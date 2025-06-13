@@ -276,17 +276,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         try {
-            const response = await fetch('https://test-hrwc.onrender.com/generate-setup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    car: selectedCarValue, 
-                    track: selectedTrackValue, 
-                    request: aiRequest 
-                }),
-            });
+         const response = await fetch('https://test-hrwc.onrender.com/generate-setup', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        car: selectedCarValue,
+        track: selectedTrackValue,
+        request: aiRequest
+    }),
+});
 
             const data = await response.json();
 
