@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Data for Cars and Tracks ---
     const allCars = [
+        { value: "Alpine_A424 Hypercar WEC2024", display: "Alpine A424", category: "Hypercar" },
         { value: "Ferrari_499P Hypercar WEC2024", display: "Ferrari 499P", category: "Hypercar" },
         { value: "BMW_M_Hybrid_V8 Hypercar WEC2024", display: "BMW M Hybrid V8", category: "Hypercar" },
         { value: "Cadillac_V_Series.R Hypercar WEC2024", display: "Cadillac V-Series.R", category: "Hypercar" },
