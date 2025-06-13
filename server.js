@@ -458,7 +458,7 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'LMGT3': `VehicleClassSetting="GT3 Lamborghini_Huracan_GT3_Evo2 WEC2024"
+    'GT3': `VehicleClassSetting="GT3 Lamborghini_Huracan_GT3_Evo2 WEC2024"
 UpgradeSetting=(6342,0,0,0)
 
 [GENERAL]
