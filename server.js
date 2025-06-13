@@ -42,7 +42,8 @@ if (!HUGGINGFACE_API_KEY) {
 // The user has requested to use deepseek-ai/DeepSeek-R1-0528 as the primary model.
 // This model is available through the OpenRouter API.
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const PRIMARY_MODEL = 'deepseek-ai/DeepSeek-R1-0528';
+// CORRECT
+const PRIMARY_MODEL = 'deepseek/deepseek-chat';
 
 // --- Define LMU .VEH Example Templates by Category ---
 const LMU_VEH_TEMPLATES = {
