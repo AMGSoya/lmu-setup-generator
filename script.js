@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { value: "GT3 Ford_Mustang_LMGT3 WEC2024", display: "Ford Mustang LMGT3", category: "LMGT3" },
         { value: "GT3 Lamborghini_Huracan_GT3_Evo2 WEC2024", display: "Lamborghini Huracan GT3 Evo2", category: "LMGT3" },
         { value: "GT3 McLaren_720S_LMGT3_Evo WEC2024", display: "McLaren 720S LMGT3 Evo", category: "LMGT3" },
-        { value: "GT3 Porsche_992_GT3_R WEC2024", display: "Porsche 992 GT3 R", category: "LMGT3" }
+        { value: "GT3 Porsche_911_GT3_R WEC2024", display: "Porsche 992 GT3 R", category: "LMGT3" }
     ];
 
     const allTracks = [
