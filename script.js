@@ -37,14 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
         { value: "Chevrolet_Corvette_C8.R_GTE WEC2024", display: "Chevrolet Corvette C8.R GTE", category: "GTE" },
         { value: "Ferrari_488_GTE_Evo WEC2024", display: "Ferrari 488 GTE Evo", category: "GTE" },
         { value: "Porsche_911_RSR-19 GTE WEC2024", display: "Porsche 911 RSR-19 GTE", category: "GTE" },
-        { value: "GT3 Aston_Martin_Vantage_AMR_LMGT3 WEC2024", display: "Aston Martin Vantage AMR LMGT3", category: "LMGT3" },
-        { value: "GT3 BMW_M4_GT3 WEC2024", display: "BMW M4 GT3", category: "LMGT3" },
-        { value: "GT3 Chevrolet_Corvette_Z06_GT3.R WEC2024", display: "Chevrolet Corvette Z06 GT3.R", category: "LMGT3" },
-        { value: "GT3 Ferrari_296_GT3 WEC2024", display: "Ferrari 296 GT3", category: "LMGT3" },
-        { value: "GT3 Ford_Mustang_LMGT3 WEC2024", display: "Ford Mustang LMGT3", category: "LMGT3" },
-        { value: "GT3 Lamborghini_Huracan_GT3_Evo2 WEC2024", display: "Lamborghini Huracan GT3 Evo2", category: "LMGT3" },
-        { value: "GT3 McLaren_720S_LMGT3_Evo WEC2024", display: "McLaren 720S LMGT3 Evo", category: "LMGT3" },
-        { value: "GT3 Porsche_911_GT3_R WEC2024", display: "Porsche 911 GT3 R", category: "LMGT3" }
+        { value: "GT3 Aston_Martin_Vantage_AMR_LMGT3 WEC2024", display: "Aston Martin Vantage AMR LMGT3", category: "GT3" },
+        { value: "GT3 BMW_M4_GT3 WEC2024", display: "BMW M4 GT3", category: "GT3" },
+        { value: "GT3 Chevrolet_Corvette_Z06_GT3.R WEC2024", display: "Chevrolet Corvette Z06 GT3.R", category: "GT3" },
+        { value: "GT3 Ferrari_296_GT3 WEC2024", display: "Ferrari 296 GT3", category: "GT3" },
+        { value: "GT3 Ford_Mustang_LMGT3 WEC2024", display: "Ford Mustang LMGT3", category: "GT3" },
+        { value: "GT3 Lamborghini_Huracan_GT3_Evo2 WEC2024", display: "Lamborghini Huracan GT3 Evo2", category: "GT3" },
+        { value: "GT3 McLaren_720S_LMGT3_Evo WEC2024", display: "McLaren 720S LMGT3 Evo", category: "GT3" },
+        { value: "GT3 Porsche_911_GT3_R WEC2024", display: "Porsche 911 GT3 R", category: "GT3" }
     ];
 
     const allTracks = [
