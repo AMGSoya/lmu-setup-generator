@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         inputElement.value = item.display;
                         selectedValueId = item.value; // Set the actual LMU ID
                         listElement.classList.remove('active');
-                        // inputElement.focus(); // No need to keep focus here, it will blur
+                        // No need to keep focus here on click, it will blur
                     });
                 });
             }
@@ -111,19 +111,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 noResults.textContent = 'No results found.';
                 listElement.appendChild(noResults);
             }
-            // listElement.classList.add('active'); // Removed: Only show on focus/arrow click
         }
 
-        // Initial render on load (for default selection)
+        // Initial render and default value setting
         renderList(); 
         if (defaultValue) {
-            inputElement.value = allItems.find(item => item.value === defaultValue).display;
-            selectedValueId = defaultValue; // Set the default selected ID
+            const defaultItem = allItems.find(item => item.value === defaultValue);
+            if (defaultItem) {
+                inputElement.value = defaultItem.display;
+                selectedValueId = defaultItem.value; // Set the default selected ID
+            }
         }
 
         // Event listeners
         inputElement.addEventListener('focus', () => {
-            renderList('', true); // Show all on focus
+            renderList('', true); // Show all on focus (empty filter term, showAll=true)
             listElement.classList.add('active'); // Show list on focus
         });
         inputElement.addEventListener('keyup', () => {
@@ -133,9 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputElement.addEventListener('blur', (event) => {
             // Delay closing to allow click on list item
             setTimeout(() => {
-                // Check if focus moved to a list item or clicked inside combobox container
-                const clickedInsideCombobox = inputElement.parentElement.contains(event.relatedTarget) || listElement.contains(event.relatedTarget);
-                if (!clickedInsideCombobox) {
+                if (!listElement.contains(event.relatedTarget)) { // Check if focus moved to a list item
                     listElement.classList.remove('active');
                     // If input is typed but not selected from list, ensure selectedValueId is cleared or updated
                     if (inputElement.value && !allItems.some(item => item.display.toLowerCase() === inputElement.value.toLowerCase())) {
@@ -151,25 +151,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 100);
         });
 
-        // Click outside to close list
-        document.addEventListener('click', (event) => {
-            if (!inputElement.parentElement.contains(event.target) && !listElement.contains(event.target)) {
-                listElement.classList.remove('active');
-            }
-        });
-        
         // Handle click on the chevron icon to show/hide list
-        inputElement.nextElementSibling.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent blur from immediately closing it again
-            if (listElement.classList.contains('active')) {
+        const iconElement = inputElement.nextElementSibling; // Get the chevron icon
+        if (iconElement && iconElement.classList.contains('combobox-icon')) {
+            iconElement.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent blur from immediately closing it again
+                if (listElement.classList.contains('active')) {
+                    listElement.classList.remove('active');
+                } else {
+                    renderList('', true); // Show all on click (empty filter term, showAll=true)
+                    listElement.classList.add('active');
+                    inputElement.focus(); // Focus the input to maintain context
+                }
+            });
+        }
+        
+        // Click outside of combobox to close it
+        document.addEventListener('click', (event) => {
+            const comboboxContainer = inputElement.closest('.combobox-container');
+            if (comboboxContainer && !comboboxContainer.contains(event.target) && !listElement.contains(event.target)) {
                 listElement.classList.remove('active');
-            } else {
-                renderList(inputElement.value, true); // Show all or filtered based on current text
-                listElement.classList.add('active');
-                inputElement.focus(); // Focus the input
             }
         });
-
 
         // Return a getter for the actual value (LMU ID)
         return {
@@ -223,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedSessionType = sessionTypeGroup.querySelector('.type-btn.selected').dataset.type;
         const trackTemp = trackTempInput.value;
         const sessionDuration = sessionDurationInput.value.trim(); 
-        const selectedWeather = weatherSelect.value;
+        const selectedWeather = weatherSelect.value; 
 
         const specificRequest = specificRequestInput.value.trim();
 
@@ -232,6 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
+        // Validation for sessionDuration (always editable, but validate if numeric for race or specific text for quali)
         if (selectedSessionType === 'race') {
             const durationNum = parseInt(sessionDuration);
             if (isNaN(durationNum) || durationNum <= 0) {
@@ -239,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         } else { // qualifying
+             // For qualifying, allow "flying lap" or a number
             if (sessionDuration.toLowerCase() !== 'flying lap') {
                 const durationNum = parseInt(sessionDuration);
                 if (isNaN(durationNum) || durationNum <= 0) {
@@ -271,17 +276,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         try {
-            const response = await fetch('https://test-hrwc.onrender.com/generate-setup', { // <-- YOUR RENDER URL GOES HERE
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        car: selectedCarValue,
-        track: selectedTrackValue,
-        request: aiRequest
-    }),
-});
+            const response = await fetch('/generate-setup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    car: selectedCarValue, 
+                    track: selectedTrackValue, 
+                    request: aiRequest 
+                }),
+            });
 
             const data = await response.json();
 
