@@ -1,0 +1,335 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f8f8; /* Very light grey/off-white background */
+    color: #333333; /* Dark text for readability */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #ffffff; /* Pure white container */
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    width: 100%;
+    max-width: 700px; /* Slightly narrower max width */
+    box-sizing: border-box;
+    border: 1px solid #e0e0e0; /* Light border */
+}
+
+h1, h2 {
+    color: #000000; /* Black headings */
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555555; /* Medium grey label color */
+    font-size: 0.95em;
+}
+
+input[type="text"],
+input[type="number"], 
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cccccc; /* Light grey border */
+    border-radius: 4px;
+    background-color: #ffffff; /* White input background */
+    color: #333333; /* Dark text */
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Common focus style for all inputs */
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #000000; /* Black focus border */
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+/* Main action buttons */
+button#generateBtn, button#copyBtn {
+    background-color: #000000; /* Black button */
+    color: #ffffff; /* White text */
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 700;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+button#generateBtn:hover, button#copyBtn:hover {
+    background-color: #333333; /* Darker grey on hover */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+button#generateBtn:active, button#copyBtn:active {
+    background-color: #555555;
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button.hidden {
+    display: none;
+}
+
+.output-section {
+    margin-top: 40px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 25px;
+}
+
+#setupOutput {
+    background-color: #f8f8f8; /* Very light grey background for code */
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    padding: 15px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: #333333;
+}
+
+.loading-spinner {
+    display: none;
+    border: 4px solid #dddddd;
+    border-top: 4px solid #000000; 
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#messageBox {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #fffacd; /* Light yellow for info */
+    color: #333333;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid #ffe0a0;
+    opacity: 0; /* Start hidden */
+    visibility: hidden; /* Start hidden */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#messageBox.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+#messageBox.error {
+    background-color: #ffe0e0; /* Light red for error */
+    color: #cc0000;
+    border: 1px solid #ffc0c0;
+}
+
+
+/* --- Button Group Styles (Minimalist) --- */
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    flex-wrap: wrap; 
+}
+
+.type-btn {
+    flex: 1; 
+    min-width: 80px; 
+    background-color: #e0e0e0; /* Light grey for unselected */
+    color: #555555; /* Dark text for unselected */
+    border: 1px solid #cccccc; 
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em; 
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: none;
+}
+
+.type-btn:hover {
+    background-color: #d0d0d0; 
+    transform: translateY(-1px);
+    border-color: #b0b0b0;
+}
+
+.type-btn.selected {
+    background-color: #000000; /* Black for selected */
+    color: #ffffff; /* White text for selected */
+    border-color: #000000; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); 
+    transform: translateY(-2px);
+}
+
+.type-btn.selected:hover {
+    background-color: #333333; 
+}
+
+textarea#specificRequest {
+    min-height: 60px;
+    margin-bottom: 0;
+}
+
+input[type="number"][readonly],
+input[type="text"][readonly] { 
+    background-color: #f0f0f0; /* Very light grey for read-only */
+    cursor: not-allowed;
+    border-color: #e0e0e0; 
+    color: #888888; 
+}
+
+/* --- New Combobox Styling --- */
+.combobox-container {
+    position: relative; /* For positioning the list */
+}
+
+.combobox-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.combobox-wrapper input[type="text"] {
+    padding-right: 35px; /* Make space for the icon */
+}
+
+.combobox-icon {
+    position: absolute;
+    right: 12px;
+    color: #666;
+    pointer-events: none; /* Make icon unclickable directly, clicks go to input */
+    transition: transform 0.2s ease;
+}
+
+.combobox-list {
+    position: absolute;
+    top: 100%; /* Position below the input */
+    left: 0;
+    width: 100%;
+    max-height: 250px; /* Max height before scrolling */
+    overflow-y: auto; /* Enable scrolling */
+    background-color: #ffffff; /* White background for list */
+    border: 1px solid #cccccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* Ensure it appears above other elements */
+    display: none; /* Hidden by default */
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, display 0.2s;
+}
+
+.combobox-list.active {
+    display: block; /* Show when active */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.combobox-category-header {
+    background-color: #f0f0f0; /* Lighter grey for category headers */
+    color: #555555;
+    padding: 8px 12px;
+    font-weight: 700;
+    font-size: 0.9em;
+    border-bottom: 1px solid #e0e0e0;
+    position: sticky; /* Make header stick while scrolling */
+    top: 0;
+    z-index: 1;
+}
+
+.combobox-list-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    color: #333333;
+    transition: background-color 0.1s ease;
+    font-size: 0.95em;
+}
+
+.combobox-list-item:hover {
+    background-color: #e0e0e0; /* Light highlight on hover */
+}
+
+.combobox-no-results {
+    padding: 10px 12px;
+    color: #888888;
+    text-align: center;
+    font-style: italic;
+}
+
+
+/* Layout for split fields (Track Temp and Session Duration) */
+.split-fields {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; 
+}
+
+.split-fields .input-group {
+    flex: 1; 
+    min-width: 180px; 
+}
+
+/* Ensure padding around container is sufficient for mobile */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    .container {
+        padding: 15px;
+    }
+    .button-group {
+        flex-direction: column;
+    }
+    .type-btn {
+        min-width: unset; 
+    }
+    .split-fields {
+        flex-direction: column; 
+        gap: 15px;
+    }
+}

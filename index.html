@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Mans Ultimate Setup Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Le Mans Ultimate Setup Generator</h1>
+
+        <div class="input-section">
+            <div class="form-group combobox-container">
+                <label for="carComboboxInput">Car:</label>
+                <div class="combobox-wrapper">
+                    <input type="text" id="carComboboxInput" placeholder="Select or type a car...">
+                    <i class="fas fa-chevron-down combobox-icon"></i>
+                </div>
+                <div id="carComboboxList" class="combobox-list"></div>
+            </div>
+
+            <div class="form-group combobox-container">
+                <label for="trackComboboxInput">Track:</label>
+                <div class="combobox-wrapper">
+                    <input type="text" id="trackComboboxInput" placeholder="Select or type a track...">
+                    <i class="fas fa-chevron-down combobox-icon"></i>
+                </div>
+                <div id="trackComboboxList" class="combobox-list"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Setup Type:</label>
+                <div class="button-group" id="setupTypeGroup">
+                    <button class="type-btn" data-type="safe">Safe</button>
+                    <button class="type-btn selected" data-type="balanced">Balanced</button>
+                    <button class="type-btn" data-type="aggressive">Aggressive</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Session Type:</label>
+                <div class="button-group" id="sessionTypeGroup">
+                    <button class="type-btn selected" data-type="qualifying">Qualifying</button>
+                    <button class="type-btn" data-type="race">Race</button>
+                </div>
+            </div>
+
+            <div class="form-group split-fields">
+                <div class="input-group">
+                    <label for="trackTemp">Track Temp (°C):</label>
+                    <input type="number" id="trackTemp" value="23" min="0" max="60">
+                </div>
+                <div class="input-group">
+                    <label for="sessionDuration">Session Duration:</label>
+                    <input type="text" id="sessionDuration" placeholder="e.g., flying lap, 60 min">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="weatherSelect">Weather:</label>
+                <select id="weatherSelect">
+                    <option value="dry">Dry</option>
+                    <option value="wet">Wet</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="specificRequest">Specific Request (Optional):</label>
+                <textarea id="specificRequest" rows="3" placeholder="e.g., good corner entry stability, oversteer high speed exit"></textarea>
+            </div>
+
+            <button id="generateBtn">Generate Setup</button>
+        </div>
+
+        <div class="output-section">
+            <h2>Generated Setup:</h2>
+            <div class="loading-spinner" id="loadingSpinner"></div>
+            <pre id="setupOutput"></pre>
+            <button id="copyBtn" class="hidden">Copy Setup</button>
+            <div id="messageBox" class="hidden"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
