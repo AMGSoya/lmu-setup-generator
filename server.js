@@ -953,7 +953,7 @@ Now generate the setup:
             headers: {
                 'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
                 'Content-Type': 'application/json',
-                'HTTP-Referer': 'http://localhost:3000', // Replace with your actual deployed URL if not local
+                'HTTP-Referer': 'https://test-hrwc.onrender.com', // Your live Render URL, // Replace with your actual deployed URL if not local
                 'X-Title': 'LMU Setup Generator',
             },
             body: JSON.stringify({
