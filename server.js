@@ -43,7 +43,7 @@ if (!HUGGINGFACE_API_KEY) {
 // This model is available through the OpenRouter API.
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 // CORRECT
-const PRIMARY_MODEL = 'deepseek/deepseek-chat';
+const PRIMARY_MODEL = 'NousResearch/Hermes-2-Pro-Llama-3-8B';
 
 // --- Define LMU .VEH Example Templates by Category ---
 const LMU_VEH_TEMPLATES = {
