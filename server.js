@@ -460,7 +460,6 @@ Custom=1`,
 
     'GT3': `VehicleClassSetting="GT3 Porsche_911_GT3_R_LMGT3 WEC2024"
 UpgradeSetting=(3276,0,0,0)
-//VEH=C:\Program Files (x86)\Steam\steamapps\common\Le Mans Ultimate\Installed\Vehicles\911GT3R_2024\1.01\92_24_MANT5488007D.VEH
 //UpgradeClass=
 //Position lights=0
 //AI Tweaks=6
