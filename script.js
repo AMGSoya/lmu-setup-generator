@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         try {
-            const response = await fetch('/generate-setup', {
+            const response = await fetch('https://test-hrwc.onrender.com/generate-setup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
