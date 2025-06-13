@@ -946,26 +946,28 @@ Now generate the setup:
 `;
 
     try {
-        console.log("Sending prompt to OpenRouter AI for car:", car, "track:", track, "category:", selectedCarCategory, "using model:", OPENROUTER_MODEL);
-
-        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-                'Content-Type': 'application/json',
-                'HTTP-Referer': 'https://test-hrwc.onrender.com', // Your live Render URL, // Replace with your actual deployed URL if not local
-                'X-Title': 'LMU Setup Generator',
-            },
-            body: JSON.stringify({
-                model: OPENROUTER_MODEL,
-                messages: [
-                    { role: "system", content: "You are a helpful assistant that generates LMU car setups. You must respond only with the .VEH file content and strictly adhere to the provided LMU .VEH format and section structure. DO NOT include markdown code blocks or any other extraneous text." },
-                    { role: "user", content: prompt }
-                ],
-                max_tokens: 4000, // Increased max_tokens to accommodate detailed setups
-                temperature: 0.7, // Adjust temperature for creativity vs. consistency (0.7 is a good balance)
-            }),
-        });
+    const response = await fetch('/generate-setup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            car: car, // <-- REQUIRED
+            selectedCarDisplay: carDisplayName, // Optional, but good to send
+            selectedCarCategory: selectedCarCategory, // <-- REQUIRED
+            track: track, // <-- REQUIRED
+            selectedTrackDisplay: trackDisplayName, // Optional
+            request: setupGoal, // <-- REQUIRED (this is your 'Setup Goal' from the textarea)
+            setupGoal: setupGoal, // Redundant but harmless if already mapping 'request' to it
+            sessionGoal: sessionGoal,
+            selectedWeather: weather,
+            weatherGuidance: `Track is ${weather.toLowerCase()}.`,
+            trackTemp: parseInt(trackTemp),
+            specificRequest: specificRequest,
+            fuelEstimateRequest: fuelEstimateRequest,
+            tireCompoundGuidance: tireCompoundGuidance
+        })
+    });
 
         if (!openrouterResponse.ok) {
             const errorData = await openrouterResponse.json();
