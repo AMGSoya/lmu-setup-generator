@@ -1,4 +1,4 @@
-// --- server.js (for OpenRouter API - Full .VEH Example with Category Templates) ---
+// --- server.js (for OpenRouter API - Primary AI Service) ---
 
 // 1. Load environment variables from .env file
 require('dotenv').config();
@@ -10,7 +10,7 @@ const path = require('path');
 
 // 3. Initialize Express app and define port
 const app = express();
-const port = process.env.PORT || 3000; // CORRECT: Render will provide the PORT environment variable
+const port = process.env.PORT || 3000;
 
 // 4. Middleware to parse JSON bodies
 app.use(express.json());
@@ -18,10 +18,13 @@ app.use(express.json());
 // 5. Serve static files (assuming your index.html and client-side JS are in the same directory)
 app.use(express.static(path.join(__dirname)));
 
-// 6. Get your API key from the .env file
+// 6. Get your API keys from the .env file
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+// The HUGGINGFACE_API_KEY is loaded and available for use,
+// but the primary setup generation uses OpenRouter as configured below.
+const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
 
-// Basic check for API key
+// --- Validation for API Keys ---
 if (!OPENROUTER_API_KEY) {
     console.error("ERROR: OPENROUTER_API_KEY not found in your .env file.");
     console.error("Please ensure you have a .env file in the same directory as server.js");
@@ -29,9 +32,17 @@ if (!OPENROUTER_API_KEY) {
     process.exit(1);
 }
 
+if (!HUGGINGFACE_API_KEY) {
+    // This is a warning because the primary function uses OpenRouter.
+    console.warn("WARN: HUGGINGFACE_API_KEY not found in your .env file.");
+    console.warn("The application will continue, but features relying on direct Hugging Face calls will fail.");
+}
+
 // 7. Define OpenRouter API endpoint and Model
+// The user has requested to use deepseek-ai/DeepSeek-R1-0528 as the primary model.
+// This model is available through the OpenRouter API.
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const OPENROUTER_MODEL = 'deepseek/deepseek-chat-v3-0324:free'; // Verify this model is active and accessible
+const PRIMARY_MODEL = 'deepseek-ai/DeepSeek-R1-0528';
 
 // --- Define LMU .VEH Example Templates by Category ---
 const LMU_VEH_TEMPLATES = {
@@ -946,67 +957,67 @@ Now generate the setup:
 `;
 
     try {
-        // THIS IS THE CRITICAL SECTION THAT WAS INCORRECTLY REPLACED
-        // This is the server-side call to the OpenRouter API
-        console.log("Sending prompt to OpenRouter AI for car:", car, "track:", track, "category:", selectedCarCategory, "using model:", OPENROUTER_MODEL);
+        // --- CORRECTED API CALL SECTION ---
+        console.log("Sending prompt to OpenRouter AI for car:", car, "track:", track, "category:", selectedCarCategory, "using model:", PRIMARY_MODEL);
 
-        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-                'Content-Type': 'application/json',
-                'HTTP-Referer': 'https://test-hrwc.onrender.com', // CORRECT: Your live Render URL
-                'X-Title': 'LMU Setup Generator',
-            },
-            body: JSON.stringify({
-                model: OPENROUTER_MODEL,
-                messages: [
-                    { role: "system", content: "You are a helpful assistant that generates LMU car setups. You must respond only with the .VEH file content and strictly adhere to the provided LMU .VEH format and section structure. DO NOT include markdown code blocks or any other extraneous text." },
-                    { role: "user", content: prompt }
-                ],
-                max_tokens: 4000, // Increased max_tokens to accommodate detailed setups
-                temperature: 0.7, // Adjust temperature for creativity vs. consistency (0.7 is a good balance)
-            }),
-        });
+        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                // Recommended headers for OpenRouter
+                'HTTP-Referer': 'https://test-hrwc.onrender.com', // Your app's URL
+                'X-Title': 'LMU Setup Generator', // Your app's name
+            },
+            body: JSON.stringify({
+                model: PRIMARY_MODEL,
+                messages: [
+                    { role: "system", content: "You are a helpful assistant that generates LMU car setups. You must respond only with the .VEH file content and strictly adhere to the provided LMU .VEH format and section structure. DO NOT include markdown code blocks or any other extraneous text." },
+                    { role: "user", content: prompt }
+                ],
+                max_tokens: 4000,
+                temperature: 0.7,
+            }),
+        });
 
-        if (!openrouterResponse.ok) {
-            const errorData = await openrouterResponse.json();
-            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
-            return res.status(openrouterResponse.status).json({
-                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
-            });
-        }
+        if (!openrouterResponse.ok) {
+            const errorData = await openrouterResponse.json();
+            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
+            return res.status(openrouterResponse.status).json({
+                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
+            });
+        }
 
-        const chatCompletion = await openrouterResponse.json();
-        let text = chatCompletion.choices[0].message.content;
+        const chatCompletion = await openrouterResponse.json();
+        let text = chatCompletion.choices[0].message.content;
 
-        // Trim leading/trailing whitespace AND markdown code blocks (if present)
-        text = text.trim();
-        if (text.startsWith('```') && text.endsWith('```')) {
-            text = text.replace(/^```[a-zA-Z]*\n|\n```$/g, '').trim();
-        }
+        // Trim leading/trailing whitespace AND markdown code blocks (if present)
+        text = text.trim();
+        if (text.startsWith('```') && text.endsWith('```')) {
+            text = text.replace(/^```[a-zA-Z]*\n|\n```$/g, '').trim();
+        }
 
-        if (text && text.startsWith('VehicleClassSetting=')) {
-            res.json({ setup: text });
-        } else {
-            console.error("AI generated an invalid setup format or empty response.");
-            console.error("AI Raw Response (first 500 chars):", text ? text.substring(0, 500) : '[Empty Response]'); // Log a snippet
-            res.status(500).json({
-                error: `AI generated an invalid setup format. Please refine your request or try again. Raw AI response snippet: ${text ? text.substring(0, 200) : '[Empty Response]'}`
-            });
-        }
+        if (text && text.startsWith('VehicleClassSetting=')) {
+            res.json({ setup: text });
+        } else {
+            console.error("AI generated an invalid setup format or empty response.");
+            console.error("AI Raw Response (first 500 chars):", text ? text.substring(0, 500) : '[Empty Response]'); // Log a snippet
+            res.status(500).json({
+                error: `AI generated an invalid setup format. Please refine your request or try again. Raw AI response snippet: ${text ? text.substring(0, 200) : '[Empty Response]'}`
+            });
+        }
 
-    } catch (error) {
-        console.error("Error communicating with OpenRouter or generating setup:", error);
-        res.status(500).json({
-            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
-        });
-    }
+    } catch (error) {
+        console.error("Error communicating with OpenRouter or generating setup:", error);
+        res.status(500).json({
+            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
+        });
+    }
 });
 
 // 9. Start the server
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-    console.log(`Open your web browser and navigate to http://localhost:${port}`);
-    console.log("Keep this terminal window open while using the generator.");
+    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Open your web browser and navigate to http://localhost:${port}`);
+    console.log("Keep this terminal window open while using the generator.");
 });
