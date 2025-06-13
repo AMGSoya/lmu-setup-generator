@@ -49,7 +49,6 @@ const PRIMARY_MODEL = 'NousResearch/Hermes-2-Pro-Llama-3-8B';
 const LMU_VEH_TEMPLATES = {
     'Hypercar': `VehicleClassSetting="Ferrari_499P Hypercar WEC2024"
 UpgradeSetting=(2,0,0,0)
-//VEH=C:\\Program Files (x86)\\Steam\\steamapps\\common\\Le Mans Ultimate\\Installed\\Vehicles\\Ferrari_499P_2023\\1.35\\50_24_AFCO4AB4105B.VEH
 //UpgradeClass=
 //Tyre Restrictions=2
 //AI Tweaks=0
@@ -253,7 +252,6 @@ Custom=1`,
 
     'LMP2': `VehicleClassSetting="LMP2 Oreca_07"
 UpgradeSetting=(12,0,0,0)
-//VEH=C:\\Program Files (x86)\\Steam\\steamapps\\common\\Le Mans Ultimate\\Installed\\Vehicles\\Oreca_07_LM_2023\\1.23\\14_NIELSENEC663C52.VEH
 //UpgradeClass=
 //Fuel tank=0
 //Engine cover gurney=0
@@ -664,14 +662,13 @@ Custom=1`,
 
     'GTE': `VehicleClassSetting="Ferrari_488_GTE_EVO GTE"
 UpgradeSetting=(2,0,0,0)
-//VEH=C:\\Program Files (x86)\\Steam\\steamapps\\common\\Le Mans Ultimate\\Installed\\Vehicles\\Ferrari_488GTE_LM_2023\\1.01\\21_AFCORSEFDF53F44.VEH
 //UpgradeClass=
 //Position lights=0
 //Aero package=1
 //Note: settings commented out if using the default
 
 [GENERAL]
-Notes="setup gara Ferrari 488 GTE"
+Notes="setup for Ferrari 488 GTE"
 Symmetric=0
 //CGHeightSetting=0//Non-adjustable
 //CGRightSetting=0//Non-adjustable
