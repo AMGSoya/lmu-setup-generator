@@ -10,7 +10,7 @@ const path = require('path');
 
 // 3. Initialize Express app and define port
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // CORRECT: Render will provide the PORT environment variable
 
 // 4. Middleware to parse JSON bodies
 app.use(express.json());
@@ -341,7 +341,7 @@ TCSlipAngleMapSetting=7//Linked
 //RevLimitSetting=0//8000
 //EngineBoostSetting=0//N/A
 //RegenerationMapSetting=0//0%
-//ElectricMotorMapSetting=0//
+ElectricMotorMapSetting=0//Not Applicable 
 //EngineMixtureSetting=1//Race
 //EngineBrakingMapSetting=0//N/A
 
@@ -446,7 +446,7 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'GT3': `VehicleClassSetting="GT3 Lamborghini_Huracan_GT3_Evo2 WEC2024"
+    'GT3': `VehicleClassSetting="GT3 Lamborghini_Huracan_GT3_Evo2 WEC2024"
 UpgradeSetting=(6342,0,0,0)
 
 [GENERAL]
@@ -542,7 +542,7 @@ AntilockBrakeSystemMapSetting=8
 RevLimitSetting=0
 EngineBoostSetting=0
 RegenerationMapSetting=0
-ElectricMotorMapSetting=0
+ElectricMotorMapSetting=0//Not Applicable
 EngineMixtureSetting=1
 EngineBrakingMapSetting=0
 
@@ -643,7 +643,7 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'GTE': `VehicleClassSetting="Ferrari_488_GTE_EVO GTE"
+    'GTE': `VehicleClassSetting="Ferrari_488_GTE_EVO GTE"
 UpgradeSetting=(2,0,0,0)
 //VEH=C:\\Program Files (x86)\\Steam\\steamapps\\common\\Le Mans Ultimate\\Installed\\Vehicles\\Ferrari_488GTE_LM_2023\\1.01\\21_AFCORSEFDF53F44.VEH
 //UpgradeClass=
@@ -743,7 +743,7 @@ TCSlipAngleMapSetting=6//6
 //RevLimitSetting=0//7,500
 //EngineBoostSetting=0//N/A
 //RegenerationMapSetting=0//0%
-//ElectricMotorMapSetting=0//
+ElectricMotorMapSetting=0//Not Applicable
 EngineMixtureSetting=2//Gara
 //EngineBrakingMapSetting=0//N/A
 
@@ -851,39 +851,39 @@ Custom=1`
 
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
-    // Destructure initial required fields from the request body
-    const { car, track, request, selectedCarCategory } = req.body; // Added selectedCarCategory
+    // Destructure initial required fields from the request body
+    const { car, track, request, selectedCarCategory } = req.body; // Added selectedCarCategory
 
-    // Validate essential parameters
-    if (!car || !track || !request || !selectedCarCategory) {
-        return res.status(400).json({ error: "Please provide Car, Track, Setup Request, and Car Category details." });
-    }
+    // Validate essential parameters
+    if (!car || !track || !request || !selectedCarCategory) {
+        return res.status(400).json({ error: "Please provide Car, Track, Setup Request, and Car Category details." });
+    }
 
-    // Select the appropriate template based on selectedCarCategory
-    const exampleTemplate = LMU_VEH_TEMPLATES[selectedCarCategory];
+    // Select the appropriate template based on selectedCarCategory
+    const exampleTemplate = LMU_VEH_TEMPLATES[selectedCarCategory];
 
-    if (!exampleTemplate) {
-        return res.status(400).json({ error: `No .VEH template found for car category: ${selectedCarCategory}` });
-    }
+    if (!exampleTemplate) {
+        return res.status(400).json({ error: `No .VEH template found for car category: ${selectedCarCategory}` });
+    }
 
-    // Capture or define additional prompt variables with defaults if not provided by client
-    const selectedCarValue = car; // Using 'car' from request body
-    const selectedCarDisplay = req.body.selectedCarDisplay || car; // Use client's display name or 'car' value
-    // selectedCarCategory is already destructured
-    const selectedTrackValue = track; // Using 'track' from request body
-    const selectedTrackDisplay = req.body.selectedTrackDisplay || track; // Use client's display name or 'track' value
-    const setupGoal = request; // Using 'request' from request body as the setup goal
-    const sessionGoal = req.body.sessionGoal || 'Optimal Lap Time'; // Default or get from client
-    const selectedWeather = req.body.selectedWeather || 'Dry'; // Default or get from client
-    const weatherGuidance = req.body.weatherGuidance || `Track is ${selectedWeather.toLowerCase()}.`; // Basic guidance based on selection
-    const trackTemp = req.body.trackTemp || 25; // Default to 25°C or get from client
-    const specificRequest = req.body.specificRequest || 'None'; // Default or get from client
-    const fuelEstimateRequest = req.body.fuelEstimateRequest || ''; // Default or get from client
-    const tireCompoundGuidance = req.body.tireCompoundGuidance || 'Choose appropriate compound for dry conditions (e.g., 0 for Soft, 1 for Medium, 2 for Hard).'; // Default or get from client
+    // Capture or define additional prompt variables with defaults if not provided by client
+    const selectedCarValue = car; // Using 'car' from request body
+    const selectedCarDisplay = req.body.selectedCarDisplay || car; // Use client's display name or 'car' value
+    // selectedCarCategory is already destructured
+    const selectedTrackValue = track; // Using 'track' from request body
+    const selectedTrackDisplay = req.body.selectedTrackDisplay || track; // Use client's display name or 'track' value
+    const setupGoal = request; // Using 'request' from request body as the setup goal
+    const sessionGoal = req.body.sessionGoal || 'Optimal Lap Time'; // Default or get from client
+    const selectedWeather = req.body.selectedWeather || 'Dry'; // Default or get from client
+    const weatherGuidance = req.body.weatherGuidance || `Track is ${selectedWeather.toLowerCase()}.`; // Basic guidance based on selection
+    const trackTemp = req.body.trackTemp || 25; // Default to 25°C or get from client
+    const specificRequest = req.body.specificRequest || 'None'; // Default or get from client
+    const fuelEstimateRequest = req.body.fuelEstimateRequest || ''; // Default or get from client
+    const tireCompoundGuidance = req.body.tireCompoundGuidance || 'Choose appropriate compound for dry conditions (e.g., 0 for Soft, 1 for Medium, 2 for Hard).'; // Default or get from client
 
-    // Construct the prompt for the AI
-    const prompt = `You are a Le Mans Ultimate (LMU) car setup expert. Your task is to provide a detailed car setup 
-IN THE EXACT LMU .VEH FILE FORMAT. 
+    // Construct the prompt for the AI
+    const prompt = `You are a Le Mans Ultimate (LMU) car setup expert. Your task is to provide a detailed car setup 
+IN THE EXACT LMU .VEH FILE FORMAT. 
 Your response MUST start with 'VehicleClassSetting="...' and include ALL standard LMU sections and parameters as shown in the example below.
 Ensure all parameters within sections are valid LMU parameters and are properly formatted as Setting=Value//Comment (even if the comment is "N/A" or "Non-adjustable").
 DO NOT include any conversational text, explanations, or extra formatting like markdown code blocks (e.g., \`\`\`).
@@ -945,68 +945,68 @@ ${exampleTemplate}
 Now generate the setup:
 `;
 
-    try {
-    const response = await fetch('/generate-setup', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            car: car, // <-- REQUIRED
-            selectedCarDisplay: carDisplayName, // Optional, but good to send
-            selectedCarCategory: selectedCarCategory, // <-- REQUIRED
-            track: track, // <-- REQUIRED
-            selectedTrackDisplay: trackDisplayName, // Optional
-            request: setupGoal, // <-- REQUIRED (this is your 'Setup Goal' from the textarea)
-            setupGoal: setupGoal, // Redundant but harmless if already mapping 'request' to it
-            sessionGoal: sessionGoal,
-            selectedWeather: weather,
-            weatherGuidance: `Track is ${weather.toLowerCase()}.`,
-            trackTemp: parseInt(trackTemp),
-            specificRequest: specificRequest,
-            fuelEstimateRequest: fuelEstimateRequest,
-            tireCompoundGuidance: tireCompoundGuidance
-        })
-    });
+    try {
+        // THIS IS THE CRITICAL SECTION THAT WAS INCORRECTLY REPLACED
+        // This is the server-side call to the OpenRouter API
+        console.log("Sending prompt to OpenRouter AI for car:", car, "track:", track, "category:", selectedCarCategory, "using model:", OPENROUTER_MODEL);
 
-        if (!openrouterResponse.ok) {
-            const errorData = await openrouterResponse.json();
-            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
-            return res.status(openrouterResponse.status).json({
-                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
-            });
-        }
+        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://test-hrwc.onrender.com', // CORRECT: Your live Render URL
+                'X-Title': 'LMU Setup Generator',
+            },
+            body: JSON.stringify({
+                model: OPENROUTER_MODEL,
+                messages: [
+                    { role: "system", content: "You are a helpful assistant that generates LMU car setups. You must respond only with the .VEH file content and strictly adhere to the provided LMU .VEH format and section structure. DO NOT include markdown code blocks or any other extraneous text." },
+                    { role: "user", content: prompt }
+                ],
+                max_tokens: 4000, // Increased max_tokens to accommodate detailed setups
+                temperature: 0.7, // Adjust temperature for creativity vs. consistency (0.7 is a good balance)
+            }),
+        });
 
-        const chatCompletion = await openrouterResponse.json();
-        let text = chatCompletion.choices[0].message.content;
+        if (!openrouterResponse.ok) {
+            const errorData = await openrouterResponse.json();
+            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
+            return res.status(openrouterResponse.status).json({
+                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
+            });
+        }
 
-        // Trim leading/trailing whitespace AND markdown code blocks (if present)
-        text = text.trim();
-        if (text.startsWith('```') && text.endsWith('```')) {
-            text = text.replace(/^```[a-zA-Z]*\n|\n```$/g, '').trim();
-        }
+        const chatCompletion = await openrouterResponse.json();
+        let text = chatCompletion.choices[0].message.content;
 
-        if (text && text.startsWith('VehicleClassSetting=')) {
-            res.json({ setup: text });
-        } else {
-            console.error("AI generated an invalid setup format or empty response.");
-            console.error("AI Raw Response (first 500 chars):", text ? text.substring(0, 500) : '[Empty Response]'); // Log a snippet
-            res.status(500).json({
-                error: `AI generated an invalid setup format. Please refine your request or try again. Raw AI response snippet: ${text ? text.substring(0, 200) : '[Empty Response]'}`
-            });
-        }
+        // Trim leading/trailing whitespace AND markdown code blocks (if present)
+        text = text.trim();
+        if (text.startsWith('```') && text.endsWith('```')) {
+            text = text.replace(/^```[a-zA-Z]*\n|\n```$/g, '').trim();
+        }
 
-    } catch (error) {
-        console.error("Error communicating with OpenRouter or generating setup:", error);
-        res.status(500).json({
-            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
-        });
-    }
+        if (text && text.startsWith('VehicleClassSetting=')) {
+            res.json({ setup: text });
+        } else {
+            console.error("AI generated an invalid setup format or empty response.");
+            console.error("AI Raw Response (first 500 chars):", text ? text.substring(0, 500) : '[Empty Response]'); // Log a snippet
+            res.status(500).json({
+                error: `AI generated an invalid setup format. Please refine your request or try again. Raw AI response snippet: ${text ? text.substring(0, 200) : '[Empty Response]'}`
+            });
+        }
+
+    } catch (error) {
+        console.error("Error communicating with OpenRouter or generating setup:", error);
+        res.status(500).json({
+            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
+        });
+    }
 });
 
 // 9. Start the server
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-    console.log(`Open your web browser and navigate to http://localhost:${port}`);
-    console.log("Keep this terminal window open while using the generator.");
+    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Open your web browser and navigate to http://localhost:${port}`);
+    console.log("Keep this terminal window open while using the generator.");
 });
