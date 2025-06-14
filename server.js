@@ -1,4 +1,4 @@
-// --- server.js (for OpenRouter API - Primary AI Service) ---
+// --- server.js (Final Version) ---
 
 // 1. Load environment variables from .env file
 require('dotenv').config();
@@ -6,7 +6,6 @@ require('dotenv').config();
 // 2. Import necessary libraries
 const express = require('express');
 const path = require('path');
-// Node.js v18+ has a built-in fetch API, so node-fetch is no longer needed
 
 // 3. Initialize Express app and define port
 const app = express();
@@ -15,36 +14,22 @@ const port = process.env.PORT || 3000;
 // 4. Middleware to parse JSON bodies
 app.use(express.json());
 
-// 5. Serve static files (assuming your index.html and client-side JS are in the same directory)
+// 5. Serve static files
 app.use(express.static(path.join(__dirname)));
 
-// 6. Get your API keys from the .env file
+// 6. Get API Keys from .env file
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-// The HUGGINGFACE_API_KEY is loaded and available for use,
-// but the primary setup generation uses OpenRouter as configured below.
-const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
+const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY; // Loaded but not used in primary flow
 
-// --- Validation for API Keys ---
+// 7. API Key Validation
 if (!OPENROUTER_API_KEY) {
     console.error("ERROR: OPENROUTER_API_KEY not found in your .env file.");
-    console.error("Please ensure you have a .env file in the same directory as server.js");
-    console.error("And it contains the line: OPENROUTER_API_KEY=YOUR_ACTUAL_OPENROUTER_KEY_HERE");
     process.exit(1);
 }
 
-if (!HUGGINGFACE_API_KEY) {
-    // This is a warning because the primary function uses OpenRouter.
-    console.warn("WARN: HUGGINGFACE_API_KEY not found in your .env file.");
-    console.warn("The application will continue, but features relying on direct Hugging Face calls will fail.");
-}
-
-// 7. Define OpenRouter API endpoint and Model
-// The user has requested to use deepseek-ai/DeepSeek-R1-0528 as the primary model.
-// This model is available through the OpenRouter API.
+// 8. Define OpenRouter API endpoint and Model
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-// CORRECT
 const PRIMARY_MODEL = 'NousResearch/Hermes-2-Pro-Llama-3-8B';
-
 // --- Define LMU .VEH Example Templates by Category ---
 const LMU_VEH_TEMPLATES = {
     'Hypercar': `VehicleClassSetting="Ferrari_499P Hypercar WEC2024"
