@@ -819,8 +819,8 @@ app.post('/generate-setup', async (req, res) => {
 ##    - Bumpy tracks need softer Fast Bump/Rebound. High-speed stability needs balanced/stiffer Slow Bump/Rebound.
 ##
 ## **Drivetrain:**
-## - **FinalDriveSetting:** (Min: 0, Max: typically 5-10 depending on car. Higher index = longer gear for higher top speed).
-## - **Gear1Setting-Gear7Setting:** (Min: 0, Max: 20). Each represents an index for a preset ratio. Higher index generally means a shorter gear (more acceleration), lower index a longer gear (higher top speed). **You MUST select a non-zero index for each gear unless the template explicitly shows it as fixed or non-adjustable for that car.**
+## - **FinalDriveSetting:** (Min: 0, Max: typically 5-10 depending on car. Higher index = longer gear for higher top speed). **For Le Mans/Monza, aim for the highest available index (e.g., 5-7).**
+## - **Gear1Setting-Gear7Setting:** (Min: 0, Max: 20). Each represents an index for a preset ratio. **For High-Speed Tracks (Le Mans, Monza), choose LOWER indices (e.g., 0-5) for these individual gears to achieve LONGER individual ratios.** For Technical Tracks, choose HIGHER indices (e.g., 5-15) for shorter, more accelerative gears. **You MUST select a non-zero index for each gear unless the template explicitly shows it as fixed or non-adjustable for that car.**
 ## - **DiffPowerSetting:** (Min: 0, Max: 15).
 ## - **DiffCoastSetting:** (Min: 0, Max: 20).
 ## - **DiffPreloadSetting:** (Min: 0, Max: 100).
@@ -833,15 +833,32 @@ app.post('/generate-setup', async (req, res) => {
 ## - **TractionControlMapSetting (TC):** (Min: 0, Max: 10). Higher value = more TC intervention.
 ##
 ## =====================================================================================
+## --- GEARING STRATEGY (CRITICAL FOR FINALDRIVE & INDIVIDUAL GEARS) ---
+## =====================================================================================
+## This is the MOST IMPORTANT section for gearing. Follow these rules precisely:
+##
+## **1. High-Speed Tracks (e.g., Le Mans, Monza, Spa-Francorchamps):**
+##    - **FinalDriveSetting:** You MUST select one of the **HIGHEST available indices** for the car (e.g., if max is 7, choose 5, 6, or 7). This makes the overall gearing "longer" for high top speed.
+##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **LOWER index** (e.g., 0-5 from a max of 20) to make that individual gear "longer". This is counter-intuitive if you're thinking of ratios, but in LMU's index system, a *lower index* often means a *longer gear*.
+##    - **Comments:** For each GearXSetting, you MUST dynamically calculate and insert a **realistic approximate speed in km/h or mph** based on the chosen gear index and final drive. Example: \`Gear1Setting=X//~Y km/h (approx. Z mph)\`. Ensure the speeds *increase logically* with each successive gear.
+##
+## **2. Technical/Accelerative Tracks (e.g., Sebring, Portimão, Imola):**
+##    - **FinalDriveSetting:** You MUST select one of the **LOWER available indices** for the car (e.g., 0-3) for quicker acceleration.
+##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **HIGHER index** (e.g., 5-15 from a max of 20) to make that individual gear "shorter" for better acceleration.
+##    - **Comments:** As above, dynamically calculate and insert a **realistic approximate speed** in km/h or mph for each gear.
+##
+## **ALWAYS ensure a non-zero index is chosen for any adjustable gear setting.** Leaving them at '0' for non-fixed gears is a critical failure.
+##
+## =====================================================================================
 ## --- TRACK DNA DATABASE (Key characteristics for setup decisions) ---
 ## =====================================================================================
-## - **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST possible drag (low wings, **long gears**). Compromise: Must have enough stability for Porsche Curves. Bumps on straights require good high-speed damping.
-## - **Sebring International Raceway:** Extremely bumpy. Focus: SOFT suspension, especially fast dampers, and higher ride height to absorb bumps. Compromise: Softness can hurt responsiveness in slow corners.
-## - **Spa-Francorchamps:** High-speed with significant elevation change (Eau Rouge/Raidillon). Focus: High-speed stability with good aero balance. Requires stiff springs for compression in Eau Rouge.
-## - **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **Long gears** are essential. Compromise: Must be stable on the brakes for heavy braking zones into chicanes.
-## - **Fuji Speedway:** Long main straight but a very tight, technical final sector. Focus: A major compromise between top speed and low-speed agility. Can't sacrifice too much downforce.
-## - **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster" with lots of elevation and blind crests. Focus: A predictable, stable platform is crucial. Medium downforce and compliant suspension.
-## - **Bahrain International Circuit:** High grip, smooth surface, often hot. Focus: Good braking stability and traction out of slow corners. Tire wear can be high.
+## - **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST possible drag (low wings, **VERY LONG GEARS**). Compromise: Must have enough stability for Porsche Curves. Bumps on straights require good high-speed damping.
+## - **Sebring International Raceway:** Extremely bumpy. Focus: SOFT suspension, especially fast dampers, and higher ride height to absorb bumps. Compromise: Softness can hurt responsiveness in slow corners. **Short Gears Recommended.**
+## - **Spa-Francorchamps:** High-speed with significant elevation change (Eau Rouge/Raidillon). Focus: High-speed stability with good aero balance. Requires stiff springs for compression in Eau Rouge. **Long Gears Recommended.**
+## - **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. Compromise: Must be stable on the brakes for heavy braking zones into chicanes.
+## - **Fuji Speedway:** Long main straight but a very tight, technical final sector. Focus: A major compromise between top speed and low-speed agility. Can't sacrifice too much downforce. **Balanced Gearing Recommended.**
+## - **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster" with lots of elevation and blind crests. Focus: A predictable, stable platform is crucial. Medium downforce and compliant suspension. **Slightly Shorter Gears Recommended.**
+## - **Bahrain International Circuit:** High grip, smooth surface, often hot. Focus: Good braking stability and traction out of slow corners. Tire wear can be high. **Balanced Gearing Recommended.**
 
 ## =====================================================================================
 ## --- QUALIFYING VS. RACE PHILOSOPHY ---
@@ -878,17 +895,19 @@ app.post('/generate-setup', async (req, res) => {
 ## 1. Low RideHeight REQUIRES Stiff Springs (to prevent bottoming out).
 ## 2. High Aero (RWSetting) REQUIRES Stiff Springs (to support downforce).
 ## 3. Bumpy Tracks (Sebring, Portimão) REQUIRE Softer Fast Damping (for bump absorption).
-## 4. DO NOT use short gears (lower FinalDriveSetting index, higher GearXSetting indices) at high-speed tracks (Le Mans/Monza). Conversely, DO NOT use overly long gears at technical tracks.
+## 4. **Gearing Sanity Check:** DO NOT use short gears (lower FinalDriveSetting index, higher GearXSetting indices) at high-speed tracks (Le Mans/Monza). Conversely, DO NOT use overly long gears (higher FinalDriveSetting index, lower GearXSetting indices) at technical tracks.
 ## 5. **Physics Check:** Ensure toe and camber settings are physically realistic for a racing car (e.g., negative camber for cornering grip, slight toe-out on front for sharper turn-in, slight toe-in on rear for stability).
 ## 6. **Physics Check:** Ensure damper settings (bump/rebound) logically complement spring stiffness and track type. Softer springs often pair with softer damping, stiffer with stiffer.
 ## 7. **Balance Consistency:** Aero balance, mechanical balance (springs/ARBs), and differential settings should ideally work in harmony towards the overall setup goal and driver feedback.
 ## 8. **FinalDrive & Gears Cohesion:** Ensure the chosen FinalDriveSetting (index) and all individual GearXSetting indices form a logical progression and provide appropriate top speeds for the track. A higher FinalDrive index should correspond to overall higher top speeds for each gear, and vice-versa.
+## 9. **Fuel Consistency:** Ensure estimated fuel load aligns with session duration and track characteristics (e.g., higher consumption on longer tracks).
+## 10. **Tire Compound Logic:** Ensure selected tire compound (Soft/Medium/Hard/Wet) aligns with weather conditions and session goal.
 
 ## =====================================================================================
 ## --- THE ENGINEER'S DEBRIEF DIRECTIVE (Mandatory for Notes field) ---
 ## =====================================================================================
 ## You MUST populate the \`[GENERAL] Notes=""\` field with a concise, multi-line summary formatted EXACTLY like this (using \\n for new lines):
-## "Philosophy: [Explain the core setup philosophy based on driver goal, session, track, and how it leverages car architecture. e.g., 'Aggressive setup for qualifying, focusing on peak performance at high-speed track (Le Mans), maximizing top speed while maintaining stability through high-speed corners.']\\nKey Adjustments: [List the 3-5 most impactful changes made and explain their purpose, *referencing the LMU Physics Reference and Tuning Guidelines* for justification. e.g., 'Lengthened final drive and adjusted individual gears (indices X-Y) for optimal top speed (approx. Z km/h in 6th gear). Stiffened front anti-roll bar (index A) to reduce entry understeer based on driver feedback. Increased negative camber (index B) for better cornering grip.']\\nFine-Tuning Guide: [Suggest 1-2 simple adjustments the driver can make in-game *with specific parameter names*. e.g., 'If oversteer persists, try increasing Rear AntiSwaySetting by 1-2 clicks. Adjust Brake PressureSetting down if locking front wheels on entry.']\\nFuel & Tires: [Provide the calculated fuel for session and recommended tire compound, justifying the compound choice by weather/session. e.g., 'Fuel set to [X]L for a [Y]-minute race. Recommended Medium compound for balanced performance in dry conditions.']"
+## "Philosophy: [Explain the core setup philosophy based on driver goal, session, track, and how it leverages car architecture. e.g., 'Aggressive setup for qualifying, focusing on peak performance at high-speed track (Le Mans), maximizing top speed while maintaining stability through high-speed corners.']\\nKey Adjustments: [List the 3-5 most impactful changes made and explain their purpose, *referencing the LMU Physics Reference and Tuning Guidelines* for justification, focusing on numerical choices and their impact. **Crucially, explain the chosen gearing strategy (e.g., 'Utilized a long final drive (index X) and optimized individual gears (indices Y-Z resulting in ~A-B km/h) for maximum straight-line speed on the Mulsanne straight.')**]\\nFine-Tuning Guide: [Suggest 1-2 simple adjustments the driver can make in-game *with specific parameter names*. e.g., 'If oversteer persists, try increasing Rear AntiSwaySetting by 1-2 clicks. Adjust Brake PressureSetting down if locking front wheels on entry.']\\nFuel & Tires: [Provide the calculated fuel for session and recommended tire compound, justifying the compound choice by weather/session. e.g., 'Fuel set to [X]L for a [Y]-minute race. Recommended Medium compound for balanced performance in dry conditions.']"
 
 ## =====================================================================================
 ## --- FINAL REQUEST DETAILS ---
@@ -924,7 +943,7 @@ Now, generate the complete and valid .VEH file. Your response must contain ONLY 
                 model: PRIMARY_MODEL,
                 messages: [{ role: "user", content: prompt }],
                 max_tokens: 4096,
-                temperature: 0.85, // Increased slightly for more nuanced physics-based decisions and adherence to complex instructions
+                temperature: 0.8, // Adjusted to 0.8 for strong adherence to detailed instructions with some nuance
             }),
         });
 
