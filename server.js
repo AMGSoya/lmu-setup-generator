@@ -880,7 +880,8 @@ app.post('/generate-setup', async (req, res) => {
     }
 
     // Capture or define additional prompt variables with defaults if not provided by client
-    const selectedCarValue = car; // Using 'car' from request body
+     const sessionDuration = req.body.sessionDuration || 0;
+    const selectedCarValue = car; // Using 'car' from request body
     const selectedCarDisplay = req.body.selectedCarDisplay || car; // Use client's display name or 'car' value
     // selectedCarCategory is already destructured
     const selectedTrackValue = track; // Using 'track' from request body
@@ -903,6 +904,21 @@ app.post('/generate-setup', async (req, res) => {
 4.  **Review and Refine:** Look over the generated values. Is the setup logical? Is the aero balance reasonable? Are the springs and dampers complementary? Ensure the setup will be stable and predictable, unless the user specifically asked for an 'aggressive' car. Make final adjustments for balance and drivability.
 5.  Format the final output strictly as a .VEH file, starting with 'VehicleClassSetting=...' and containing no other text.
 
+// Insert this block into your main prompt variable
+
+**Fuel & Strategy Calculation:**
+- This is a CRITICAL task. If the 'Session Goal' is 'Race' and 'Session Duration' is greater than 0, you must perform a fuel calculation based on time.
+- **Methodology:**
+    1.  First, for the ${selectedCarValue} on ${selectedTrackValue}, estimate a reasonable average race lap time (in minutes).
+    2.  Calculate the number of laps possible within the stint by dividing the 'Session Duration' (${sessionDuration} minutes) by your estimated lap time. Round this down to the nearest whole lap.
+    3.  Next, estimate the fuel consumption per lap (in Liters) for the car.
+    4.  Calculate the total fuel needed by multiplying the fuel-per-lap by the number of laps calculated in step 2.
+    5.  Add a safety margin of **1.5 extra laps** worth of fuel to the total.
+    6.  Round the final number to the nearest whole number (e.g., 85.7 becomes 86).
+- **Output:**
+    1.  You MUST update the `FuelSetting` in the [GENERAL] section with this final calculated value.
+    2.  You MUST update the `Notes` field in the [GENERAL] section to state the calculation (e.g., "Race fuel for a ${sessionDuration} min stint").
+- **Exception:** If the 'Session Goal' is 'Qualifying', ignore the duration and use a standard low fuel amount suitable for 2-3 fast laps.
 **CRITICAL INSTRUCTION: The template below uses OBVIOUS PLACEHOLDER values (e.g., 'Gear1Setting=5'). You MUST replace these placeholders with your new, calculated values. A setup returned with placeholder values like 'Gear1Setting=5' or 'RearBrakeSetting=15' is a complete failure. Do not copy the placeholder values.**
 
 Here are the details for the setup request:
