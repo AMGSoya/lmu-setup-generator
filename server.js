@@ -3336,4 +3336,3 @@ app.listen(port, () => {
     console.log(`Open your web browser and navigate to http://localhost:${port}`);
     console.log("Keep this terminal window open while using the generator.");
 });
-.
