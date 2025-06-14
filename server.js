@@ -436,10 +436,10 @@ FastReboundSetting=0//1 (soft) (Min: 0, Max: 10)
 CompoundSetting=0//Medium (Min: 0, Max: 2)
 
 [BASIC]
-Downforce=0.500000
-Balance=0.500000
-Ride=0.500000
-Gearing=0.500000
+Downforce=0.400000
+Balance=0.400000
+Ride=0.400000
+Gearing=0.400000
 Custom=1`,
 
     'GT3': `VehicleClassSetting="[[CAR_NAME]]"
@@ -627,10 +627,10 @@ FastReboundSetting=2//16 (Min: 0, Max: 10)
 //CompoundSetting=0//Medium (Min: 0, Max: 2)
 
 [BASIC]
-Downforce=0.500000
-Balance=0.500000
-Ride=0.500000
-Gearing=0.500000
+Downforce=0.400000
+Balance=0.400000
+Ride=0.400000
+Gearing=0.400000
 Custom=1`,
 
     'GTE': `VehicleClassSetting="[[CAR_NAME]]"
@@ -793,7 +793,7 @@ FastReboundSetting=10//10
 //EquippedTireIDSetting=0//
 
 [REARLEFT]
-CamberSetting=33//-1.2 deg
+CamberSetting=20//-1.40 deg (Min: 0, Max: 40)
 //PressureSetting=0//140 kPa
 PackerSetting=25//2.5 cm
 SpringSetting=1//140 N/mm
@@ -811,7 +811,7 @@ FastReboundSetting=7//7
 //EquippedTireIDSetting=0//
 
 [REARRIGHT]
-CamberSetting=33//-1.2 deg
+CamberSetting=20//-1.40 deg (Min: 0, Max: 40)
 //PressureSetting=0//140 kPa
 PackerSetting=25//2.5 cm
 SpringSetting=1//140 N/mm
@@ -829,10 +829,10 @@ FastReboundSetting=7//7
 //EquippedTireIDSetting=0//
 
 [BASIC]
-Downforce=0.500000
-Balance=0.500000
-Ride=0.500000
-Gearing=0.500000
+Downforce=0.400000
+Balance=0.400000
+Ride=0.400000
+Gearing=0.400000
 Custom=1`
 };
 
@@ -936,7 +936,7 @@ app.post('/generate-setup', async (req, res) => {
 ## - **Camber Setting:** The vertical angle of the tire. Negative camber ($<0$) allows the tire to sit flatter when the suspension compresses and the car rolls, maximizing tire contact patch during cornering. Too much negative camber reduces straight-line grip and braking performance. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
 ## - **Toe In/Out (ToeInSetting):** The horizontal angle of the tires.
 ##    - **Toe-in ($>0$):):** Tires point inwards. Increases straight-line stability, reduces turn-in sharpness.
-##    - **Toe-out ($<0$):):** Tires point outwards. Increases turn-in sharpness, reduces straight-line stability.
+##    - **Toe-out ($<0$):)::** Tires point outwards. Increases turn-in sharpness, reduces straight-line stability.
 ## - **Ride Height:** Distance between the chassis and the ground. Lower ride height reduces drag and lowers the center of gravity, improving stability and aero performance. Too low can cause bottoming out on bumps/kerbs. Rake (front vs. rear ride height) impacts aero balance.
 ## - **Packers:** Limit suspension travel. Prevents bottoming out on stiff setups or very bumpy tracks.
 
@@ -1114,68 +1114,68 @@ ${exampleTemplate}
 Now, generate the complete and valid .VEH file. Your response MUST contain ONLY the file content and nothing else.
 `;
 
-    try {
-        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-                'Content-Type': 'application/json',
-                'X-Title': 'LMU Setup Generator',
-            },
-            body: JSON.stringify({
-                model: PRIMARY_MODEL,
-                messages: [{ role: "user", content: prompt }],
-                max_tokens: 4096,
-                temperature: 0.8, // Slightly increased to encourage more nuance while maintaining structure
-            }),
-        });
+    try {
+        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                'X-Title': 'LMU Setup Generator',
+            },
+            body: JSON.stringify({
+                model: PRIMARY_MODEL,
+                messages: [{ role: "user", content: prompt }],
+                max_tokens: 4096,
+                temperature: 0.8, // Slightly increased to encourage more nuance while maintaining structure
+            }),
+        });
 
-        if (!openrouterResponse.ok) {
-            const errorData = await openrouterResponse.json();
-            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
-            return res.status(openrouterResponse.status).json({
-                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
-            });
-        }
+        if (!openrouterResponse.ok) {
+            const errorData = await openrouterResponse.json();
+            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
+            return res.status(openrouterResponse.status).json({
+                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
+            });
+        }
 
-        const chatCompletion = await openrouterResponse.json();
-        const rawText = chatCompletion.choices[0].message.content;
+        const chatCompletion = await openrouterResponse.json();
+        const rawText = chatCompletion.choices[0].message.content;
 
-        // --- NEW ROBUST PARSING LOGIC ---
-        // Find the start of the actual .VEH content. The AI sometimes adds introductory text.
-        const setupStartIndex = rawText.indexOf('VehicleClassSetting=');
-        
-        if (setupStartIndex !== -1) {
-            // If the start string is found, extract everything from that point on.
-            let setupText = rawText.substring(setupStartIndex);
+        // --- NEW ROBUST PARSING LOGIC ---
+        // Find the start of the actual .VEH content. The AI sometimes adds introductory text.
+        const setupStartIndex = rawText.indexOf('VehicleClassSetting=');
+        
+        if (setupStartIndex !== -1) {
+            // If the start string is found, extract everything from that point on.
+            let setupText = rawText.substring(setupStartIndex);
 
-            // Also remove any trailing markdown code blocks if they exist
-            if (setupText.trim().endsWith('```')) {
-                setupText = setupText.trim().slice(0, -3).trim();
-            }
+            // Also remove any trailing markdown code blocks if they exist
+            if (setupText.trim().endsWith('```')) {
+                setupText = setupText.trim().slice(0, -3).trim();
+            }
 
-            res.json({ setup: setupText });
+            res.json({ setup: setupText });
 
-        } else {
-            // If 'VehicleClassSetting=' is not found at all, the response is invalid.
-            console.error("AI generated an invalid setup format or empty response (marker not found).");
-            console.error("AI Raw Response (first 500 chars):", rawText ? rawText.substring(0, 500) : '[Empty Response]'); // Log a snippet
-            res.status(500).json({
-                error: `AI generated an invalid setup format. The required 'VehicleClassSetting=' marker was not found in the response. Please try again. Raw AI response snippet: ${rawText ? rawText.substring(0, 200) : '[Empty Response]'}`
-            });
-        }
+        } else {
+            // If 'VehicleClassSetting=' is not found at all, the response is invalid.
+            console.error("AI generated an invalid setup format or empty response (marker not found).");
+            console.error("AI Raw Response (first 500 chars):", rawText ? rawText.substring(0, 500) : '[Empty Response]'); // Log a snippet
+            res.status(500).json({
+                error: `AI generated an invalid setup format. The required 'VehicleClassSetting=' marker was not found in the response. Please try again. Raw AI response snippet: ${rawText ? rawText.substring(0, 200) : '[Empty Response]'}`
+            });
+        }
 
-    } catch (error) {
-        console.error("Error communicating with OpenRouter or generating setup:", error);
-        res.status(500).json({
-            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
-        });
-    }
+    } catch (error) {
+        console.error("Error communicating with OpenRouter or generating setup:", error);
+        res.status(500).json({
+            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
+        });
+    }
 });
 
 // 9. Start the server
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-    console.log(`Open your web browser and navigate to http://localhost:${port}`);
-    console.log("Keep this terminal window open while using the generator.");
+    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Open your web browser and navigate to http://localhost:${port}`);
+    console.log("Keep this terminal window open while using the generator.");
 });
