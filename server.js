@@ -236,7 +236,7 @@ TenderTravelSetting=0//Detached (Fixed)
 SpringRubberSetting=0//Detached (Fixed)
 RideHeightSetting=15//7.5 cm (Min: 0, Max: 30)
 SlowBumpSetting=4//5 (Min: 0, Max: 10)
-FastBumpSetting=4//5 (Min: 0, Max: 10)
+FastBumpSetting=4//14 (Min: 0, Max: 10)
 SlowReboundSetting=6//7 (Min: 0, Max: 10)
 FastReboundSetting=6//7 (Min: 0, Max: 10)
 BrakeDiscSetting=0//4.00 cm (Fixed)
@@ -632,7 +632,7 @@ Balance=0.500000
 Ride=0.500000
 Gearing=0.500000
 Custom=1`,
-    
+
     'GTE': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(0,0,0,0)
 
@@ -828,7 +828,7 @@ app.post('/generate-setup', async (req, res) => {
 ## - **RideHeightSetting:** (Min: 0 / ~4.0 cm, Max: 30 / ~8.0 cm). Lower for aero, higher for bumps. Rake (rear height > front height) is common.
 ## - **SpringSetting:** (Min: 0, Max: 20). Higher index = stiffer spring. Adjust according to track bumps and aero requirements.
 ## - **AntiSwaySetting (ARB):** (Min: 0, Max: 20). Higher index = stiffer ARB.
-## - **CamberSetting:** (Min: 0 / ~-0.5 deg, Max: 40 / ~-4.0 deg). Most racing cars use negative camber. Front typically more negative than rear.
+## - **CamberSetting:** (Min: 0 / ~-0.5 deg, Max: 40 / ~-4.0 deg). Most racing cars use negative camber. Front typically more negative than rear. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
 ## - **ToeInSetting/RearToeInSetting:** (Min: 0 / ~-0.2 deg, Max: 30 / ~+0.2 deg). Slight toe-out on front for turn-in, slight toe-in on rear for stability.
 ## - **Damper Settings (Slow/Fast Bump/Rebound):** (Min: 0, Max: 10). Relative adjustments are key.
 ##    - Soft = lower index (0-3). Medium = mid-index (4-7). Stiff = higher index (8-10).
@@ -921,10 +921,29 @@ app.post('/generate-setup', async (req, res) => {
 ## 10. **Tire Compound Logic:** Ensure selected tire compound (Soft/Medium/Hard/Wet) aligns with weather conditions and session goal.
 
 ## =====================================================================================
-## --- THE ENGINEER'S DEBRIEF DIRECTIVE (Mandatory for Notes field) ---
+## --- COMMON SETUP COMPROMISES (for AI to be aware of) ---
 ## =====================================================================================
-## You MUST populate the \`[GENERAL] Notes=""\` field with a concise, multi-line summary formatted EXACTLY like this (using \\n for new lines):
-## "Philosophy: [Explain the core setup philosophy based on driver goal, session, track, and how it leverages car architecture. e.g., 'Aggressive setup for qualifying, focusing on peak performance at high-speed track (Le Mans), maximizing top speed while maintaining stability through high-speed corners.']\\nKey Adjustments: [List the 3-5 most impactful changes made and explain their purpose, *referencing the LMU Physics Reference and Tuning Guidelines* for justification, focusing on numerical choices and their impact. **Crucially, explain the chosen gearing strategy by specifically mentioning the FinalDriveSetting index, the range of GearXSetting indices used, and the approximate top speeds achieved (e.g., 'Utilized a long final drive (index X) and optimized individual gears (indices Y-Z resulting in ~A-B km/h) for maximum straight-line speed on the Mulsanne straight.')**]\\nFine-Tuning Guide: [Suggest 1-2 simple adjustments the driver can make in-game *with specific parameter names*. e.g., 'If oversteer persists, try increasing Rear AntiSwaySetting by 1-2 clicks. Adjust Brake PressureSetting down if locking front wheels on entry.']\\nFuel & Tires: [Provide the calculated fuel for session and recommended tire compound, justifying the compound choice by weather/session. e.g., 'Fuel set to [X]L for a [Y]-minute race. Recommended Medium compound for balanced performance in dry conditions.']"
+## - **More Downforce = Less Top Speed:** Crucial trade-off. Higher wings (FW/RW) increase cornering grip but penalize straight-line speed.
+## - **Stiffer Suspension = More Responsive, Less Compliant:** Stiffer springs/dampers improve responsiveness and transient handling but can make the car nervous over bumps, curbs, and mid-corner if too stiff.
+## - **Softer Suspension = More Compliant, Less Responsive:** Better over bumps and curbs, but can lead to excessive body roll and slower responsiveness.
+## - **Long Gearing = High Top Speed, Slower Acceleration:** Best for long straights. Can struggle on corner exits or in technical sections.
+## - **Short Gearing = Quick Acceleration, Lower Top Speed:** Excellent for technical tracks, but can hit rev limiter too soon on straights.
+## - **Aggressive Camber = More Cornering Grip, Less Straight-line Stability/Braking:** Too much negative camber can reduce tire contact patch in a straight line.
+## - **High Brake Pressure = More Stopping Power, Higher Risk of Lockup:** Must be balanced with driver skill and ABS settings.
+## - **Forward Brake Bias = More Stable Braking, Risk of Front Lockup:** Common for most cars.
+## - **Rearward Brake Bias = More Rotation/Turn-in on Braking, Risk of Rear Lockup/Spin:** For aggressive drivers or cars that understeer on entry.
+## - **High Differential Lock (Power/Coast) = More Traction/Stability, More Understeer (Power) / Snap Oversteer (Coast):** Be mindful of driver feedback.
+
+## =====================================================================================
+## --- DRIVER CONFIDENCE & CONSISTENCY PRINCIPLES (CRITICAL for a great setup) ---
+## =====================================================================================
+## To ensure drivers don't "lose pace," prioritize these aspects:
+## - **Predictability over Peak Aggression:** A setup that is predictable and consistent lap-to-lap is often faster over a race distance than a twitchy, peak-performance setup.
+## - **Stability under Braking & Power:** Crucial for driver confidence into and out of corners, especially under pressure.
+## - **Smooth Transitions:** The car should transition smoothly between braking, cornering, and acceleration phases, avoiding abrupt changes in balance.
+## - **Tire Preservation (Race Sessions):** For race setups, managing tire wear through less aggressive camber, toe, and smoother diff settings is paramount to maintain pace over a stint.
+## - **Forgiveness:** A setup that is slightly more forgiving of driver errors will result in fewer mistakes and more consistent lap times.
+## - **Neutral Balance:** A slightly neutral or predictable understeer balance is generally preferred for long-distance consistency over a car prone to snap oversteer.
 
 ## =====================================================================================
 ## --- FINAL REQUEST DETAILS ---
@@ -960,7 +979,7 @@ Now, generate the complete and valid .VEH file. Your response MUST contain ONLY 
                 model: PRIMARY_MODEL,
                 messages: [{ role: "user", content: prompt }],
                 max_tokens: 4096,
-                temperature: 0.7, // Adjusted for stricter adherence
+                temperature: 0.8, // Slightly increased to encourage more nuance while maintaining structure
             }),
         });
 
