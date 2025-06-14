@@ -210,7 +210,7 @@ BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//76% Soft (Min: 0, Max: 2)
 
 [REARLEFT]
-CamberSetting=35//-0.5 deg (Min: 0, Max: 40)
+CamberSetting=30//-1.40 deg (Min: 0, Max: 40)
 PressureSetting=5//140 kPa (Min: 0, Max: 10)
 PackerSetting=12//1.2 cm (Min: 0, Max: 20)
 SpringSetting=0//13.33mm (Min: 0, Max: 20)
@@ -227,7 +227,7 @@ BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//86% Soft (Min: 0, Max: 2)
 
 [REARRIGHT]
-CamberSetting=35//-0.5 deg (Min: 0, Max: 40)
+CamberSetting=30//-1.40 deg (Min: 0, Max: 40)
 PressureSetting=5//140 kPa (Min: 0, Max: 10)
 PackerSetting=12//1.2 cm (Min: 0, Max: 20)
 SpringSetting=0//13.33mm (Min: 0, Max: 20)
@@ -402,9 +402,9 @@ FastReboundSetting=1//2 (Min: 0, Max: 10)
 CompoundSetting=0//Medium (Min: 0, Max: 2)
 
 [REARLEFT]
-CamberSetting=5//-1.0 deg (Min: 0, Max: 40)
+CamberSetting=30//-1.40 deg (Min: 0, Max: 40)
 PressureSetting=5//140 kPa (Min: 0, Max: 10)
-PackerSetting=1//0.1 cm (Min: 0, Max: 20)
+PackerSetting=12//1.2 cm (Min: 0, Max: 20)
 SpringSetting=0//1100lbf/in (Min: 0, Max: 20)
 //TenderSpringSetting=0//Detached (Fixed)
 //TenderTravelSetting=0//Detached (Fixed)
@@ -419,9 +419,9 @@ FastReboundSetting=0//1 (soft) (Min: 0, Max: 10)
 CompoundSetting=0//Medium (Min: 0, Max: 2)
 
 [REARRIGHT]
-CamberSetting=5//-1.0 deg (Min: 0, Max: 40)
+CamberSetting=30//-1.40 deg (Min: 0, Max: 40)
 PressureSetting=5//140 kPa (Min: 0, Max: 10)
-PackerSetting=1//0.1 cm (Min: 0, Max: 20)
+PackerSetting=12//1.2 cm (Min: 0, Max: 20)
 SpringSetting=0//1100lbf/in (Min: 0, Max: 20)
 //TenderSpringSetting=0//Detached (Fixed)
 //TenderTravelSetting=0//Detached (Fixed)
@@ -594,13 +594,13 @@ FastReboundSetting=4//14 (Min: 0, Max: 10)
 
 [REARLEFT]
 CamberSetting=30//-1.40 deg (Min: 0, Max: 40)
-//PressureSetting=0//140 kPa (Min: 0, Max: 10)
+PressureSetting=5//140 kPa (Min: 0, Max: 10)
 PackerSetting=14//1.4 cm (Min: 0, Max: 20)
 SpringSetting=1//2 (Min: 0, Max: 20)
 //TenderSpringSetting=0//Standard (Fixed)
-//TenderTravelSetting=0//Standard (Fixed)
-//SpringRubberSetting=0//N/A (Fixed)
-//RideHeightSetting=16//6.6 cm (Min: 0, Max: 30)
+//TenderTravelSetting=0//Detached (Fixed)
+//SpringRubberSetting=0//Detached (Fixed)
+RideHeightSetting=16//6.6 cm (Min: 0, Max: 30)
 SlowBumpSetting=7//11 (Min: 0, Max: 10)
 FastBumpSetting=4//14 (Min: 0, Max: 10)
 SlowReboundSetting=11//7 (Min: 0, Max: 10)
@@ -611,13 +611,13 @@ FastReboundSetting=2//16 (Min: 0, Max: 10)
 
 [REARRIGHT]
 CamberSetting=30//-1.40 deg (Min: 0, Max: 40)
-//PressureSetting=0//140 kPa (Min: 0, Max: 10)
+PressureSetting=5//140 kPa (Min: 0, Max: 10)
 PackerSetting=14//1.4 cm (Min: 0, Max: 20)
 SpringSetting=1//2 (Min: 0, Max: 20)
 //TenderSpringSetting=0//Standard (Fixed)
-//TenderTravelSetting=0//Standard (Fixed)
-//SpringRubberSetting=0//N/A (Fixed)
-//RideHeightSetting=16//6.6 cm (Min: 0, Max: 30)
+//TenderTravelSetting=0//Detached (Fixed)
+//SpringRubberSetting=0//Detached (Fixed)
+RideHeightSetting=16//6.6 cm (Min: 0, Max: 30)
 SlowBumpSetting=7//11 (Min: 0, Max: 10)
 FastBumpSetting=4//14 (Min: 0, Max: 10)
 SlowReboundSetting=11//7 (Min: 0, Max: 10)
@@ -786,7 +786,7 @@ app.post('/generate-setup', async (req, res) => {
 ##    - **Stiffer Rebound:** Holds wheel down longer after compression, can "pack down" over consecutive bumps.
 ##    - **Softer Rebound:** Allows wheel to extend quickly, maintaining tire contact over undulations.
 ## - **Anti-Roll Bars (AntiSwaySetting):** Controls body roll and affects load transfer across the axle. Stiffer anti-roll bar on an axle transfers more load to the outside tire, increasing grip on that axle at the expense of grip on the other axle (e.g., stiffer front increases understeer, stiffer rear increases oversteer).
-## - **Camber Setting:** The vertical angle of the tire. Negative camber ($<0$) allows the tire to sit flatter when the suspension compresses and the car rolls, maximizing tire contact patch during cornering. Too much negative camber reduces straight-line grip and braking performance.
+## - **Camber Setting:** The vertical angle of the tire. Negative camber ($<0$) allows the tire to sit flatter when the suspension compresses and the car rolls, maximizing tire contact patch during cornering. Too much negative camber reduces straight-line grip and braking performance. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
 ## - **Toe In/Out (ToeInSetting):** The horizontal angle of the tires.
 ##    - **Toe-in ($>0$):):** Tires point inwards. Increases straight-line stability, reduces turn-in sharpness.
 ##    - **Toe-out ($<0$):):** Tires point outwards. Increases turn-in sharpness, reduces straight-line stability.
@@ -855,7 +855,7 @@ app.post('/generate-setup', async (req, res) => {
 ##
 ## **1. High-Speed Tracks (e.g., Le Mans, Monza, Spa-Francorchamps):**
 ##    - **FinalDriveSetting:** You MUST select one of the **HIGHEST available indices** for the car (e.g., if max is 7, choose 5, 6, or 7). This makes the overall gearing "longer" for high top speed.
-##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **VERY LOW non-negative integer index from the absolute bottom of the range (e.g., 0, 1, or 2 from a max of 20, using the absolute lowest available if possible for extreme top speed)** to make that individual gear **significantly LONGER**. Specifically, for a 7-speed Hypercar or LMP2 on Le Mans, you MUST choose indices like **"0, 0, 1, 2, 3, 4, 5" for Gear1-7 respectively** (or the lowest sequential available indices). This sequential use of very low indices is paramount for long gearing.
+##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **VERY LOW non-negative integer index from the absolute bottom of the range (e.g., 0, 1, or 2 from a max of 20, using the absolute lowest available if possible for extreme top speed)** to make that individual gear **significantly LONGER**. Specifically, for a 7-speed Hypercar or LMP2 on Le Mans, you MUST choose indices for Gear1-7 following a pattern of **"0-0-1-2-3-4-5"** (or the lowest sequential available indices for all applicable gears, starting with 0). This sequential use of very low indices is paramount for long gearing.
 ##    - **Comments:** For each GearXSetting, you MUST dynamically calculate and insert a **realistic approximate speed in km/h (e.g., ~Y km/h) and mph (e.g., ~Z mph)** based on the chosen gear index and final drive. Example: \`Gear1Setting=X//~Y km/h (approx. Z mph)\`. Ensure the speeds *increase logically* and are *very high* with each successive gear, reflecting a long gear setup for Le Mans (e.g., 6th or 7th gear often well over 300 km/h / 185 mph).
 ##    - **Self-Verification:** Mentally confirm that 6th or 7th gear top speed reaches *over 300 km/h (or 185 mph)* for Hypercars/LMP2s on tracks like Le Mans, indicating truly long gearing.
 ##
@@ -912,7 +912,7 @@ app.post('/generate-setup', async (req, res) => {
 ## 1. Low RideHeight REQUIRES Stiff Springs (to prevent bottoming out).
 ## 2. High Aero (RWSetting) REQUIRES Stiff Springs (to support downforce).
 ## 3. Bumpy Tracks (Sebring, Portimão) REQUIRE Softer Fast Damping (for bump absorption).
-## 4. **Gearing Sanity Check:** For High-Speed Tracks (Le Mans/Monza), **ENSURE** that \`FinalDriveSetting\` is set to a HIGH index and individual \`GearXSetting\` indices are set to VERY LOW indices (e.g., "0, 0, 1, 2, 3, 4, 5"), resulting in very long gears as indicated by their approximate speeds. Conversely, for Technical Tracks, confirm shorter gears.
+## 4. **Gearing Sanity Check:** For High-Speed Tracks (Le Mans/Monza), **ENSURE** that \`FinalDriveSetting\` is set to a HIGH index and individual \`GearXSetting\` indices are set to VERY LOW indices (e.g., "0-0-1-2-3-4-5"), resulting in very long gears as indicated by their approximate speeds. Conversely, for Technical Tracks, confirm shorter gears.
 ## 5. **Physics Check:** Ensure toe and camber settings are physically realistic for a racing car (e.g., negative camber for cornering grip, slight toe-out on front for sharper turn-in, slight toe-in on rear for stability).
 ## 6. **Physics Check:** Ensure damper settings (bump/rebound) logically complement spring stiffness and track type. Softer springs often pair with softer damping, stiffer with stiffer.
 ## 7. **Balance Consistency:** Aero balance, mechanical balance (springs/ARBs), and differential settings should ideally work in harmony towards the overall setup goal and driver feedback.
