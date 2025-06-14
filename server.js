@@ -871,6 +871,7 @@ app.post('/generate-setup', async (req, res) => {
         return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}` });
     }
 
+    // --- CORRECTED VARIABLE DEFINITIONS ---
     // Safely define all optional variables with default fallbacks to prevent crashes
     const sessionGoal = req.body.sessionGoal || 'Optimal Lap Time';
     const sessionDuration = req.body.sessionDuration || 0;
@@ -897,26 +898,21 @@ You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philoso
 **CRITICAL INSTRUCTION: The template below uses OBVIOUS PLACEHOLDER values (e.g., 'Gear1Setting=5'). You MUST replace these placeholders with your new, calculated values. A setup returned with placeholder values like 'Gear1Setting=5' is a complete failure.**
 
 Crucial LMU Setup Principles to Apply:
+
+// --- NEW IMPROVEMENT TO MAKE SETUPS BETTER ---
+Track-Type Philosophy: My entire setup approach must change based on the track. 
+- For High-Speed tracks (Le Mans, Monza, Daytona, Spa), I must prioritize top speed by using low wing angles, long gear ratios, and stiff springs for high-speed stability.
+- For Technical/Bumpy tracks (Sebring, Lime Rock, Road America), I must prioritize braking stability and cornering grip by using higher wing angles, shorter gear ratios for acceleration, and softer, more compliant suspension settings.
+
 Driver-Centric Adjustments:
 - For a 'Safe' or 'Stable' request, I will prioritize predictability: using slightly softer suspension settings, higher wing angles for stability, and less aggressive differential locking.
 - For an 'Aggressive' request, I will prioritize responsiveness and rotation: using stiffer springs and dampers, more negative front camber for sharp turn-in, and settings that allow the rear to rotate.
 - If the driver reports 'understeer', I will focus on changes that increase front-end grip (e.g., soften front anti-roll bar, stiffen rear anti-roll bar).
 - If the driver reports 'oversteer', I will focus on changes that increase rear-end stability (e.g., stiffen front anti-roll bar, soften rear anti-roll bar).
 
-Qualifying vs. Race Philosophy: The Trade-Off Between Pace and Consistency.
-For a race setup, I will prioritize stability and tire preservation over ultimate one-lap pace.
+Qualifying vs. Race Philosophy: For a race setup, I will prioritize stability and tire preservation over ultimate one-lap pace.
 
-The Aero-Mechanical Balance: How a Change in One Area Affects Another.
-A significant change to aerodynamics must be balanced by a change to the suspension.
-
-Tire Temperature as the Ultimate Goal: The "Why" Behind Pressure and Camber.
-The ultimate goal for any tire setting is to have the tire's core temperature consistently in the optimal grip window (typically 85-100°C).
-
-Engineer's Commentary in Notes:
-The [GENERAL] Notes section is critical. In addition to the fuel calculation, I must use it to briefly explain the setup's core philosophy. For example: "Le Mans setup: Low wings for top speed, stiff springs for stability in high-speed corners."
-
-The Importance of Useful Comments:
-The '//Comment' part of each setting should also be a concise, useful description of the actual value being set (e.g., 'PressureSetting=5//140 kPa').
+Engineer's Commentary in Notes: The [GENERAL] Notes section is critical. I must use it to briefly explain the setup's core philosophy (e.g., "Le Mans setup: Low wings for top speed, stiff springs for stability.") and include the fuel calculation.
 
 Here are the details for the setup request:
 Car: ${car}
@@ -930,17 +926,10 @@ Track Temperature: ${trackTemp}°C
 Specific User Request: ${specificRequest}
 
 **Fuel & Strategy Calculation:**
-- If 'Session Goal' is 'Race' and 'Session Duration' is greater than 0, you must perform a fuel calculation based on time.
-- **Methodology:**
-    1.  Estimate a reasonable average race lap time (in minutes) for the car/track.
-    2.  Calculate the number of laps possible in the stint by dividing 'Session Duration' by the estimated lap time. Round down.
-    3.  Estimate the fuel consumption per lap (in Liters).
-    4.  Calculate total fuel: (fuel per lap * number of laps) + (fuel per lap * 1.5 for safety).
-    5.  Round the final result to the nearest whole number.
-- **Output:**
-    1.  You MUST update the 'FuelSetting' in the [GENERAL] section with this final calculated value.
-    2.  You MUST update the 'Notes' field in the [GENERAL] section to contain BOTH the Engineer's Commentary and the fuel calculation results.
-- **Exception:** If 'Session Goal' is 'Qualifying', ignore the duration and use a standard low fuel amount.
+- If 'Session Goal' is 'Race' and 'Session Duration' is greater than 0, perform a fuel calculation.
+- **Methodology:** Estimate lap time and fuel per lap for the car/track. Calculate laps for the duration. Total fuel = (fuel/lap * laps) + (1.5 * fuel/lap for safety). Round up.
+- **Output:** Update 'FuelSetting' and add results to the 'Notes' field.
+- **Exception:** For 'Qualifying', use low fuel for 2-3 laps.
 
 This is the required LMU .VEH structure and format. You must use this exact structure, replacing all placeholder values.
 ${exampleTemplate}
@@ -991,9 +980,4 @@ Now, generate the complete and valid .VEH file. Your response must contain ONLY 
         console.error("Error communicating with OpenRouter:", error);
         res.status(500).json({ error: `Failed to connect to AI service. Error: ${error.message}` });
     }
-});
-
-// 10. Start the server
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
 });
