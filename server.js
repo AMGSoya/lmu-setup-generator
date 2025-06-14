@@ -194,7 +194,7 @@ CompoundSetting=0//82% Soft (Min: 0, Max: 2)
 
 [FRONTRIGHT]
 CamberSetting=26//-1.4 deg (Min: 0, Max: 40)
-PressureSetting=5//135 kPa (Min: 0, Max: 10)
+PressureSetting=5//140 kPa (Min: 0, Max: 10)
 PackerSetting=5//0.5 cm (Min: 0, Max: 20)
 SpringSetting=10//15.95mm (Min: 0, Max: 20)
 TenderSpringSetting=0//Detached (Fixed)
@@ -633,449 +633,207 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
-UpgradeSetting=(12,0,0,0)
-//UpgradeClass=
-//Fuel tank=0
-//Engine cover gurney=0
-//Setup=3
-//Visor Mod=0
-//Note: settings commented out if using the default
-
-[GENERAL]
-Notes=""
-Symmetric=1
-//CGHeightSetting=0//Non-adjustable (Fixed)
-//CGRightSetting=0//Non-adjustable (Fixed)
-//CGRearSetting=0//Non-adjustable (Fixed)
-//WedgeSetting=0//N/A (Fixed)
-FuelSetting=65//65L (AI adjusts based on session duration and track)
-//FuelCapacitySetting=0//N/A (Fixed)
-//NumPitstopsSetting=0//N/A (AI calculates)
-//Pitstop1Setting=50//N/A (Fixed)
-//Pitstop2Setting=50//N/A (Fixed)
-//Pitstop3Setting=50//N/A (Fixed)
-
-[LEFTFENDER]
-//FenderFlareSetting=0//N/A (Fixed)
-
-[RIGHTFENDER]
-//FenderFlareSetting=0//N/A (Fixed)
-
-[FRONTWING]
-//FWSetting=0//Le Mans (Fixed)
-
-[REARWING]
-RWSetting=2//P3 (Min: 0, Max: 8)
-// RWSetting for LMP2: 0-8 (P1=low, P8=high)
-
-[BODYAERO]
-WaterRadiatorSetting=2//50% (Min: 0, Max: 4)
-OilRadiatorSetting=2//50% (Min: 0, Max: 4)
-//BrakeDuctSetting=0//Open (Fixed)
-BrakeDuctRearSetting=1//25% (Min: 0, Max: 3)
-
-[SUSPENSION]
-//FrontWheelTrackSetting=0//Non-adjustable (Fixed)
-//RearWheelTrackSetting=0//Non-adjustable (Fixed)
-FrontAntiSwaySetting=9//D25 H-H (Min: 0, Max: 20)
-RearAntiSwaySetting=1//D7.5 S-S (Min: 0, Max: 20)
-FrontToeInSetting=13//-0.18 deg (Min: 0, Max: 30)
-//FrontToeOffsetSetting=0//N/A (Fixed)
-RearToeInSetting=22//0.35 deg (Min: 0, Max: 30)
-//RearToeOffsetSetting=0//N/A (Fixed)
-//LeftCasterSetting=0//Non-adjustable (Fixed)
-//RightCasterSetting=0//Non-adjustable (Fixed)
-//LeftTrackBarSetting=0//N/A (Fixed)
-//RightTrackBarSetting=0//N/A (Fixed)
-Front3rdPackerSetting=6//0.6 cm (Min: 0, Max: 20)
-Front3rdSpringSetting=0//N/A (Fixed)
-//Front3rdTenderSpringSetting=0//Detached (Fixed)
-//Front3rdTenderTravelSetting=0//Detached (Fixed)
-//Front3rdSlowBumpSetting=0//1 (Min: 0, Max: 10)
-//Front3rdFastBumpSetting=0//1 (Min: 0, Max: 10)
-//Front3rdSlowReboundSetting=0//1 (Min: 0, Max: 10)
-//Front3rdFastReboundSetting=0//1 (Min: 0, Max: 10)
-Rear3rdPackerSetting=7//0.7 cm (Min: 0, Max: 20)
-//Rear3rdSpringSetting=0//N/A (Fixed)
-//Rear3rdTenderSpringSetting=0//Detached (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SlowBumpSetting=0//1 (Min: 0, Max: 10)
-//FastBumpSetting=0//1 (Min: 0, Max: 10)
-//SlowReboundSetting=0//1 (Min: 0, Max: 10)
-//FastReboundSetting=0//1 (Min: 0, Max: 10)
-//ChassisAdj00Setting=0//N/A (Fixed)
-
-[CONTROLS]
-//SteerLockSetting=3//336 (13) deg (Fixed)
-RearBrakeSetting=13//54.1:45.9 (Min: 0, Max: 40)
-//BrakeMigrationSetting=0// 0.0 (Fixed)
-BrakePressureSetting=60//100 kgf (83%) (Min: 0, Max: 100)
-//HandfrontbrakePressSetting=0//0% (Fixed)
-//HandbrakePressSetting=0//N/A (Fixed)
-//TCSetting=0//Available (Fixed)
-//ABSSetting=0//N/A (Fixed)
-TractionControlMapSetting=7//7 (Min: 0, Max: 10)
-TCPowerCutMapSetting=4//4 (Min: 0, Max: 10)
-TCSlipAngleMapSetting=7//Linked (Min: 0, Max: 10)
-//AntilockBrakeSystemMapSetting=0//N/A (Fixed)
-
-[ENGINE]
-//RevLimitSetting=0//8000 (Non-adjustable) (Fixed)
-//EngineBoostSetting=0//N/A (Fixed)
-//RegenerationMapSetting=0//0% (N/A for Non-Hybrid) (Fixed)
-ElectricMotorMapSetting=0//Not Applicable (N/A for Non-Hybrid) (Fixed)
-EngineMixtureSetting=1//Race (Min: 0, Max: 1)
-//EngineBrakingMapSetting=0//N/A (Fixed)
-
-[DRIVELINE]
-FinalDriveSetting=3//2.88:1 (AI adjusts for track type: 0=Standard/Short, higher values=Long) (Min: 0, Max: 5. Higher index = longer gear for higher top speed)
-ReverseSetting=0//2.85 (8.18) (Fixed)
-Gear1Setting=0//2.85 (~90 km/h) (Min: 0, Max: 20)
-Gear2Setting=0//2.20 (~115 km/h) (Min: 0, Max: 20)
-Gear3Setting=1//1.88 (~135 km/h) (Min: 0, Max: 20)
-Gear4Setting=2//1.62 (~155 km/h) (Min: 0, Max: 20)
-Gear5Setting=3//1.42 (~175 km/h) (Min: 0, Max: 20)
-Gear6Setting=4//1.27 (~195 km/h) (Min: 0, Max: 20)
-RatioSetSetting=1//High Speed (AI adjusts for track type: 0=Standard, 1=High Speed) (Min: 0, Max: 1 or higher based on car)
-//DiffPumpSetting=0//N/A (Fixed)
-DiffPowerSetting=0//FF6-60 deg (Min: 0, Max: 15)
-DiffCoastSetting=2//FF6-45 deg (Min: 0, Max: 20)
-DiffPreloadSetting=17//85 Nm (Min: 0, Max: 100)
-//FrontDiffPumpSetting=0//0% (N/A for RWD) (Fixed)
-//FrontDiffPowerSetting=0//0% (N/A for RWD) (Fixed)
-//FrontDiffCoastSetting=0//0% (N/A for RWD) (Fixed)
-//FrontDiffPreloadSetting=0//1 (N/A for RWD) (Fixed)
-//RearSplitSetting=0// 0.0:100.0 (Fixed to RWD)
-//GearAutoUpShiftSetting=0//Off (Manual Shifting) (Fixed)
-//GearAutoDownShiftSetting=0//Off (Manual Shifting) (Fixed)
-
-[FRONTLEFT]
-CamberSetting=11//-1.5 deg (Min: 0, Max: 40)
-PressureSetting=5//140 kPa (Min: 0, Max: 10)
-PackerSetting=3//0.3 cm (Min: 0, Max: 20)
-SpringSetting=5//150N/mm (Min: 0, Max: 20)
-//TenderSpringSetting=0//Detached (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=10//4.5 cm (Min: 0, Max: 30)
-SlowBumpSetting=4//5 (Min: 0, Max: 10)
-FastBumpSetting=1//2 (Min: 0, Max: 10)
-SlowReboundSetting=2//3 (Min: 0, Max: 10)
-FastReboundSetting=1//2 (Min: 0, Max: 10)
-//BrakeDiscSetting=0//3.20 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2)
-
-[FRONTRIGHT]
-CamberSetting=11//-1.5 deg (Min: 0, Max: 40)
-PressureSetting=5//140 kPa (Min: 0, Max: 10)
-PackerSetting=3//0.3 cm (Min: 0, Max: 20)
-SpringSetting=5//150N/mm (Min: 0, Max: 20)
-//TenderSpringSetting=0//Detached (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=10//4.5 cm (Min: 0, Max: 30)
-SlowBumpSetting=4//5 (Min: 0, Max: 10)
-FastBumpSetting=1//2 (Min: 0, Max: 10)
-SlowReboundSetting=2//3 (Min: 0, Max: 10)
-FastReboundSetting=1//2 (Min: 0, Max: 10)
-//BrakeDiscSetting=0//3.20 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2)
-
-[REARLEFT]
-CamberSetting=25//-1.80 deg (Min: 0, Max: 40)
-PressureSetting=5//140 kPa (Min: 0, Max: 10)
-PackerSetting=12//1.2 cm (Min: 0, Max: 20)
-SpringSetting=0//1100lbf/in (Min: 0, Max: 20)
-//TenderSpringSetting=0//Detached (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=24//7.0 cm (Min: 0, Max: 30)
-SlowBumpSetting=0//1 (soft) (Min: 0, Max: 10)
-FastBumpSetting=0//1 (soft) (Min: 0, Max: 10)
-SlowReboundSetting=1//2 (Min: 0, Max: 10)
-FastReboundSetting=0//1 (soft) (Min: 0, Max: 10)
-//BrakeDiscSetting=0//3.20 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2)
-
-[REARRIGHT]
-CamberSetting=25//-1.80 deg (Min: 0, Max: 40)
-PressureSetting=5//140 kPa (Min: 0, Max: 10)
-PackerSetting=12//1.2 cm (Min: 0, Max: 20)
-SpringSetting=0//1100lbf/in (Min: 0, Max: 20)
-//TenderSpringSetting=0//Detached (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=24//7.0 cm (Min: 0, Max: 30)
-SlowBumpSetting=0//1 (soft) (Min: 0, Max: 10)
-FastBumpSetting=0//1 (soft) (Min: 0, Max: 10)
-SlowReboundSetting=1//2 (Min: 0, Max: 10)
-FastReboundSetting=0//1 (soft) (Min: 0, Max: 10)
-//BrakeDiscSetting=0//4.00 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2)
-
-[BASIC]
-Downforce=0.500000
-Balance=0.500000
-Ride=0.500000
-Gearing=0.500000
-Custom=1`,
-
-    'GT3': `VehicleClassSetting="[[CAR_NAME]]"
-UpgradeSetting=(3276,0,0,0)
-//UpgradeClass=
-//Position lights=0
-//AI Tweaks=6
-//Estimates=6
-//BOP=6
-//Atmos Conditions=0
-//Note: settings commented out if using the default
-
-[GENERAL]
-Notes=""
-Symmetric=1
-//CGHeightSetting=0//Non-adjustable (Fixed)
-//CGRightSetting=0//Non-adjustable (Fixed)
-//CGRearSetting=0//Non-adjustable (Fixed)
-//WedgeSetting=0//N/A (Fixed)
-FuelSetting=92//0.93 (AI adjusts)
-//FuelCapacitySetting=0//93.0l (22.5 laps) (Fixed)
-//VirtualEnergySetting=100//100% (22.0 laps) (Fixed)
-//NumPitstopsSetting=0//N/A (AI calculates)
-//Pitstop1Setting=59//N/A (Fixed)
-//Pitstop2Setting=59//N/A (Fixed)
-//Pitstop3Setting=59//N/A (Fixed)
-
-[LEFTFENDER]
-//FenderFlareSetting=0//N/A (Fixed)
-
-[RIGHTFENDER]
-//FenderFlareSetting=0//N/A (Fixed)
-
-[FRONTWING]
-//FWSetting=0//Standard (Fixed)
-
-[REARWING]
-RWSetting=2//8.3 deg (Min: 0, Max: 5)
-
-[BODYAERO]
-//WaterRadiatorSetting=0//No tape (Fixed)
-//OilRadiatorSetting=0//No tape (Fixed)
-BrakeDuctSetting=3//60mm (Min: 0, Max: 3)
-BrakeDuctRearSetting=2//40mm (Min: 0, Max: 2)
-
-[SUSPENSION]
-//FrontWheelTrackSetting=0//Non-adjustable (Fixed)
-//RearWheelTrackSetting=0//Non-adjustable (Fixed)
-FrontAntiSwaySetting=7//P7 (dur) (Min: 0, Max: 10)
-RearAntiSwaySetting=4//P4 (Min: 0, Max: 10)
-FrontToeInSetting=7//-0.117 deg (Min: 0, Max: 30)
-//FrontToeOffsetSetting=0//N/A (Fixed)
-RearToeInSetting=8//0 deg (Min: 0, Max: 30)
-//RearToeOffsetSetting=0//N/A (Fixed)
-//LeftCasterSetting=0//Non-adjustable (Fixed)
-//RightCasterSetting=0//Non-adjustable (Fixed)
-//LeftTrackBarSetting=0//N/A (Fixed)
-//RightTrackBarSetting=0//N/A (Fixed)
-//Front3rdPackerSetting=0//N/A (Fixed)
-//Front3rdSpringSetting=0//N/A (Fixed)
-//Front3rdTenderSpringSetting=0//Détaché (Fixed)
-//Front3rdTenderTravelSetting=0//Détaché (Fixed)
-//Front3rdSlowBumpSetting=0//N/A (Fixed)
-//Front3rdFastBumpSetting=0//N/A (Fixed)
-//Front3rdSlowReboundSetting=0//N/A (Fixed)
-//Front3rdFastReboundSetting=0//N/A (Fixed)
-//Rear3rdPackerSetting=0//N/A (Fixed)
-//Rear3rdSpringSetting=0//N/A (Fixed)
-//Rear3rdTenderSpringSetting=0//Détaché (Fixed)
-//Rear3rdTenderTravelSetting=0//Détaché (Fixed)
-//Rear3rdSlowBumpSetting=0//N/A (Fixed)
-//Rear3rdFastBumpSetting=0//N/A (Fixed)
-//Rear3rdSlowReboundSetting=0//N/A (Fixed)
-//Rear3rdFastReboundSetting=0//N/A (Fixed)
-
-[CONTROLS]
-SteerLockSetting=4//380° (11.2°) (Min: 0, Max: 15)
-RearBrakeSetting=21//51.8:48.2 (Min: 0, Max: 40)
-//BrakeMigrationSetting=0// 0.0 (Fixed)
-//BrakePressureSetting=80//120 kgf (100%) (Fixed)
-//HandfrontbrakePressSetting=0//N/A (Fixed)
-//HandbrakePressSetting=0//N/A (Fixed)
-//TCSetting=0//Disponible (Fixed)
-//ABSSetting=0//Disponible (Fixed)
-//TractionControlMapSetting=8//8 (Fixed)
-TCPowerCutMapSetting=3//3 (Min: 0, Max: 10)
-//TCSlipAngleMapSetting=10//10 (Fixed)
-AntilockBrakeSystemMapSetting=11//11 (Min: 0, Max: 15)
-
-[ENGINE]
-//RevLimitSetting=0//9,400 (Non-adjustable) (Fixed)
-//EngineBoostSetting=0//N/A (Fixed)
-//RegenerationMapSetting=0//0% (N/A for Non-Hybrid) (Fixed)
-ElectricMotorMapSetting=0//Not Applicable (N/A for Non-Hybrid) (Fixed)
-//EngineMixtureSetting=1//Race (Fixed)
-//EngineBrakingMapSetting=0//N/A (Fixed)
-
-[DRIVELINE]
-FinalDriveSetting=0//Fixed (AI adjusts for track type) (Min: 0, Max: depends on car, often fixed for GT3)
-//ReverseSetting=0//Fixed
-Gear1Setting=8//Fixed (~95 km/h) (Min: 0, Max: 20)
-Gear2Setting=8//Fixed (~130 km/h) (Min: 0, Max: 20)
-Gear3Setting=8//Fixed (~160 km/h) (Min: 0, Max: 20)
-Gear4Setting=8//Fixed (~190 km/h) (Min: 0, Max: 20)
-Gear5Setting=8//Fixed (~220 km/h) (Min: 0, Max: 20)
-Gear6Setting=8//Fixed (~250 km/h) (Min: 0, Max: 20)
-RatioSetSetting=0//Short (AI adjusts for track type) (Min: 0, Max: 1 or higher based on car)
-//DiffPumpSetting=0//Non-adjustable (Fixed)
-//DiffCoastSetting=0//Non-adjustable (Fixed)
-DiffPreloadSetting=28//78 Nm (Min: 0, Max: 100)
-//FrontDiffPumpSetting=0//0% (N/A for RWD) (Fixed)
-//FrontDiffPowerSetting=0//0% (N/A for RWD) (Fixed)
-//FrontDiffCoastSetting=0//0% (N/A for RWD) (Fixed)
-//FrontDiffPreloadSetting=0//1 (N/A for RWD) (Fixed)
-//RearSplitSetting=0//RWD (Fixed)
-//GearAutoUpShiftSetting=0//Non (Manual Shifting) (Fixed)
-//GearAutoDownShiftSetting=0//Non (Manual Shifting) (Fixed)
-
-[FRONTLEFT]
-CamberSetting=26//-1.80 deg (Min: 0, Max: 40)
-PressureSetting=5//140 kPa (Min: 0, Max: 10)
-PackerSetting=9//0.9 cm (Min: 0, Max: 20)
-SpringSetting=3//4 (Min: 0, Max: 20)
-//TenderSpringSetting=0//Standard (Fixed)
-//TenderTravelSetting=0//Standard (Fixed)
-//SpringRubberSetting=0//N/A (Fixed)
-//RideHeightSetting=0//5.0 cm (Min: 0, Max: 30)
-SlowBumpSetting=11//7 (Min: 0, Max: 10)
-FastBumpSetting=2//16 (Min: 0, Max: 10)
-SlowReboundSetting=6//12 (Min: 0, Max: 10)
-FastReboundSetting=4//14 (Min: 0, Max: 10)
-//BrakeDiscSetting=0//3.56 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Medium (Min: 0, Max: 2)
-
-[FRONTRIGHT]
-CamberSetting=26//-1.80 deg (Min: 0, Max: 40)
-PressureSetting=5//140 kPa (Min: 0, Max: 10)
-PackerSetting=9//0.9 cm (Min: 0, Max: 20)
-SpringSetting=3//4 (Min: 0, Max: 20)
-//TenderSpringSetting=0//Standard (Fixed)
-//TenderTravelSetting=0//Standard (Fixed)
-//SpringRubberSetting=0//N/A (Fixed)
-//RideHeightSetting=0//5.0 cm (Min: 0, Max: 30)
-SlowBumpSetting=11//7 (Min: 0, Max: 10)
-FastBumpSetting=2//16 (Min: 0, Max: 10)
-SlowReboundSetting=6//12 (Min: 0, Max: 10)
-FastReboundSetting=4//14 (Min: 0, Max: 10)
-//BrakeDiscSetting=0//3.56 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Medium (Min: 0, Max: 2)
-
-[REARLEFT]
-CamberSetting=30//-1.40 deg (Min: 0, Max: 40)
-PressureSetting=5//140 kPa (Min: 0, Max: 10)
-PackerSetting=14//1.4 cm (Min: 0, Max: 20)
-SpringSetting=1//2 (Min: 0, Max: 20)
-//TenderSpringSetting=0//Standard (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=16//6.6 cm (Min: 0, Max: 30)
-SlowBumpSetting=7//11 (Min: 0, Max: 10)
-FastBumpSetting=4//14 (Min: 0, Max: 10)
-SlowReboundSetting=11//7 (Min: 0, Max: 10)
-FastReboundSetting=2//16 (Min: 0, Max: 10)
-//BrakeDiscSetting=0//3.20 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Medium (Min: 0, Max: 2)
-
-[REARRIGHT]
-CamberSetting=30//-1.40 deg (Min: 0, Max: 40)
-PressureSetting=5//140 kPa (Min: 0, Max: 10)
-PackerSetting=14//1.4 cm (Min: 0, Max: 20)
-SpringSetting=1//2 (Min: 0, Max: 20)
-//TenderSpringSetting=0//Standard (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=16//6.6 cm (Min: 0, Max: 30)
-SlowBumpSetting=7//11 (Min: 0, Max: 10)
-FastBumpSetting=4//14 (Min: 0, Max: 10)
-SlowReboundSetting=11//7 (Min: 0, Max: 10)
-FastReboundSetting=2//16 (Min: 0, Max: 10)
-//BrakeDiscSetting=0//3.20 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Medium (Min: 0, Max: 2)
-
-[BASIC]
-Downforce=0.500000
-Balance=0.500000
-Ride=0.500000
-Gearing=0.500000
-Custom=1`,
-
     'GTE': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(0,0,0,0)
+//Aero package=0
+//Note: settings commented out if using the default
 
 [GENERAL]
 Notes=""
 Symmetric=1
-FuelSetting=100//100L (AI adjusts based on duration)
-FuelCapacitySetting=0//Max Fuel (AI adjusts based on duration) (Fixed)
-NumPitstopsSetting=0//N/A (AI calculates) (Fixed)
+//CGHeightSetting=0//Non-adjustable
+//CGRightSetting=0//Non-adjustable
+//CGRearSetting=0//Non-adjustable
+//WedgeSetting=0//N/A
+FuelSetting=33//34L (13laps)
+//FuelCapacitySetting=0//+0L (0laps)
+//NumPitstopsSetting=0//
+//Pitstop1Setting=49//N/A
+//Pitstop2Setting=49//N/A
+//Pitstop3Setting=49//N/A
+
+[LEFTFENDER]
+//FenderFlareSetting=0//Standard
+
+[RIGHTFENDER]
+//FenderFlareSetting=0//Standard
 
 [FRONTWING]
-FWSetting=0//Standard (Min: 0, Max: 2)
+//FWSetting=0//Standard
 
 [REARWING]
-RWSetting=5//High Downforce (Min: 0, Max: 10)
+RWSetting=2//P3
+
+[BODYAERO]
+//WaterRadiatorSetting=0//No tape
+//OilRadiatorSetting=0//No tape
+//BrakeDuctSetting=1//33%
+//BrakeDuctRearSetting=1//33%
 
 [SUSPENSION]
-FrontAntiSwaySetting=8//Medium (Min: 0, Max: 15)
-RearAntiSwaySetting=4//Soft (Min: 0, Max: 15)
-FrontToeInSetting=12//-0.10 deg (Min: 0, Max: 20)
-RearToeInSetting=18//0.05 deg (Min: 0, Max: 20)
-Front3rdPackerSetting=0//N/A (Fixed)
-Front3rdSpringSetting=0//N/A (Fixed)
-Rear3rdPackerSetting=0//N/A (Fixed)
-Rear3rdSpringSetting=0//N/A (Fixed)
+//FrontWheelTrackSetting=0//Non-adjustable
+//RearWheelTrackSetting=0//Non-adjustable
+//FrontAntiSwaySetting=5//P5
+//RearAntiSwaySetting=1//P1
+//FrontToeInSetting=6//-0.23 deg
+//FrontToeOffsetSetting=0//N/A
+RearToeInSetting=12//0.47 deg
+//RearToeOffsetSetting=0//N/A
+//LeftCasterSetting=0//Non-adjustable
+//RightCasterSetting=0//Non-adjustable
+//LeftTrackBarSetting=0//N/A
+//RightTrackBarSetting=0//N/A
+//Front3rdPackerSetting=0//N/A
+//Front3rdSpringSetting=0//Detached
+//Front3rdTenderSpringSetting=0//Detached
+//Front3rdTenderTravelSetting=0//Detached
+//Front3rdSlowBumpSetting=0//N/A
+//Front3rdFastBumpSetting=0//N/A
+//Front3rdSlowReboundSetting=0//N/A
+//Front3rdFastReboundSetting=0//N/A
+//Rear3rdPackerSetting=0//N/A
+//Rear3rdSpringSetting=0//Detached
+//Rear3rdTenderSpringSetting=0//Detached
+//Rear3rdTenderTravelSetting=0//Detached
+//Rear3rdSlowBumpSetting=0//N/A
+//Rear3rdFastBumpSetting=0//N/A
+//Rear3rdSlowReboundSetting=0//N/A
+//Rear3rdFastReboundSetting=0//N/A
+//ChassisAdj00Setting=0//N/A
+//ChassisAdj01Setting=0//N/A
+//ChassisAdj02Setting=0//N/A
+//ChassisAdj03Setting=0//N/A
+//ChassisAdj04Setting=0//N/A
+//ChassisAdj05Setting=0//N/A
+//ChassisAdj06Setting=0//N/A
+//ChassisAdj07Setting=0//N/A
+//ChassisAdj08Setting=0//N/A
+//ChassisAdj09Setting=0//N/A
+//ChassisAdj10Setting=0//N/A
+//ChassisAdj11Setting=0//N/A
 
 [CONTROLS]
-SteerLockSetting=15//360 deg (Min: 0, Max: 20)
-RearBrakeSetting=15//55:45 (Min: 0, Max: 30)
-BrakePressureSetting=95//95% (Min: 0, Max: 100)
-TCSetting=0//Available (Fixed)
-TractionControlMapSetting=5//Medium (Min: 0, Max: 10)
-TCPowerCutMapSetting=5//Medium (Min: 0, Max: 10)
-TCSlipAngleMapSetting=5//Medium (Min: 0, Max: 10)
-AntilockBrakeSystemMapSetting=5//Medium (Min: 0, Max: 15)
+//SteerLockSetting=6//540 (18) deg
+RearBrakeSetting=17//52.8:47.2
+//BrakeMigrationSetting=0// 0.0
+//BrakePressureSetting=40//80 kgf (100%)
+//HandfrontbrakePressSetting=0//N/A
+//HandbrakePressSetting=0//N/A
+//TCSetting=0//Available
+//ABSSetting=0//N/A
+TractionControlMapSetting=6//6
+TCPowerCutMapSetting=2//2
+//TCSlipAngleMapSetting=4//4
+//AntilockBrakeSystemMapSetting=0//N/A
 
 [ENGINE]
-RevLimitSetting=0//Fixed (Non-adjustable) (Fixed)
-EngineMixtureSetting=1//Race (Min: 0, Max: 2)
-EngineBrakingMapSetting=8//Medium (Min: 0, Max: 10)
+//RevLimitSetting=0//7,400
+//EngineBoostSetting=0//N/A
+//RegenerationMapSetting=0//0%
+//ElectricMotorMapSetting=0//
+EngineMixtureSetting=1//Race lean
+//EngineBrakingMapSetting=0//N/A
 
 [DRIVELINE]
-FinalDriveSetting=5//Long (AI adjusts for track type, Min: 0, Max: 10. Higher index = longer gear for higher top speed)
-Gear1Setting=0//~80 km/h (Min: 0, Max: 20)
-Gear2Setting=0//~120 km/h (Min: 0, Max: 20)
-Gear3Setting=1//~150 km/h (Min: 0, Max: 20)
-Gear4Setting=2//~180 km/h (Min: 0, Max: 20)
-Gear5Setting=3//~210 km/h (Min: 0, Max: 20)
-Gear6Setting=4//~240 km/h (Min: 0, Max: 20)
-RatioSetSetting=1//High Speed (Min: 0, Max: 1 or higher based on car)
-DiffPowerSetting=8//Medium (Min: 0, Max: 15)
-DiffCoastSetting=10//Medium (Min: 0, Max: 20)
-DiffPreloadSetting=25//Medium (Min: 0, Max: 100)
-FrontDiffPumpSetting=0//N/A (N/A for RWD) (Fixed)
-FrontDiffPowerSetting=0//N/A (N/A for RWD) (Fixed)
-FrontDiffCoastSetting=0//N/A (N/A for RWD) (Fixed)
-FrontDiffPreloadSetting=0//N/A (N/A for RWD) (Fixed)
-RearSplitSetting=0//RWD (Fixed)
-GearAutoUpShiftSetting=0//Off (Manual Shifting) (Fixed)
-GearAutoDownShiftSetting=0//Off (Manual Shifting) (Fixed)`
+//FinalDriveSetting=0//3.664
+//ReverseSetting=0//3.083
+Gear1Setting=0//2.067
+Gear2Setting=0//1.706
+Gear3Setting=0//1.368
+Gear4Setting=0//1.143
+Gear5Setting=0//1.000
+Gear6Setting=0//0.889
+//RatioSetSetting=0//Standard
+//DiffPumpSetting=0//N/A
+//DiffPowerSetting=0//Non-adjustable
+//DiffCoastSetting=0//Non-adjustable
+DiffPreloadSetting=18//90 Nm
+//FrontDiffPumpSetting=0//0%
+//FrontDiffPowerSetting=0//0%
+//FrontDiffCoastSetting=0//0%
+//FrontDiffPreloadSetting=0//1
+//RearSplitSetting=0//RWD
+//GearAutoUpShiftSetting=0//Off
+//GearAutoDownShiftSetting=0//Off
+
+[FRONTLEFT]
+CamberSetting=28//-2.2 deg
+//PressureSetting=0//140 kPa
+//PackerSetting=20//2.0 cm
+SpringSetting=5//220 N/mm
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=0//5.0 cm
+SlowBumpSetting=8//8
+FastBumpSetting=10//10
+SlowReboundSetting=10//10
+FastReboundSetting=10//10
+//BrakeDiscSetting=0//3.56 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Soft
+//EquippedTireIDSetting=0//
+
+[FRONTRIGHT]
+CamberSetting=28//-2.2 deg
+//PressureSetting=0//140 kPa
+//PackerSetting=20//2.0 cm
+SpringSetting=5//220 N/mm
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=0//5.0 cm
+SlowBumpSetting=8//8
+FastBumpSetting=10//10
+SlowReboundSetting=10//10
+FastReboundSetting=10//10
+//BrakeDiscSetting=0//3.56 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Soft
+//EquippedTireIDSetting=0//
+
+[REARLEFT]
+CamberSetting=33//-1.2 deg
+//PressureSetting=0//140 kPa
+PackerSetting=25//2.5 cm
+SpringSetting=1//140 N/mm
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=22//7.2 cm
+SlowBumpSetting=7//7
+FastBumpSetting=7//7
+SlowReboundSetting=7//7
+FastReboundSetting=7//7
+//BrakeDiscSetting=0//3.20 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Soft
+//EquippedTireIDSetting=0//
+
+[REARRIGHT]
+CamberSetting=33//-1.2 deg
+//PressureSetting=0//140 kPa
+PackerSetting=25//2.5 cm
+SpringSetting=1//140 N/mm
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=22//7.2 cm
+SlowBumpSetting=7//7
+FastBumpSetting=7//7
+SlowReboundSetting=7//7
+FastReboundSetting=7//7
+//BrakeDiscSetting=0//3.20 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Soft
+//EquippedTireIDSetting=0//
+
+[BASIC]
+Downforce=0.500000
+Balance=0.500000
+Ride=0.500000
+Gearing=0.500000
+Custom=1`
 };
 
 // 8. Define a route for AI setup requests
