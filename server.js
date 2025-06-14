@@ -839,15 +839,15 @@ app.post('/generate-setup', async (req, res) => {
 ##
 ## **1. High-Speed Tracks (e.g., Le Mans, Monza, Spa-Francorchamps):**
 ##    - **FinalDriveSetting:** You MUST select one of the **HIGHEST available indices** for the car (e.g., if max is 7, choose 5, 6, or 7). This makes the overall gearing "longer" for high top speed.
-##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **LOWER index** (e.g., 0-5 from a max of 20) to make that individual gear "longer". This is counter-intuitive if you're thinking of ratios, but in LMU's index system, a *lower index* often means a *longer gear*.
-##    - **Comments:** For each GearXSetting, you MUST dynamically calculate and insert a **realistic approximate speed in km/h or mph** based on the chosen gear index and final drive. Example: \`Gear1Setting=X//~Y km/h (approx. Z mph)\`. Ensure the speeds *increase logically* with each successive gear.
+##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **VERY LOW index** (e.g., 0, 1, 2 from a max of 20, using the absolute lowest available if possible for extreme top speed) to make that individual gear **significantly LONGER**.
+##    - **Comments:** For each GearXSetting, you MUST dynamically calculate and insert a **realistic approximate speed in km/h or mph** based on the chosen gear index and final drive. Example: \`Gear1Setting=X//~Y km/h (approx. Z mph)\`. Ensure the speeds *increase logically* and are *very high* with each successive gear, reflecting a long gear setup for Le Mans.
 ##
 ## **2. Technical/Accelerative Tracks (e.g., Sebring, Portimão, Imola):**
 ##    - **FinalDriveSetting:** You MUST select one of the **LOWER available indices** for the car (e.g., 0-3) for quicker acceleration.
 ##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **HIGHER index** (e.g., 5-15 from a max of 20) to make that individual gear "shorter" for better acceleration.
-##    - **Comments:** As above, dynamically calculate and insert a **realistic approximate speed** in km/h or mph for each gear.
+##    - **Comments:** As above, dynamically calculate and insert a **realistic approximate speed** in km/h or mph for each gear. Ensure the speeds *increase logically* and are *appropriate for an accelerative track*.
 ##
-## **ALWAYS ensure a non-zero index is chosen for any adjustable gear setting.** Leaving them at '0' for non-fixed gears is a critical failure.
+## **ALWAYS ensure a non-zero index is chosen for any adjustable gear setting unless it's explicitly fixed to 0.** Leaving them at '0' for non-fixed gears is a critical failure.
 ##
 ## =====================================================================================
 ## --- TRACK DNA DATABASE (Key characteristics for setup decisions) ---
@@ -895,7 +895,7 @@ app.post('/generate-setup', async (req, res) => {
 ## 1. Low RideHeight REQUIRES Stiff Springs (to prevent bottoming out).
 ## 2. High Aero (RWSetting) REQUIRES Stiff Springs (to support downforce).
 ## 3. Bumpy Tracks (Sebring, Portimão) REQUIRE Softer Fast Damping (for bump absorption).
-## 4. **Gearing Sanity Check:** DO NOT use short gears (lower FinalDriveSetting index, higher GearXSetting indices) at high-speed tracks (Le Mans/Monza). Conversely, DO NOT use overly long gears (higher FinalDriveSetting index, lower GearXSetting indices) at technical tracks.
+## 4. **Gearing Sanity Check:** For High-Speed Tracks (Le Mans/Monza), confirm that `FinalDriveSetting` is set to a HIGH index and individual `GearXSetting` indices are set to VERY LOW indices, resulting in very long gears as indicated by their approximate speeds. Conversely, for Technical Tracks, confirm shorter gears.
 ## 5. **Physics Check:** Ensure toe and camber settings are physically realistic for a racing car (e.g., negative camber for cornering grip, slight toe-out on front for sharper turn-in, slight toe-in on rear for stability).
 ## 6. **Physics Check:** Ensure damper settings (bump/rebound) logically complement spring stiffness and track type. Softer springs often pair with softer damping, stiffer with stiffer.
 ## 7. **Balance Consistency:** Aero balance, mechanical balance (springs/ARBs), and differential settings should ideally work in harmony towards the overall setup goal and driver feedback.
@@ -907,7 +907,7 @@ app.post('/generate-setup', async (req, res) => {
 ## --- THE ENGINEER'S DEBRIEF DIRECTIVE (Mandatory for Notes field) ---
 ## =====================================================================================
 ## You MUST populate the \`[GENERAL] Notes=""\` field with a concise, multi-line summary formatted EXACTLY like this (using \\n for new lines):
-## "Philosophy: [Explain the core setup philosophy based on driver goal, session, track, and how it leverages car architecture. e.g., 'Aggressive setup for qualifying, focusing on peak performance at high-speed track (Le Mans), maximizing top speed while maintaining stability through high-speed corners.']\\nKey Adjustments: [List the 3-5 most impactful changes made and explain their purpose, *referencing the LMU Physics Reference and Tuning Guidelines* for justification, focusing on numerical choices and their impact. **Crucially, explain the chosen gearing strategy (e.g., 'Utilized a long final drive (index X) and optimized individual gears (indices Y-Z resulting in ~A-B km/h) for maximum straight-line speed on the Mulsanne straight.')**]\\nFine-Tuning Guide: [Suggest 1-2 simple adjustments the driver can make in-game *with specific parameter names*. e.g., 'If oversteer persists, try increasing Rear AntiSwaySetting by 1-2 clicks. Adjust Brake PressureSetting down if locking front wheels on entry.']\\nFuel & Tires: [Provide the calculated fuel for session and recommended tire compound, justifying the compound choice by weather/session. e.g., 'Fuel set to [X]L for a [Y]-minute race. Recommended Medium compound for balanced performance in dry conditions.']"
+## "Philosophy: [Explain the core setup philosophy based on driver goal, session, track, and how it leverages car architecture. e.g., 'Aggressive setup for qualifying, focusing on peak performance at high-speed track (Le Mans), maximizing top speed while maintaining stability through high-speed corners.']\\nKey Adjustments: [List the 3-5 most impactful changes made and explain their purpose, *referencing the LMU Physics Reference and Tuning Guidelines* for justification, focusing on numerical choices and their impact. **Crucially, explain the chosen gearing strategy by specifically mentioning the FinalDriveSetting index, the range of GearXSetting indices used, and the approximate top speeds achieved (e.g., 'Utilized a long final drive (index X) and optimized individual gears (indices Y-Z resulting in ~A-B km/h) for maximum straight-line speed on the Mulsanne straight.')**]\\nFine-Tuning Guide: [Suggest 1-2 simple adjustments the driver can make in-game *with specific parameter names*. e.g., 'If oversteer persists, try increasing Rear AntiSwaySetting by 1-2 clicks. Adjust Brake PressureSetting down if locking front wheels on entry.']\\nFuel & Tires: [Provide the calculated fuel for session and recommended tire compound, justifying the compound choice by weather/session. e.g., 'Fuel set to [X]L for a [Y]-minute race. Recommended Medium compound for balanced performance in dry conditions.']"
 
 ## =====================================================================================
 ## --- FINAL REQUEST DETAILS ---
