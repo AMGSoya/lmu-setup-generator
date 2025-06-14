@@ -132,45 +132,45 @@ ChassisAdj11Setting=0//N/A
 
 [CONTROLS]
 SteerLockSetting=0//400 (16) deg
-RearBrakeSetting=14//53.7:46.3
-BrakeMigrationSetting=3//1.0% F
-BrakePressureSetting=70//110 kgf (92%)
+RearBrakeSetting=10//MUST be changed for stability (e.g., 52:48 to 58:42)
+BrakeMigrationSetting=0//0.0
+BrakePressureSetting=50//MUST be changed for track/driver preference
 HandfrontbrakePressSetting=0//0%
 HandbrakePressSetting=0//N/A
 TCSetting=0//Available
 ABSSetting=0//N/A
-TractionControlMapSetting=10//10
-TCPowerCutMapSetting=7//7
-TCSlipAngleMapSetting=10//10
+TractionControlMapSetting=5//MUST be changed for track/driver preference
+TCPowerCutMapSetting=5//MUST be changed for track/driver preference
+TCSlipAngleMapSetting=5//MUST be changed for track/driver preference
 AntilockBrakeSystemMapSetting=0//N/A
 
 [ENGINE]
 RevLimitSetting=0//8,500
 EngineBoostSetting=0//N/A
-RegenerationMapSetting=10//200kW
-ElectricMotorMapSetting=1//20kW
-EngineMixtureSetting=0//Full
+RegenerationMapSetting=5//MUST be changed for session type (e.g., Quali vs Race)
+ElectricMotorMapSetting=0//MUST be changed for track type
+EngineMixtureSetting=1//MUST be changed for session type (e.g., 0=Full, 1=Race, 2=Lean)
 EngineBrakingMapSetting=0//N/A
 
 [DRIVELINE]
-FinalDriveSetting=0//2.98:1
-ReverseSetting=0//2.07 (6.18)
-Gear1Setting=1//2.69 (8.03)
-Gear2Setting=0//2.20 (6.56)
-Gear3Setting=1//1.80 (5.37)
-Gear4Setting=1//1.47 (4.39)
-Gear5Setting=1//1.27 (3.79)
-Gear6Setting=1//1.11 (3.30)
-Gear7Setting=1//1.00 (2.98)
-RatioSetSetting=1//Long
+FinalDriveSetting=0//MUST be changed for the track
+ReverseSetting=0//MUST be changed for the track
+Gear1Setting=0//MUST be changed for the track
+Gear2Setting=0//MUST be changed for the track
+Gear3Setting=0//MUST be changed for the track
+Gear4Setting=0//MUST be changed for the track
+Gear5Setting=0//MUST be changed for the track
+Gear6Setting=0//MUST be changed for the track
+Gear7Setting=0//MUST be changed for the track
+RatioSetSetting=0//MUST be changed for the track (e.g., 0=Standard, 1=Long)
 DiffPumpSetting=0//N/A
-DiffPowerSetting=4//30%
-DiffCoastSetting=6//40%
-DiffPreloadSetting=11//55 Nm
+DiffPowerSetting=0//MUST be changed for track (affects on-throttle stability)
+DiffCoastSetting=0//MUST be changed for track (affects off-throttle stability)
+DiffPreloadSetting=0//MUST be changed for track (affects overall stability)
 FrontDiffPumpSetting=0//N/A
-FrontDiffPowerSetting=8//50%
-FrontDiffCoastSetting=0//10%
-FrontDiffPreloadSetting=45//45 Nm
+FrontDiffPowerSetting=0//MUST be changed for track
+FrontDiffCoastSetting=0//MUST be changed for track
+FrontDiffPreloadSetting=0//MUST be changed for track
 RearSplitSetting=0// 0.0:100.0
 GearAutoUpShiftSetting=0//Off
 GearAutoDownShiftSetting=0//Off
@@ -917,8 +917,7 @@ ${fuelEstimateRequest}
 
 **Crucial LMU Setup Principles to Apply:**
 - **Gear ratios (FinalDriveSetting, Gear1Setting-Gear7Setting) MUST be adjusted realistically for the specific track and car, NOT fixed or generic.**
-- **For Circuit de la Sarthe (Le Mans) and its layouts, ensure a high top speed by selecting a LONG FinalDriveSetting and adjusting individual gears accordingly. Avoid short gearing.**
-- **Engine settings like RegenerationMapSetting and ElectricMotorMapSetting (for hybrid cars) MUST be performance-oriented (e.g., 10 for regen, 3 or 4 for motor map if applicable), NOT "Safety-car" or "N/A".**
+- **For Circuit de la Sarthe (Le Mans) and its layouts, ensure a high top speed by selecting a LONG FinalDriveSetting and adjusting individual gears - **Engine settings like RegenerationMapSetting and ElectricMotorMapSetting (for hybrid cars) MUST be performance-oriented (e.g., 10 for regen, 3 or 4 for motor map if applicable), NOT "Safety-car" or "N/A".**
 - **Tyre Compound (CompoundSetting) MUST be a numerical value (0 for Soft/Wet, 1 for Medium, 2 for Hard). ${tireCompoundGuidance}**
 - **Tyre Pressure (PressureSetting) MUST be a numerical value (e.g., 0 for 135kPa, 1 for 136kPa, etc.) corresponding to realistic pressures, NOT "N/A" or a fixed kPa value in the setting itself.**
 - **All Suspension settings (AntiSway, Toe, Camber, Spring, RideHeight, Bump, Rebound, Packers) must be adjusted for the car/track/goal.**
