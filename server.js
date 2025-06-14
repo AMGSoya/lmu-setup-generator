@@ -743,16 +743,16 @@ RearToeInSetting=16//-0.00 °
 
 [CONTROLS]
 //SteerLockSetting=6//540 (18)°
-RearBrakeSetting=20//52.0:48.0
+RearBrakeSetting=15//MUST be changed for stability
 //BrakeMigrationSetting=0// 0.0
-BrakePressureSetting=27//67 kgf  (84%)
+BrakePressureSetting=50//MUST be changed for preference
 //HandfrontbrakePressSetting=0//N/A
 //HandbrakePressSetting=0//N/A
-//TCSetting=0//Disponibile
+//TCSetting=0//
 //ABSSetting=0//N/D
-TractionControlMapSetting=7//7
-TCPowerCutMapSetting=2//2
-TCSlipAngleMapSetting=6//6
+TractionControlMapSetting=5//MUST be changed for track/driver preference
+TCPowerCutMapSetting=5//MUST be changed for track/driver preference
+TCSlipAngleMapSetting=5//MUST be changed for track/driver preference
 //AntilockBrakeSystemMapSetting=0//N/A
 
 [ENGINE]
@@ -760,30 +760,30 @@ TCSlipAngleMapSetting=6//6
 //EngineBoostSetting=0//N/A
 //RegenerationMapSetting=0//0%
 ElectricMotorMapSetting=0//Not Applicable
-EngineMixtureSetting=2//Gara
+EngineMixtureSetting=1//MUST be changed for session (e.g., 0=Quali, 1=Race, 2=Lean)
 //EngineBrakingMapSetting=0//N/A
 
 [DRIVELINE]
-//FinalDriveSetting=1//2.682
-//ReverseSetting=0//2.846
-Gear1Setting=0//2.846
-Gear2Setting=0//2.200
-Gear3Setting=0//1.800
-Gear4Setting=1//1.421
-Gear5Setting=0//1.238
-Gear6Setting=0//1.053
-//RatioSetSetting=0//Le Mans
+FinalDriveSetting=0//MUST be changed for the track
+ReverseSetting=0//MUST be changed for the track
+Gear1Setting=0//MUST be changed for the track
+Gear2Setting=0//MUST be changed for the track
+Gear3Setting=0//MUST be changed for the track
+Gear4Setting=0//MUST be changed for the track
+Gear5Setting=0//MUST be changed for the track
+Gear6Setting=0//MUST be changed for the track
+RatioSetSetting=0//MUST be changed for the track
 //DiffPumpSetting=0//N/A
-//DiffPowerSetting=8//40%
-//DiffCoastSetting=20//100%
-DiffPreloadSetting=25//125 Nm
+DiffPowerSetting=10//MUST be changed for track (on-throttle stability)
+DiffCoastSetting=10//MUST be changed for track (off-throttle stability)
+DiffPreloadSetting=15//MUST be changed for track (overall stability)
 //FrontDiffPumpSetting=0//0%
 //FrontDiffPowerSetting=0//0%
 //FrontDiffCoastSetting=0//0%
 //FrontDiffPreloadSetting=0//1
 //RearSplitSetting=0//RWD
-//GearAutoUpShiftSetting=0//Disattivati
-//GearAutoDownShiftSetting=0//Disattivati
+//GearAutoUpShiftSetting=0//
+//GearAutoDownShiftSetting=0//
 
 [FRONTLEFT]
 CamberSetting=28//-2.2 °
