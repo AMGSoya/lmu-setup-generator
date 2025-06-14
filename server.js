@@ -895,7 +895,7 @@ app.post('/generate-setup', async (req, res) => {
     const tireCompoundGuidance = req.body.tireCompoundGuidance || 'Choose appropriate compound for dry conditions (e.g., 0 for Soft, 1 for Medium, 2 for Hard).'; // Default or get from client
 
     // Construct the prompt for the AI
-  const prompt = `You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable and perfectly suited to the driver's requested style and feedback.
+onst prompt = `You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable and perfectly suited to the driver's requested style and feedback.
 
 **Thought Process (Follow these steps internally):**
 1.  **Prioritize the Driver:** My main objective is to create a setup that is SUITABLE FOR THE DRIVER. First, I will analyze the 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') and any specific problem in the 'Driver Problem to Solve' field. These are my most important instructions.
@@ -952,7 +952,6 @@ Specific User Request: ${specificRequest}
     2.  You MUST update the 'Notes' field in the [GENERAL] section to contain BOTH the Engineer's Commentary and the fuel calculation results, as described in the principles above.
 
 - **Exception:** If the 'Session Goal' is 'Qualifying', ignore the duration and use a standard low fuel amount suitable for 2-3 fast laps.
-
 Example of expected LMU .VEH structure (use this as the exact template to fill in values):
 ${exampleTemplate}
 
