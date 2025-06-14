@@ -692,7 +692,14 @@ FrontDiffCoastSetting=0//N/A (N/A for RWD) (Fixed)
 FrontDiffPreloadSetting=0//N/A (N/A for RWD) (Fixed)
 RearSplitSetting=0//RWD (Fixed)
 GearAutoUpShiftSetting=0//Off (Manual Shifting) (Fixed)
-GearAutoDownShiftSetting=0//Off (Manual Shifting) (Fixed)`
+GearAutoDownShiftSetting=0//Off (Manual Shifting) (Fixed)
+
+[BASIC]
+Downforce=0.500000
+Balance=0.500000
+Ride=0.500000
+Gearing=0.500000
+Custom=1`
 };
 
 // 8. Define a route for AI setup requests
@@ -752,9 +759,25 @@ app.post('/generate-setup', async (req, res) => {
 ## 6.  **Engineer's Debrief:** After generating all values, I will write a concise summary in the '[GENERAL] Notes' section explaining my choices, as per 'THE ENGINEER'S DEBRIEF DIRECTIVE'.
 
 ## =====================================================================================
+## --- LMU GAME MECHANICS & NUANCES (CRITICAL) ---
+## =====================================================================================
+## All tuning decisions MUST be based on Le Mans Ultimate's simulation and parameter behaviors, NOT generalized real-world engineering where discrepancies exist.
+##
+## **LMU Gearing Index Behavior:**
+## - In LMU, for individual gears (Gear1Setting to Gear7Setting), there is often an **INVERSE relationship** between the numerical index chosen and the actual "length" of the gear.
+##    - **LOWER numerical index (e.g., 0, 1, 2) often results in a LONGER gear (higher top speed for that gear).**
+##    - **HIGHER numerical index (e.g., 10, 15, 20) often results in a SHORTER gear (quicker acceleration for that gear).**
+## - **FinalDriveSetting:** A HIGHER index for FinalDriveSetting always means longer overall gearing (higher top speed, slower acceleration).
+## - You MUST apply this LMU-specific gearing logic when selecting indices and predicting speeds.
+##
+## **Other Nuances:**
+## - Values for settings like 'FuelSetting', 'FuelCapacitySetting', 'VirtualEnergySetting', 'NumPitstopsSetting' may have specific in-game interpretations or fixed values in templates that should be respected.
+## - UpgradeSetting values are typically fixed by the template and should not be altered.
+##
+## =====================================================================================
 ## --- LMU PHYSICS & TUNING REFERENCE ---
 ## =====================================================================================
-## This section provides key physics principles and their impact on vehicle behavior. Use this knowledge to make informed decisions for each setting.
+## This section provides key physics principles and their impact on vehicle behavior *as simulated in LMU*. Use this knowledge to make informed decisions for each setting.
 ##
 ## **Aero:**
 ## - **Front Wing/Rear Wing (Downforce):** Increases grip at speed by pushing tires into the ground. More downforce means higher cornering speeds but lower top speed due to drag. Balance between front and rear wings dictates aero balance (understeer/oversteer at speed).
@@ -839,8 +862,9 @@ app.post('/generate-setup', async (req, res) => {
 ##
 ## **1. High-Speed Tracks (e.g., Le Mans, Monza, Spa-Francorchamps):**
 ##    - **FinalDriveSetting:** You MUST select one of the **HIGHEST available indices** for the car (e.g., if max is 7, choose 5, 6, or 7). This makes the overall gearing "longer" for high top speed.
-##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **VERY LOW index** (e.g., 0, 1, 2 from a max of 20, using the absolute lowest available if possible for extreme top speed) to make that individual gear **significantly LONGER**.
+##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **VERY LOW non-negative integer index from the absolute bottom of the range (e.g., 0, 1, or 2 from a max of 20, using the absolute lowest available if possible for extreme top speed)** to make that individual gear **significantly LONGER**.
 ##    - **Comments:** For each GearXSetting, you MUST dynamically calculate and insert a **realistic approximate speed in km/h or mph** based on the chosen gear index and final drive. Example: \`Gear1Setting=X//~Y km/h (approx. Z mph)\`. Ensure the speeds *increase logically* and are *very high* with each successive gear, reflecting a long gear setup for Le Mans.
+##    - **Self-Verification:** Mentally confirm that 6th or 7th gear top speed reaches *over 300 km/h (or 185 mph)* for Hypercars/LMP2s on tracks like Le Mans, indicating truly long gearing.
 ##
 ## **2. Technical/Accelerative Tracks (e.g., Sebring, Portimão, Imola):**
 ##    - **FinalDriveSetting:** You MUST select one of the **LOWER available indices** for the car (e.g., 0-3) for quicker acceleration.
