@@ -851,36 +851,39 @@ Custom=1`
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
     // Safely destructure all possible values from the request body
-    const { car, track, request, selectedCarCategory } = req.body;
+    const { car, track, request, selectedCarCategory,
+        selectedCarDisplay, selectedTrackDisplay, setupGoal,
+        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
+    } = req.body;
 
-    // Validate essential parameters
-    if (!car || !track || !request || !selectedCarCategory) {
-        return res.status(400).json({ error: "Please provide Car, Track, Setup Request, and Car Category details." });
+    // Validate essential parameters (using 'request' as setupGoal is expected by the server now)
+    if (!car || !track || !setupGoal || !selectedCarCategory) {
+        return res.status(400).json({ error: "Please provide Car, Track, Setup Goal, and Car Category details." });
     }
     
-    // Handle potential category key mismatch (e.g., front-end sends 'GT3' but template key is 'LMGT3')
+    // Handle potential category key mismatch (e.g., front-end sends 'LMGT3' but template key is 'GT3')
     let finalCategory = selectedCarCategory;
-    if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
+    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) { // If LMGT3 sent, but template is GT3
+        finalCategory = 'GT3';
+    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) { // If GT3 sent, but template is LMGT3
         finalCategory = 'LMGT3';
-    } else if (selectedCarCategory === 'LMGT3' && !LMU_VEH_TEMPLATES['LMGT3']) {
-        if(LMU_VEH_TEMPLATES['GT3']) finalCategory = 'GT3';
     }
-    
+
     const exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
     if (!exampleTemplate) {
-        return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}` });
+        return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.` });
     }
 
-    // --- CORRECTED VARIABLE DEFINITIONS ---
-    // Safely define all optional variables with default fallbacks to prevent crashes
-    const sessionGoal = req.body.sessionGoal || 'Optimal Lap Time';
-    const sessionDuration = req.body.sessionDuration || 0;
-    const selectedWeather = req.body.selectedWeather || 'Dry';
-    const trackTemp = req.body.trackTemp || 25;
-    const specificRequest = req.body.specificRequest || 'None';
-    const driverFeedback = req.body.driverFeedback || 'None';
-    
-    // The final, complete prompt
+    // Capture or define additional prompt variables with default fallbacks
+    // These are already destructured and will be undefined if not provided, so use default directly
+    const sessionDuration = req.body.sessionDuration || 'N/A'; // Default to N/A if not provided
+    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
+                                `Estimate fuel for a ${sessionDuration} minute race.` : '';
+    const weatherGuidance = `Current weather is ${selectedWeather}.`;
+    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+
+
+    // Construct the prompt for the AI
     const prompt = `
 // --- PRIME DIRECTIVE ---
 Your sole mission is to act as an expert LMU race engineer and generate a complete .VEH setup file. The final setup MUST be a direct and logical response to the user's primary selections for **Setup Goal (Safe, Balanced, Aggressive)**, **Track**, **Car**, and any specific **Driver Feedback**. Every parameter you choose must be justified by these inputs. This is your primary directive.
@@ -895,43 +898,51 @@ You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philoso
 4.  **Review and Refine:** I will look over the generated values to ensure they are logical and directly address the driver's request.
 5.  **Format Output:** I will format the final output strictly as a .VEH file with no other text.
 
-**CRITICAL INSTRUCTION: The template below uses OBVIOUS PLACEHOLDER values (e.g., 'Gear1Setting=5'). You MUST replace these placeholders with your new, calculated values. A setup returned with placeholder values like 'Gear1Setting=5' is a complete failure.**
+**CRITICAL INSTRUCTION: The template below uses OBVIOUS PLACEHOLDER values (e.g., 'Gear1Setting=0//MUST be changed for the track'). You MUST replace these placeholders with your new, calculated, and numerically valid values. A setup returned with placeholder values like 'Gear1Setting=0//MUST be changed for the track' is a complete failure and will be rejected. Remove ALL 'MUST be changed' comments and replace with actual calculations or 'N/A'/'Non-adjustable' where appropriate.**
 
 Crucial LMU Setup Principles to Apply:
 
 // --- NEW IMPROVEMENT TO MAKE SETUPS BETTER ---
 Track-Type Philosophy: My entire setup approach must change based on the track. 
-- For High-Speed tracks (Le Mans, Monza, Daytona, Spa), I must prioritize top speed by using low wing angles, long gear ratios, and stiff springs for high-speed stability.
-- For Technical/Bumpy tracks (Sebring, Lime Rock, Road America), I must prioritize braking stability and cornering grip by using higher wing angles, shorter gear ratios for acceleration, and softer, more compliant suspension settings.
+- For High-Speed tracks (e.g., Circuit de la Sarthe (Le Mans), Monza, Spa-Francorchamps), I must prioritize top speed by using low wing angles, longer gear ratios (higher FinalDriveSetting values, numerically lower individual gears like Gear1-7), and stiffer springs/dampers for high-speed stability.
+- For Technical/Bumpy tracks (e.g., Sebring International Raceway, Autódromo Internacional do Algarve (Portimão)), I must prioritize braking stability and cornering grip by using higher wing angles (if beneficial for downforce balance), shorter gear ratios for acceleration (lower FinalDriveSetting values, numerically higher individual gears), and softer, more compliant suspension settings.
 
 Driver-Centric Adjustments:
-- For a 'Safe' or 'Stable' request, I will prioritize predictability: using slightly softer suspension settings, higher wing angles for stability, and less aggressive differential locking.
-- For an 'Aggressive' request, I will prioritize responsiveness and rotation: using stiffer springs and dampers, more negative front camber for sharp turn-in, and settings that allow the rear to rotate.
-- If the driver reports 'understeer', I will focus on changes that increase front-end grip (e.g., soften front anti-roll bar, stiffen rear anti-roll bar).
-- If the driver reports 'oversteer', I will focus on changes that increase rear-end stability (e.g., stiffen front anti-roll bar, soften rear anti-roll bar).
+- For a 'Safe' or 'Stable' request, I will prioritize predictability: using slightly softer suspension settings, higher wing angles for stability (if appropriate for track type), and less aggressive differential locking.
+- For an 'Aggressive' request, I will prioritize responsiveness and rotation: using stiffer springs and dampers, more negative front camber for sharp turn-in, and differential settings that allow the rear to rotate.
+- If the driver reports 'understeer', I will focus on changes that increase front-end grip (e.g., soften front anti-roll bar, stiffen rear anti-roll bar, more negative front camber, slightly increase front ride height).
+- If the driver reports 'oversteer', I will focus on changes that increase rear-end stability (e.g., stiffen front anti-roll bar, soften rear anti-roll bar, less negative rear camber, slightly reduce rear ride height).
 
-Qualifying vs. Race Philosophy: For a race setup, I will prioritize stability and tire preservation over ultimate one-lap pace.
+Qualifying vs. Race Philosophy: For a race setup, I will prioritize stability and tire preservation over ultimate one-lap pace. For qualifying, maximize raw pace.
 
 Engineer's Commentary in Notes: The [GENERAL] Notes section is critical. I must use it to briefly explain the setup's core philosophy (e.g., "Le Mans setup: Low wings for top speed, stiff springs for stability.") and include the fuel calculation.
 
+**Specific Guidance for ENGINE and DRIVELINE (Crucial for fixing the issue):**
+- **RegenerationMapSetting (for Hybrids like Hypercars):** For Race sessions, aim for `10` (max regen). For Qualifying, a lower value like `8` or `9` might be used. For non-hybrids, this should be `0//N/A`.
+- **ElectricMotorMapSetting (for Hybrids like Hypercars):** For Race sessions, use `3` or `4` for usable electric power. For Qualifying, `4` for maximum boost. For non-hybrids (LMP2, GT3, GTE), this *must* be `0//Not Applicable`. Do NOT output "safety-car" or any other non-numerical value.
+- **EngineMixtureSetting:** For Qualifying, use `0//Full`. For Race sessions, use `1//Race` unless fuel saving is a very specific request, then consider `2//Lean`.
+- **FinalDriveSetting & Gears (Gear1Setting-Gear7Setting):** These are paramount for track type.
+    - **High-Speed Tracks (e.g., Le Mans, Monza):** Choose a **longer** FinalDriveSetting (numerically higher values like 0-7, depending on car) and adjust individual gears to stretch them for top speed. The comments for individual gears should reflect the calculated speed.
+    - **Technical Tracks (e.g., Sebring, Imola):** Choose a **shorter** FinalDriveSetting (numerically lower values, or 0 if default is short) and adjust individual gears for quicker acceleration out of corners.
+- **DiffPowerSetting (on-throttle):** Higher for more traction, lower for more rotation. Adjust based on setup goal and driver feedback. (e.g., 0-15 typical range).
+- **DiffCoastSetting (off-throttle):** Higher for more stability on lift-off, lower for more rotation. Adjust based on setup goal and driver feedback. (e.g., 0-20 typical range).
+- **DiffPreloadSetting:** Affects low-speed stability. Higher for more stability, lower for more maneuverability. (e.g., 0-100 Nm typical range).
+- **RatioSetSetting:** `0` for Standard, `1` for Long/High Speed, etc. Adjust based on track type.
+
 Here are the details for the setup request:
-Car: ${car}
-Track: ${track}
-Setup Goal: ${request}
+Car: ${car} (Display Name: ${selectedCarDisplay}, Category: ${selectedCarCategory})
+Track: ${track} (Display Name: ${selectedTrackDisplay})
+Setup Goal: ${setupGoal}
 Driver Problem to Solve: ${driverFeedback}
 Session Goal: ${sessionGoal}
 Session Duration: ${sessionDuration} minutes
-Weather: ${selectedWeather}
+Weather: ${selectedWeather} (${weatherGuidance})
 Track Temperature: ${trackTemp}°C
 Specific User Request: ${specificRequest}
+${fuelEstimateRequest}
+${tireCompoundGuidance}
 
-**Fuel & Strategy Calculation:**
-- If 'Session Goal' is 'Race' and 'Session Duration' is greater than 0, perform a fuel calculation.
-- **Methodology:** Estimate lap time and fuel per lap for the car/track. Calculate laps for the duration. Total fuel = (fuel/lap * laps) + (1.5 * fuel/lap for safety). Round up.
-- **Output:** Update 'FuelSetting' and add results to the 'Notes' field.
-- **Exception:** For 'Qualifying', use low fuel for 2-3 laps.
-
-This is the required LMU .VEH structure and format. You must use this exact structure, replacing all placeholder values.
+This is the required LMU .VEH structure and format. You must use this exact structure, replacing all placeholder values (especially those with "MUST be changed" comments).
 ${exampleTemplate}
 
 Now, generate the complete and valid .VEH file. Your response must contain ONLY the file content and nothing else.
@@ -950,7 +961,7 @@ Now, generate the complete and valid .VEH file. Your response must contain ONLY 
                 model: PRIMARY_MODEL,
                 messages: [{ role: "user", content: prompt }],
                 max_tokens: 4096,
-                temperature: 0.4,
+                temperature: 0.4, // Keep temperature low to encourage adherence to format
             }),
         });
 
@@ -958,13 +969,14 @@ Now, generate the complete and valid .VEH file. Your response must contain ONLY 
             const errorData = await openrouterResponse.json();
             console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
             return res.status(openrouterResponse.status).json({
-                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'}`
+                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
             });
         }
 
         const chatCompletion = await openrouterResponse.json();
         let text = chatCompletion.choices[0].message.content.trim();
 
+        // Remove markdown code blocks if the AI still includes them
         if (text.startsWith('```') && text.endsWith('```')) {
             text = text.replace(/^```[a-zA-Z]*\n|\n```$/g, '').trim();
         }
@@ -973,7 +985,8 @@ Now, generate the complete and valid .VEH file. Your response must contain ONLY 
             res.json({ setup: text });
         } else {
             console.error("AI generated an invalid setup format.");
-            res.status(500).json({ error: 'AI generated an invalid setup format.' });
+            console.error("AI Raw Response (first 500 chars):", text ? text.substring(0, 500) : '[Empty Response]');
+            res.status(500).json({ error: `AI generated an invalid setup format or incomplete response. Raw AI response snippet: ${text ? text.substring(0, 200) : '[Empty Response]'}` });
         }
 
     } catch (error) {
