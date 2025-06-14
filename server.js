@@ -1,4 +1,5 @@
-// --- server.js (for OpenRouter API - Primary AI Service) ---More actions
+javascript
+// --- server.js (Final Version with Syntax Fix and Improved AI Output Directives) ---
 
 // 1. Load environment variables from .env file
 require('dotenv').config();
@@ -39,13 +40,14 @@ if (!HUGGINGFACE_API_KEY) {
 }
 
 // 7. Define OpenRouter API endpoint and Model
-// The user has requested to use deepseek-ai/DeepSeek-R1-0528 as the primary model.
+// The user has requested to use NousResearch/Hermes-2-Pro-Llama-3-8B as the primary model.
 // This model is available through the OpenRouter API.
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-// CORRECT
 const PRIMARY_MODEL = 'NousResearch/Hermes-2-Pro-Llama-3-8B';
 
 // --- Define LMU .VEH Example Templates by Category ---
+// Updated all templates with reasonable default values for Engine and Driveline,
+// and clearer comments, instead of "MUST be changed".
 const LMU_VEH_TEMPLATES = {
     'Hypercar': `VehicleClassSetting="Ferrari_499P Hypercar WEC2024"
 UpgradeSetting=(2,0,0,0)
@@ -62,9 +64,9 @@ CGHeightSetting=0//Non-adjustable
 CGRightSetting=0//Non-adjustable
 CGRearSetting=0//Non-adjustable
 WedgeSetting=0//N/A
-FuelSetting=95//1.00
-FuelCapacitySetting=0//72.0L (11.5 laps)
-VirtualEnergySetting=72//72% (10.0 laps)
+FuelSetting=85//85L (Initial guess, AI adjusts)
+FuelCapacitySetting=0//Max Fuel (AI adjusts based on duration)
+VirtualEnergySetting=72//72% (AI adjusts based on session)
 NumPitstopsSetting=0//
 Pitstop1Setting=88//N/A
 Pitstop2Setting=88//N/A
@@ -78,45 +80,47 @@ FenderFlareSetting=0//N/A
 
 [FRONTWING]
 FWSetting=0//Standard
+// FWSetting: 0=low, 1=medium, 2=high (AI adjusts based on track type)
 
 [REARWING]
-RWSetting=3//P4
+RWSetting=3//P4 (AI adjusts based on track type)
+// RWSetting for Hypercar: 0-7 (P1=low, P7=high)
 
 [BODYAERO]
-WaterRadiatorSetting=1//25%
-OilRadiatorSetting=1//25%
-BrakeDuctSetting=0//Open
-BrakeDuctRearSetting=0//Open
+WaterRadiatorSetting=1//25% (AI adjusts based on temp/session)
+OilRadiatorSetting=1//25% (AI adjusts based on temp/session)
+BrakeDuctSetting=0//Open (AI adjusts based on temp/track)
+BrakeDuctRearSetting=0//Open (AI adjusts based on temp/track)
 
 [SUSPENSION]
 FrontWheelTrackSetting=0//Non-adjustable
 RearWheelTrackSetting=0//Non-adjustable
-FrontAntiSwaySetting=16//D-P1
-RearAntiSwaySetting=0//Detached
-FrontToeInSetting=15//-0.06 deg
+FrontAntiSwaySetting=16//D-P1 (AI adjusts for balance)
+RearAntiSwaySetting=0//Detached (AI adjusts for balance)
+FrontToeInSetting=15//-0.06 deg (AI adjusts for turn-in/stability)
 FrontToeOffsetSetting=0//N/A
-RearToeInSetting=17//0.06 deg
+RearToeInSetting=17//0.06 deg (AI adjusts for stability)
 RearToeOffsetSetting=0//N/A
 LeftCasterSetting=0//Non-adjustable
 RightCasterSetting=0//Non-adjustable
 LeftTrackBarSetting=0//N/A
 RightTrackBarSetting=0//N/A
-Front3rdPackerSetting=8//0.8 cm
-Front3rdSpringSetting=8//8
+Front3rdPackerSetting=8//0.8 cm (AI adjusts for ride height/suspension travel)
+Front3rdSpringSetting=8//8 (AI adjusts for track surface/aggressiveness)
 Front3rdTenderSpringSetting=0//Detached
 Front3rdTenderTravelSetting=0//Detached
-Front3rdSlowBumpSetting=0//1
-Front3rdFastBumpSetting=2//3
-Front3rdSlowReboundSetting=4//5
-Front3rdFastReboundSetting=2//3
-Rear3rdPackerSetting=10//1.0 cm
-Rear3rdSpringSetting=7//7
+Front3rdSlowBumpSetting=0//1 (AI adjusts for weight transfer control)
+Front3rdFastBumpSetting=2//3 (AI adjusts for bumps/curbs)
+Front3rdSlowReboundSetting=4//5 (AI adjusts for weight transfer control)
+Front3rdFastReboundSetting=2//3 (AI adjusts for bumps/curbs)
+Rear3rdPackerSetting=10//1.0 cm (AI adjusts for ride height/suspension travel)
+Rear3rdSpringSetting=7//7 (AI adjusts for track surface/aggressiveness)
 Rear3rdTenderSpringSetting=0//Detached
 Rear3rdTenderTravelSetting=0//Detached
-Rear3rdSlowBumpSetting=0//1
-Rear3rdFastBumpSetting=2//3
-Rear3rdSlowReboundSetting=0//1
-Rear3rdFastReboundSetting=2//3
+Rear3rdSlowBumpSetting=0//1 (AI adjusts for weight transfer control)
+Rear3rdFastBumpSetting=2//3 (AI adjusts for bumps/curbs)
+Rear3rdSlowReboundSetting=0//1 (AI adjusts for weight transfer control)
+Rear3rdFastReboundSetting=2//3 (AI adjusts for bumps/curbs)
 ChassisAdj00Setting=0//Alternative
 ChassisAdj01Setting=0//N/A
 ChassisAdj02Setting=0//N/A
@@ -132,116 +136,116 @@ ChassisAdj11Setting=0//N/A
 
 [CONTROLS]
 SteerLockSetting=0//400 (16) deg
-RearBrakeSetting=10//MUST be changed for stability (e.g., 52:48 to 58:42)
-BrakeMigrationSetting=0//0.0
-BrakePressureSetting=50//MUST be changed for track/driver preference
+RearBrakeSetting=16//52.8:47.2 (Adjust for stability: 52:48 F to 58:42 F)
+BrakeMigrationSetting=0//2.5% F
+BrakePressureSetting=80//120 kgf (100%) (Adjust for track/driver preference: 80-100)
 HandfrontbrakePressSetting=0//0%
 HandbrakePressSetting=0//N/A
 TCSetting=0//Available
 ABSSetting=0//N/A
-TractionControlMapSetting=5//MUST be changed for track/driver preference
-TCPowerCutMapSetting=5//MUST be changed for track/driver preference
-TCSlipAngleMapSetting=5//MUST be changed for track/driver preference
+TractionControlMapSetting=9//9 (Adjust for track/driver preference: 0=off, 1-10)
+TCPowerCutMapSetting=8//8 (Adjust for track/driver preference: 0=off, 1-10)
+TCSlipAngleMapSetting=8//8 (Adjust for track/driver preference: 0=off, 1-10)
 AntilockBrakeSystemMapSetting=0//N/A
 
 [ENGINE]
 RevLimitSetting=0//8,500
 EngineBoostSetting=0//N/A
-RegenerationMapSetting=5//MUST be changed for session type (e.g., Quali vs Race)
-ElectricMotorMapSetting=0//MUST be changed for track type
-EngineMixtureSetting=1//MUST be changed for session type (e.g., 0=Full, 1=Race, 2=Lean)
+RegenerationMapSetting=10//200kW (Adjust for session type: 8-10)
+ElectricMotorMapSetting=3//60kW (Adjust for track/session type: 0=N/A, 1-4)
+EngineMixtureSetting=0//Full (Adjust for session type: 0=Full, 1=Race, 2=Lean)
 EngineBrakingMapSetting=0//N/A
 
 [DRIVELINE]
-FinalDriveSetting=0//MUST be changed for the track
-ReverseSetting=0//MUST be changed for the track
-Gear1Setting=0//MUST be changed for the track
-Gear2Setting=0//MUST be changed for the track
-Gear3Setting=0//MUST be changed for the track
-Gear4Setting=0//MUST be changed for the track
-Gear5Setting=0//MUST be changed for the track
-Gear6Setting=0//MUST be changed for the track
-Gear7Setting=0//MUST be changed for the track
-RatioSetSetting=0//MUST be changed for the track (e.g., 0=Standard, 1=Long)
+FinalDriveSetting=0//2.98:1 (Adjust for track type: 0=Standard/Short, higher values for Long)
+ReverseSetting=0//2.07 (6.18)
+Gear1Setting=0//2.85 (8.49) (Adjust for track type)
+Gear2Setting=0//2.20 (6.56) (Adjust for track type)
+Gear3Setting=0//1.82 (5.44) (Adjust for track type)
+Gear4Setting=0//1.56 (4.64) (Adjust for track type)
+Gear5Setting=0//1.35 (4.02) (Adjust for track type)
+Gear6Setting=0//1.19 (3.55) (Adjust for track type)
+Gear7Setting=0//1.05 (3.14) (Adjust for track type)
+RatioSetSetting=0//Short (Adjust for track type: 0=Standard, 1=Long/High Speed)
 DiffPumpSetting=0//N/A
-DiffPowerSetting=0//MUST be changed for track (affects on-throttle stability)
-DiffCoastSetting=0//MUST be changed for track (affects off-throttle stability)
-DiffPreloadSetting=0//MUST be changed for track (affects overall stability)
+DiffPowerSetting=3//25% (Adjust for on-throttle stability: 0-15)
+DiffCoastSetting=10//60% (Adjust for off-throttle stability: 0-20)
+DiffPreloadSetting=24//120 Nm (Adjust for overall stability: 0-100 Nm)
 FrontDiffPumpSetting=0//N/A
-FrontDiffPowerSetting=0//MUST be changed for track
-FrontDiffCoastSetting=0//MUST be changed for track
-FrontDiffPreloadSetting=0//MUST be changed for track
+FrontDiffPowerSetting=0//10%
+FrontDiffCoastSetting=0//10%
+FrontDiffPreloadSetting=0//0 Nm
 RearSplitSetting=0// 0.0:100.0
 GearAutoUpShiftSetting=0//Off
 GearAutoDownShiftSetting=0//Off
 
 [FRONTLEFT]
-CamberSetting=35//-0.5 deg
-PressureSetting=0//135 kPa
-PackerSetting=5//0.5 cm
-SpringSetting=12//16.44mm
+CamberSetting=26//-1.4 deg (Adjust for track: -1.0 to -3.0 deg)
+PressureSetting=0//135 kPa (Adjust for weather/session: 130-150 kPa)
+PackerSetting=5//0.5 cm (Adjust for track)
+SpringSetting=10//15.95mm (Adjust for track)
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=10//5.0 cm
-SlowBumpSetting=7//8
-FastBumpSetting=4//5
-SlowReboundSetting=6//7
-FastReboundSetting=4//5
+RideHeightSetting=9//4.9 cm (Adjust for track and rake)
+SlowBumpSetting=5//6 (Adjust for track)
+FastBumpSetting=6//7 (Adjust for track)
+SlowReboundSetting=5//6 (Adjust for track)
+FastReboundSetting=4//5 (Adjust for track)
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=0//Soft
+CompoundSetting=0//82% Soft (Adjust for session/weather: 0=Soft/Wet, 1=Medium, 2=Hard)
 
 [FRONTRIGHT]
-CamberSetting=35//-0.5 deg
-PressureSetting=0//135 kPa
-PackerSetting=5//0.5 cm
-SpringSetting=12//16.44mm
+CamberSetting=26//-1.4 deg (Adjust for track)
+PressureSetting=0//135 kPa (Adjust for weather/session)
+PackerSetting=5//0.5 cm (Adjust for track)
+SpringSetting=10//15.95mm (Adjust for track)
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=10//5.0 cm
-SlowBumpSetting=7//8
-FastBumpSetting=4//5
-SlowReboundSetting=6//7
-FastReboundSetting=4//5
+RideHeightSetting=9//4.9 cm (Adjust for track and rake)
+SlowBumpSetting=5//6 (Adjust for track)
+FastBumpSetting=6//7 (Adjust for track)
+SlowReboundSetting=5//6 (Adjust for track)
+FastReboundSetting=4//5 (Adjust for track)
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=0//Soft
+CompoundSetting=0//76% Soft (Adjust for session/weather)
 
 [REARLEFT]
-CamberSetting=35//-0.5 deg
-PressureSetting=0//135 kPa
-PackerSetting=8//0.8 cm
-SpringSetting=0//13.33mm
+CamberSetting=35//-0.5 deg (Adjust for track: -0.5 to -2.5 deg)
+PressureSetting=0//135 kPa (Adjust for weather/session)
+PackerSetting=12//1.2 cm (Adjust for track)
+SpringSetting=0//13.33mm (Adjust for track)
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=5//6.5 cm
-SlowBumpSetting=2//3
-FastBumpSetting=1//2
-SlowReboundSetting=3//4
-FastReboundSetting=2//3
+RideHeightSetting=15//7.5 cm (Adjust for track)
+SlowBumpSetting=4//5 (Adjust for track)
+FastBumpSetting=4//5 (Adjust for track)
+SlowReboundSetting=6//7 (Adjust for track)
+FastReboundSetting=6//7 (Adjust for track)
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=0//Soft
+CompoundSetting=0//86% Soft (Adjust for session/weather)
 
 [REARRIGHT]
-CamberSetting=35//-0.5 deg
-PressureSetting=0//135 kPa
-PackerSetting=8//0.8 cm
-SpringSetting=0//13.33mm
+CamberSetting=35//-0.5 deg (Adjust for track)
+PressureSetting=0//135 kPa (Adjust for weather/session)
+PackerSetting=12//1.2 cm (Adjust for track)
+SpringSetting=0//13.33mm (Adjust for track)
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=5//6.5 cm
-SlowBumpSetting=2//3
-FastBumpSetting=1//2
-SlowReboundSetting=3//4
-FastReboundSetting=2//3
+RideHeightSetting=15//7.5 cm (Adjust for track)
+SlowBumpSetting=4//5 (Adjust for track)
+FastBumpSetting=4//5 (Adjust for track)
+SlowReboundSetting=6//7 (Adjust for track)
+FastReboundSetting=6//7 (Adjust for track)
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=0//Soft
+CompoundSetting=0//82% Soft (Adjust for session/weather)
 
 [BASIC]
 Downforce=0.500000
@@ -266,7 +270,7 @@ Symmetric=1
 //CGRightSetting=0//Non-adjustable
 //CGRearSetting=0//Non-adjustable
 //WedgeSetting=0//N/A
-FuelSetting=11//16L (3laps)
+FuelSetting=11//16L (3laps) (AI adjusts)
 //FuelCapacitySetting=0//N/A
 //NumPitstopsSetting=0//
 //Pitstop1Setting=50//N/A
@@ -283,28 +287,28 @@ FuelSetting=11//16L (3laps)
 //FWSetting=0//Le Mans
 
 [REARWING]
-RWSetting=0//P1
+RWSetting=0//P1-P9 (Adjust for track)
 
 [BODYAERO]
-WaterRadiatorSetting=2//50%
-OilRadiatorSetting=2//50%
+WaterRadiatorSetting=2//50% (AI adjusts)
+OilRadiatorSetting=2//50% (AI adjusts)
 //BrakeDuctSetting=0//Open
-BrakeDuctRearSetting=1//25%
+BrakeDuctRearSetting=1//25% (AI adjusts)
 
 [SUSPENSION]
 //FrontWheelTrackSetting=0//Non-adjustable
 //RearWheelTrackSetting=0//Non-adjustable
-FrontAntiSwaySetting=9//D25 H-H
-RearAntiSwaySetting=1//D7.5 S-S
-FrontToeInSetting=13//-0.18 deg
+FrontAntiSwaySetting=9//D25 H-H (Adjust for balance)
+RearAntiSwaySetting=1//D7.5 S-S (Adjust for balance)
+FrontToeInSetting=13//-0.18 deg (Adjust for turn-in/stability)
 //FrontToeOffsetSetting=0//N/A
-RearToeInSetting=22//0.35 deg
+RearToeInSetting=22//0.35 deg (Adjust for stability)
 //RearToeOffsetSetting=0//N/A
 //LeftCasterSetting=0//Non-adjustable
 //RightCasterSetting=0//Non-adjustable
 //LeftTrackBarSetting=0//N/A
 //RightTrackBarSetting=0//N/A
-Front3rdPackerSetting=6//0.6 cm
+Front3rdPackerSetting=6//0.6 cm (Adjust for ride height/suspension travel)
 Front3rdSpringSetting=0//N/A
 //Front3rdTenderSpringSetting=0//Detached
 //Front3rdTenderTravelSetting=0//Detached
@@ -312,7 +316,7 @@ Front3rdSpringSetting=0//N/A
 //Front3rdFastBumpSetting=0//1
 //Front3rdSlowReboundSetting=0//1
 //Front3rdFastReboundSetting=0//1
-Rear3rdPackerSetting=7//0.7 cm
+Rear3rdPackerSetting=7//0.7 cm (Adjust for ride height/suspension travel)
 //Rear3rdSpringSetting=0//N/A
 //Rear3rdTenderSpringSetting=0//Detached
 //Rear3rdTenderTravelSetting=0//Detached
@@ -335,16 +339,16 @@ Rear3rdPackerSetting=7//0.7 cm
 
 [CONTROLS]
 //SteerLockSetting=3//336 (13) deg
-RearBrakeSetting=10//MUST be changed for stability (e.g., 52:48 to 56:44)
+RearBrakeSetting=13//54.1:45.9 (Adjust for stability: 52:48 F to 56:44 F)
 //BrakeMigrationSetting=0// 0.0
-BrakePressureSetting=50//MUST be changed for track/driver preference
+BrakePressureSetting=60//100 kgf (83%) (Adjust for track/driver preference: 80-100)
 //HandfrontbrakePressSetting=0//0%
 //HandbrakePressSetting=0//N/A
 //TCSetting=0//Available
 //ABSSetting=0//N/A
-TractionControlMapSetting=5//MUST be changed for track/driver preference
-TCPowerCutMapSetting=5//MUST be changed for track/driver preference
-TCSlipAngleMapSetting=5//MUST be changed for track/driver preference
+TractionControlMapSetting=7//7 (Adjust for track/driver preference: 0=off, 1-10)
+TCPowerCutMapSetting=4//4 (Adjust for track/driver preference: 0=off, 1-10)
+TCSlipAngleMapSetting=7//Linked (Adjust for track/driver preference: 0=off, 1-10)
 //AntilockBrakeSystemMapSetting=0//N/A
 
 [ENGINE]
@@ -352,23 +356,23 @@ TCSlipAngleMapSetting=5//MUST be changed for track/driver preference
 //EngineBoostSetting=0//N/A
 //RegenerationMapSetting=0//0%
 ElectricMotorMapSetting=0//Not Applicable
-EngineMixtureSetting=1//MUST be changed for session type (e.g., 0=Quali, 1=Race)
+EngineMixtureSetting=1//Race (Adjust for session type: 0=Quali, 1=Race)
 //EngineBrakingMapSetting=0//N/A
 
 [DRIVELINE]
-FinalDriveSetting=0//MUST be changed for the track
-ReverseSetting=0//MUST be changed for the track
-Gear1Setting=0//MUST be changed for the track
-Gear2Setting=0//MUST be changed for the track
-Gear3Setting=0//MUST be changed for the track
-Gear4Setting=0//MUST be changed for the track
-Gear5Setting=0//MUST be changed for the track
-Gear6Setting=0//MUST be changed for the track
-RatioSetSetting=0//MUST be changed for the track (e.g., 0=Standard, 1=High Speed)
+FinalDriveSetting=0//2.88:1 (Adjust for track type: 0=Standard, higher values=longer)
+ReverseSetting=0//2.85 (8.18)
+Gear1Setting=0//2.85 (8.18) (Adjust for track type)
+Gear2Setting=0//2.20 (6.33) (Adjust for track type)
+Gear3Setting=1//1.88 (5.39) (Adjust for track type)
+Gear4Setting=1//1.62 (4.67) (Adjust for track type)
+Gear5Setting=1//1.42 (4.09) (Adjust for track type)
+Gear6Setting=1//1.27 (3.66) (Adjust for track type)
+RatioSetSetting=1//High Speed (Adjust for track type: 0=Standard, 1=High Speed)
 //DiffPumpSetting=0//N/A
-DiffPowerSetting=0//MUST be changed for track (affects on-throttle stability)
-DiffCoastSetting=0//MUST be changed for track (affects off-throttle stability)
-DiffPreloadSetting=10//MUST be changed for track (affects overall stability)
+DiffPowerSetting=0//FF6-60 deg (Adjust for on-throttle stability: 0-15)
+DiffCoastSetting=2//FF6-45 deg (Adjust for off-throttle stability: 0-20)
+DiffPreloadSetting=17//85 Nm (Adjust for overall stability: 0-100 Nm)
 //FrontDiffPumpSetting=0//0%
 //FrontDiffPowerSetting=0//0%
 //FrontDiffCoastSetting=0//0%
@@ -378,75 +382,75 @@ DiffPreloadSetting=10//MUST be changed for track (affects overall stability)
 //GearAutoDownShiftSetting=0//Off
 
 [FRONTLEFT]
-CamberSetting=11//-1.5 deg
-//PressureSetting=0//140 kPa
-PackerSetting=3//0.3 cm
-SpringSetting=0//150N/mm
+CamberSetting=11//-1.5 deg (Adjust for track: -1.0 to -3.0 deg)
+PressureSetting=0//140 kPa (Adjust for weather/session: 130-150 kPa)
+PackerSetting=3//0.3 cm (Adjust for track)
+SpringSetting=0//150N/mm (Adjust for track)
 //TenderSpringSetting=0//Detached
 //TenderTravelSetting=0//Detached
 //SpringRubberSetting=0//Detached
-RideHeightSetting=10//4.5 cm
-SlowBumpSetting=4//5
-FastBumpSetting=1//2
-SlowReboundSetting=2//3
-FastReboundSetting=1//2
+RideHeightSetting=10//4.5 cm (Adjust for track)
+SlowBumpSetting=4//5 (Adjust for track)
+FastBumpSetting=1//2 (Adjust for track)
+SlowReboundSetting=2//3 (Adjust for track)
+FastReboundSetting=1//2 (Adjust for track)
 //BrakeDiscSetting=0//3.20 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Medium
+CompoundSetting=0//Medium (Adjust for session/weather: 0=Soft/Wet, 1=Medium, 2=Hard)
 //EquippedTireIDSetting=-1//None Available
 
 [FRONTRIGHT]
-CamberSetting=11//-1.5 deg
-//PressureSetting=0//140 kPa
-PackerSetting=3//0.3 cm
-SpringSetting=0//150N/mm
+CamberSetting=11//-1.5 deg (Adjust for track)
+PressureSetting=0//140 kPa (Adjust for weather/session)
+PackerSetting=3//0.3 cm (Adjust for track)
+SpringSetting=0//150N/mm (Adjust for track)
 //TenderSpringSetting=0//Detached
 //TenderTravelSetting=0//Detached
 //SpringRubberSetting=0//Detached
-RideHeightSetting=10//4.5 cm
-SlowBumpSetting=4//5
-FastBumpSetting=1//2
-SlowReboundSetting=2//3
-FastReboundSetting=1//2
+RideHeightSetting=10//4.5 cm (Adjust for track)
+SlowBumpSetting=4//5 (Adjust for track)
+FastBumpSetting=1//2 (Adjust for track)
+SlowReboundSetting=2//3 (Adjust for track)
+FastReboundSetting=1//2 (Adjust for track)
 //BrakeDiscSetting=0//3.20 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Medium
+CompoundSetting=0//Medium (Adjust for session/weather)
 //EquippedTireIDSetting=-1//None Available
 
 [REARLEFT]
-CamberSetting=5//-1.0 deg
-//PressureSetting=0//140 kPa
-PackerSetting=1//0.1 cm
+CamberSetting=5//-1.0 deg (Adjust for track: -0.5 to -2.5 deg)
+PressureSetting=0//140 kPa (Adjust for weather/session)
+PackerSetting=1//0.1 cm (Adjust for track)
 //SpringSetting=3//1100lbf/in
 //TenderSpringSetting=0//Detached
 //TenderTravelSetting=0//Detached
 //SpringRubberSetting=0//Detached
-RideHeightSetting=24//7.0 cm
-SlowBumpSetting=0//1 (soft)
-FastBumpSetting=0//1 (soft)
-SlowReboundSetting=1//2
-FastReboundSetting=0//1 (soft)
+RideHeightSetting=24//7.0 cm (Adjust for track)
+SlowBumpSetting=0//1 (soft) (Adjust for track)
+FastBumpSetting=0//1 (soft) (Adjust for track)
+SlowReboundSetting=1//2 (Adjust for track)
+FastReboundSetting=0//1 (soft) (Adjust for track)
 //BrakeDiscSetting=0//3.20 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Medium
+CompoundSetting=0//Medium (Adjust for session/weather)
 //EquippedTireIDSetting=-1//None Available
 
 [REARRIGHT]
-CamberSetting=5//-1.0 deg
-//PressureSetting=0//140 kPa
-PackerSetting=1//0.1 cm
+CamberSetting=5//-1.0 deg (Adjust for track)
+PressureSetting=0//140 kPa (Adjust for weather/session)
+PackerSetting=1//0.1 cm (Adjust for track)
 //SpringSetting=3//1100lbf/in
 //TenderSpringSetting=0//Detached
 //TenderTravelSetting=0//Detached
 //SpringRubberSetting=0//Detached
-RideHeightSetting=24//7.0 cm
-SlowBumpSetting=0//1 (soft)
-FastBumpSetting=0//1 (soft)
-SlowReboundSetting=1//2
-FastReboundSetting=0//1 (soft)
+RideHeightSetting=24//7.0 cm (Adjust for track)
+SlowBumpSetting=0//1 (soft) (Adjust for track)
+FastBumpSetting=0//1 (soft) (Adjust for track)
+SlowReboundSetting=1//2 (Adjust for track)
+FastReboundSetting=0//1 (soft) (Adjust for track)
 //BrakeDiscSetting=0//3.20 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Medium
+CompoundSetting=0//Medium (Adjust for session/weather)
 //EquippedTireIDSetting=-1//None Available
 
 [BASIC]
@@ -456,7 +460,7 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'GT3': `VehicleClassSetting="GT3 Porsche_911_GT3_R_LMGT3 WEC2024"
+    'GT3': `VehicleClassSetting="GT3 Porsche_911_GT3_R_LMGT3 WEC2024"
 UpgradeSetting=(3276,0,0,0)
 //UpgradeClass=
 //Position lights=0
@@ -473,7 +477,7 @@ Symmetric=1
 //CGRightSetting=0//Non-adjustable
 //CGRearSetting=0//Non-adjustable
 //WedgeSetting=0//N/A
-FuelSetting=92//0.93
+FuelSetting=92//0.93 (AI adjusts)
 //FuelCapacitySetting=0//93.0l (22.5 laps)
 //VirtualEnergySetting=100//100% (22.0 laps)
 //NumPitstopsSetting=0//
@@ -491,22 +495,22 @@ FuelSetting=92//0.93
 //FWSetting=0//Standard
 
 [REARWING]
-RWSetting=2//8.3 deg
+RWSetting=2//8.3 deg (Adjust for track)
 
 [BODYAERO]
 //WaterRadiatorSetting=0//No tape
 //OilRadiatorSetting=0//No tape
-BrakeDuctSetting=3//60mm
-BrakeDuctRearSetting=2//40mm
+BrakeDuctSetting=3//60mm (Adjust for track/temp)
+BrakeDuctRearSetting=2//40mm (Adjust for track/temp)
 
 [SUSPENSION]
 //FrontWheelTrackSetting=0//Non-adjustable
 //RearWheelTrackSetting=0//Non-adjustable
-FrontAntiSwaySetting=7//P7 (dur)
-RearAntiSwaySetting=4//P4
-FrontToeInSetting=7//-0.117 deg
+FrontAntiSwaySetting=7//P7 (dur) (Adjust for balance)
+RearAntiSwaySetting=4//P4 (Adjust for balance)
+FrontToeInSetting=7//-0.117 deg (Adjust for turn-in/stability)
 //FrontToeOffsetSetting=0//N/A
-RearToeInSetting=8//0 deg
+RearToeInSetting=8//0 deg (Adjust for stability)
 //RearToeOffsetSetting=0//N/A
 //LeftCasterSetting=0//Non-adjustable
 //RightCasterSetting=0//Non-adjustable
@@ -542,41 +546,40 @@ RearToeInSetting=8//0 deg
 //ChassisAdj11Setting=0//N/A
 
 [CONTROLS]
-SteerLockSetting=4//380° (11.2°)
-RearBrakeSetting=21//51.8:48.2
+SteerLockSetting=4//380° (11.2°) (Adjust for track)
+RearBrakeSetting=21//51.8:48.2 (Adjust for stability)
 //BrakeMigrationSetting=0// 0.0
-//BrakePressureSetting=80//120 kgf (100%)
+//BrakePressureSetting=80//120 kgf (100%) (Adjust for track/driver)
 //HandfrontbrakePressSetting=0//N/A
 //HandbrakePressSetting=0//N/A
 //TCSetting=0//Disponible
 //ABSSetting=0//Disponible
-//TractionControlMapSetting=8//8
-TCPowerCutMapSetting=3//3
-//TCSlipAngleMapSetting=10//10
-AntilockBrakeSystemMapSetting=11//11
+//TractionControlMapSetting=8//8 (Adjust for track/driver)
+TCPowerCutMapSetting=3//3 (Adjust for track/driver)
+//TCSlipAngleMapSetting=10//10 (Adjust for track/driver)
+AntilockBrakeSystemMapSetting=11//11 (Adjust for track/driver)
 
 [ENGINE]
 //RevLimitSetting=0//9,400
 //EngineBoostSetting=0//N/A
 //RegenerationMapSetting=0//0%
-//ElectricMotorMapSetting=0//
-//EngineMixtureSetting=1//Race
+ElectricMotorMapSetting=0//Not Applicable
+//EngineMixtureSetting=1//Race (Adjust for session type)
 //EngineBrakingMapSetting=0//N/A
 
 [DRIVELINE]
-//FinalDriveSetting=0//Fixed
+FinalDriveSetting=0//Fixed (AI adjusts for track type)
 //ReverseSetting=0//Fixed
-Gear1Setting=0//Fixed
-Gear2Setting=0//Fixed
-Gear3Setting=0//Fixed
-Gear4Setting=0//Fixed
-Gear5Setting=0//Fixed
-Gear6Setting=0//Fixed
-RatioSetSetting=0//Short
-//DiffPumpSetting=0//N/A
-//DiffPowerSetting=0//Non-adjustable
+Gear1Setting=0//Fixed (AI adjusts for track type)
+Gear2Setting=0//Fixed (AI adjusts for track type)
+Gear3Setting=0//Fixed (AI adjusts for track type)
+Gear4Setting=0//Fixed (AI adjusts for track type)
+Gear5Setting=0//Fixed (AI adjusts for track type)
+Gear6Setting=0//Fixed (AI adjusts for track type)
+RatioSetSetting=0//Short (AI adjusts for track type)
+//DiffPumpSetting=0//Non-adjustable
 //DiffCoastSetting=0//Non-adjustable
-DiffPreloadSetting=28//78 Nm
+DiffPreloadSetting=28//78 Nm (AI adjusts for track)
 //FrontDiffPumpSetting=0//0%
 //FrontDiffPowerSetting=0//0%
 //FrontDiffCoastSetting=0//0%
@@ -586,72 +589,72 @@ DiffPreloadSetting=28//78 Nm
 //GearAutoDownShiftSetting=0//Non
 
 [FRONTLEFT]
-CamberSetting=26//-1.80 deg
-//PressureSetting=0//140 kPa
-PackerSetting=9//0.9 cm
-SpringSetting=3//4
+CamberSetting=26//-1.80 deg (Adjust for track)
+//PressureSetting=0//140 kPa (Adjust for weather/session)
+PackerSetting=9//0.9 cm (Adjust for track)
+SpringSetting=3//4 (Adjust for track)
 //TenderSpringSetting=0//Standard
 //TenderTravelSetting=0//Standard
 //SpringRubberSetting=0//N/A
-//RideHeightSetting=0//5.0 cm
-SlowBumpSetting=11//7
-FastBumpSetting=2//16
-SlowReboundSetting=6//12
-FastReboundSetting=4//14
+//RideHeightSetting=0//5.0 cm (Adjust for track)
+SlowBumpSetting=11//7 (Adjust for track)
+FastBumpSetting=2//16 (Adjust for track)
+SlowReboundSetting=6//12 (Adjust for track)
+FastReboundSetting=4//14 (Adjust for track)
 //BrakeDiscSetting=0//3.56 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Medium
+//CompoundSetting=0//Medium (Adjust for session/weather)
 
 [FRONTRIGHT]
-CamberSetting=26//-1.80 deg
-//PressureSetting=0//140 kPa
-PackerSetting=9//0.9 cm
-SpringSetting=3//4
+CamberSetting=26//-1.80 deg (Adjust for track)
+//PressureSetting=0//140 kPa (Adjust for weather/session)
+PackerSetting=9//0.9 cm (Adjust for track)
+SpringSetting=3//4 (Adjust for track)
 //TenderSpringSetting=0//Standard
 //TenderTravelSetting=0//Standard
 //SpringRubberSetting=0//N/A
-//RideHeightSetting=0//5.0 cm
-SlowBumpSetting=11//7
-FastBumpSetting=2//16
-SlowReboundSetting=6//12
-FastReboundSetting=4//14
+//RideHeightSetting=0//5.0 cm (Adjust for track)
+SlowBumpSetting=11//7 (Adjust for track)
+FastBumpSetting=2//16 (Adjust for track)
+SlowReboundSetting=6//12 (Adjust for track)
+FastReboundSetting=4//14 (Adjust for track)
 //BrakeDiscSetting=0//3.56 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Medium
+//CompoundSetting=0//Medium (Adjust for session/weather)
 
 [REARLEFT]
-CamberSetting=30//-1.40 deg
-//PressureSetting=0//140 kPa
-PackerSetting=14//1.4 cm
-SpringSetting=1//2
+CamberSetting=30//-1.40 deg (Adjust for track)
+//PressureSetting=0//140 kPa (Adjust for weather/session)
+PackerSetting=14//1.4 cm (Adjust for track)
+SpringSetting=1//2 (Adjust for track)
 //TenderSpringSetting=0//Standard
 //TenderTravelSetting=0//Standard
 //SpringRubberSetting=0//N/A
-//RideHeightSetting=16//6.6 cm
-SlowBumpSetting=7//11
-FastBumpSetting=4//14
-SlowReboundSetting=11//7
-FastReboundSetting=2//16
+//RideHeightSetting=16//6.6 cm (Adjust for track)
+SlowBumpSetting=7//11 (Adjust for track)
+FastBumpSetting=4//14 (Adjust for track)
+SlowReboundSetting=11//7 (Adjust for track)
+FastReboundSetting=2//16 (Adjust for track)
 //BrakeDiscSetting=0//3.20 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Medium
+//CompoundSetting=0//Medium (Adjust for session/weather)
 
 [REARRIGHT]
-CamberSetting=30//-1.40 deg
-//PressureSetting=0//140 kPa
-PackerSetting=14//1.4 cm
-SpringSetting=1//2
+CamberSetting=30//-1.40 deg (Adjust for track)
+//PressureSetting=0//140 kPa (Adjust for weather/session)
+PackerSetting=14//1.4 cm (Adjust for track)
+SpringSetting=1//2 (Adjust for track)
 //TenderSpringSetting=0//Standard
 //TenderTravelSetting=0//Standard
 //SpringRubberSetting=0//N/A
-//RideHeightSetting=16//6.6 cm
-SlowBumpSetting=7//11
-FastBumpSetting=4//14
-SlowReboundSetting=11//7
-FastReboundSetting=2//16
+//RideHeightSetting=16//6.6 cm (Adjust for track)
+SlowBumpSetting=7//11 (Adjust for track)
+FastBumpSetting=4//14 (Adjust for track)
+SlowReboundSetting=11//7 (Adjust for track)
+FastReboundSetting=2//16 (Adjust for track)
 //BrakeDiscSetting=0//3.20 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Medium
+//CompoundSetting=0//Medium (Adjust for session/weather)
 
 [BASIC]
 Downforce=0.500000
@@ -660,7 +663,7 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'GTE': `VehicleClassSetting="Ferrari_488_GTE_EVO GTE"
+    'GTE': `VehicleClassSetting="Ferrari_488_GTE_EVO GTE"
 UpgradeSetting=(2,0,0,0)
 //UpgradeClass=
 //Position lights=0
@@ -674,7 +677,7 @@ Symmetric=0
 //CGRightSetting=0//Non-adjustable
 //CGRearSetting=0//Non-adjustable
 //WedgeSetting=0//N/A
-FuelSetting=85//86l (12giri)
+FuelSetting=85//86l (12giri) (AI adjusts)
 //FuelCapacitySetting=0//+0l (0giri)
 //NumPitstopsSetting=0//
 //Pitstop1Setting=49//N/D
@@ -691,22 +694,22 @@ FuelSetting=85//86l (12giri)
 //FWSetting=0//Le Mans
 
 [REARWING]
-RWSetting=1//P2
+RWSetting=1//P2 (Adjust for track)
 
 [BODYAERO]
-WaterRadiatorSetting=2//50%
-OilRadiatorSetting=2//50%
-BrakeDuctSetting=2//66%
-BrakeDuctRearSetting=2//66%
+WaterRadiatorSetting=2//50% (AI adjusts)
+OilRadiatorSetting=2//50% (AI adjusts)
+BrakeDuctSetting=2//66% (Adjust for track/temp)
+BrakeDuctRearSetting=2//66% (Adjust for track/temp)
 
 [SUSPENSION]
 //FrontWheelTrackSetting=0//Non-adjustable
 //RearWheelTrackSetting=0//Non-adjustable
-FrontAntiSwaySetting=4//P4
-RearAntiSwaySetting=5//P5
-FrontToeInSetting=16//-0.00 °
+FrontAntiSwaySetting=4//P4 (Adjust for balance)
+RearAntiSwaySetting=5//P5 (Adjust for balance)
+FrontToeInSetting=16//-0.00 ° (Adjust for turn-in/stability)
 //FrontToeOffsetSetting=0//N/D
-RearToeInSetting=16//-0.00 °
+RearToeInSetting=16//-0.00 ° (Adjust for stability)
 //RearToeOffsetSetting=0//N/D
 //LeftCasterSetting=0//Non-adjustable
 //RightCasterSetting=0//Non-adjustable
@@ -743,16 +746,16 @@ RearToeInSetting=16//-0.00 °
 
 [CONTROLS]
 //SteerLockSetting=6//540 (18)°
-RearBrakeSetting=15//MUST be changed for stability
+RearBrakeSetting=15//52.0:48.0 (Adjust for stability)
 //BrakeMigrationSetting=0// 0.0
-BrakePressureSetting=50//MUST be changed for preference
+BrakePressureSetting=50//67 kgf (84%) (Adjust for preference)
 //HandfrontbrakePressSetting=0//N/A
 //HandbrakePressSetting=0//N/A
 //TCSetting=0//
 //ABSSetting=0//N/D
-TractionControlMapSetting=5//MUST be changed for track/driver preference
-TCPowerCutMapSetting=5//MUST be changed for track/driver preference
-TCSlipAngleMapSetting=5//MUST be changed for track/driver preference
+TractionControlMapSetting=5//5 (Adjust for track/driver)
+TCPowerCutMapSetting=5//5 (Adjust for track/driver)
+TCSlipAngleMapSetting=5//5 (Adjust for track/driver)
 //AntilockBrakeSystemMapSetting=0//N/A
 
 [ENGINE]
@@ -760,23 +763,23 @@ TCSlipAngleMapSetting=5//MUST be changed for track/driver preference
 //EngineBoostSetting=0//N/A
 //RegenerationMapSetting=0//0%
 ElectricMotorMapSetting=0//Not Applicable
-EngineMixtureSetting=1//MUST be changed for session (e.g., 0=Quali, 1=Race, 2=Lean)
+EngineMixtureSetting=1//Race (Adjust for session type)
 //EngineBrakingMapSetting=0//N/A
 
 [DRIVELINE]
-FinalDriveSetting=0//MUST be changed for the track
-ReverseSetting=0//MUST be changed for the track
-Gear1Setting=0//MUST be changed for the track
-Gear2Setting=0//MUST be changed for the track
-Gear3Setting=0//MUST be changed for the track
-Gear4Setting=0//MUST be changed for the track
-Gear5Setting=0//MUST be changed for the track
-Gear6Setting=0//MUST be changed for the track
-RatioSetSetting=0//MUST be changed for the track
+FinalDriveSetting=0//Fixed (Adjust for track type)
+ReverseSetting=0//2.846
+Gear1Setting=0//2.846 (Adjust for track type)
+Gear2Setting=0//2.200 (Adjust for track type)
+Gear3Setting=0//1.800 (Adjust for track type)
+Gear4Setting=1//1.421 (Adjust for track type)
+Gear5Setting=0//1.238 (Adjust for track type)
+Gear6Setting=0//1.053 (Adjust for track type)
+RatioSetSetting=0//Le Mans (Adjust for track type)
 //DiffPumpSetting=0//N/A
-DiffPowerSetting=10//MUST be changed for track (on-throttle stability)
-DiffCoastSetting=10//MUST be changed for track (off-throttle stability)
-DiffPreloadSetting=15//MUST be changed for track (overall stability)
+DiffPowerSetting=10//40% (Adjust for on-throttle stability)
+DiffCoastSetting=10//100% (Adjust for off-throttle stability)
+DiffPreloadSetting=15//125 Nm (Adjust for overall stability)
 //FrontDiffPumpSetting=0//0%
 //FrontDiffPowerSetting=0//0%
 //FrontDiffCoastSetting=0//0%
@@ -786,75 +789,75 @@ DiffPreloadSetting=15//MUST be changed for track (overall stability)
 //GearAutoDownShiftSetting=0//
 
 [FRONTLEFT]
-CamberSetting=28//-2.2 °
-PressureSetting=3//143 kPa
-PackerSetting=26//2.6 cm
-SpringSetting=2//160 N/mm
+CamberSetting=28//-2.2 ° (Adjust for track)
+PressureSetting=3//143 kPa (Adjust for weather/session)
+PackerSetting=26//2.6 cm (Adjust for track)
+SpringSetting=2//160 N/mm (Adjust for track)
 //TenderSpringSetting=0//Separata
 //TenderTravelSetting=0//Separata
 //SpringRubberSetting=0//Separata
-RideHeightSetting=7//5.7 cm
-SlowBumpSetting=3//3
-FastBumpSetting=1//1
-SlowReboundSetting=5//5
-FastReboundSetting=8//8
+RideHeightSetting=7//5.7 cm (Adjust for track)
+SlowBumpSetting=3//3 (Adjust for track)
+FastBumpSetting=1//1 (Adjust for track)
+SlowReboundSetting=5//5 (Adjust for track)
+FastReboundSetting=8//8 (Adjust for track)
 //BrakeDiscSetting=0//3.50 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Morbida
+//CompoundSetting=0//Morbida (Adjust for session/weather)
 EquippedTireIDSetting=-1//None Available
 
 [FRONTRIGHT]
-CamberSetting=28//-2.2 °
-PressureSetting=3//143 kPa
-PackerSetting=26//2.6 cm
-SpringSetting=2//160 N/mm
+CamberSetting=28//-2.2 ° (Adjust for track)
+PressureSetting=3//143 kPa (Adjust for weather/session)
+PackerSetting=26//2.6 cm (Adjust for track)
+SpringSetting=2//160 N/mm (Adjust for track)
 //TenderSpringSetting=0//Separata
 //TenderTravelSetting=0//Separata
 //SpringRubberSetting=0//Separata
-RideHeightSetting=7//5.7 cm
-SlowBumpSetting=3//3
-FastBumpSetting=1//1
-SlowReboundSetting=5//5
-FastReboundSetting=8//8
+RideHeightSetting=7//5.7 cm (Adjust for track)
+SlowBumpSetting=3//3 (Adjust for track)
+FastBumpSetting=1//1 (Adjust for track)
+SlowReboundSetting=5//5 (Adjust for track)
+FastReboundSetting=8//8 (Adjust for track)
 //BrakeDiscSetting=0//3.50 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Morbida
+//CompoundSetting=0//Morbida (Adjust for session/weather)
 EquippedTireIDSetting=-1//None Available
 
 [REARLEFT]
-CamberSetting=29//-1.6 °
-//PressureSetting=0//140 kPa
-PackerSetting=24//2.4 cm
-SpringSetting=1//140 N/mm
+CamberSetting=29//-1.6 ° (Adjust for track)
+//PressureSetting=0//140 kPa (Adjust for weather/session)
+PackerSetting=24//2.4 cm (Adjust for track)
+SpringSetting=1//140 N/mm (Adjust for track)
 //TenderSpringSetting=0//Separata
 //TenderTravelSetting=0//Separata
 //SpringRubberSetting=0//Separata
-RideHeightSetting=4//5.4 cm
-SlowBumpSetting=1//1
-FastBumpSetting=1//1
-SlowReboundSetting=3//3
-FastReboundSetting=4//4
+RideHeightSetting=4//5.4 cm (Adjust for track)
+SlowBumpSetting=1//1 (Adjust for track)
+FastBumpSetting=1//1 (Adjust for track)
+SlowReboundSetting=3//3 (Adjust for track)
+FastReboundSetting=4//4 (Adjust for track)
 //BrakeDiscSetting=0//3.20 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Morbida
+//CompoundSetting=0//Morbida (Adjust for session/weather)
 EquippedTireIDSetting=-1//None Available
 
 [REARRIGHT]
-CamberSetting=28//-1.7 °
-//PressureSetting=0//140 kPa
-PackerSetting=24//2.4 cm
-SpringSetting=1//140 N/mm
+CamberSetting=28//-1.7 ° (Adjust for track)
+//PressureSetting=0//140 kPa (Adjust for weather/session)
+PackerSetting=24//2.4 cm (Adjust for track)
+SpringSetting=1//140 N/mm (Adjust for track)
 //TenderSpringSetting=0//Separata
 //TenderTravelSetting=0//Separata
 //SpringRubberSetting=0//Separata
-RideHeightSetting=4//5.4 cm
-SlowBumpSetting=1//1
-FastBumpSetting=1//1
-SlowReboundSetting=3//3
-FastReboundSetting=4//4
+RideHeightSetting=4//5.4 cm (Adjust for track)
+SlowBumpSetting=1//1 (Adjust for track)
+FastBumpSetting=1//1 (Adjust for track)
+SlowReboundSetting=3//3 (Adjust for track)
+FastReboundSetting=4//4 (Adjust for track)
 //BrakeDiscSetting=0//3.20 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Morbida
+//CompoundSetting=0//Morbida (Adjust for session/weather)
 EquippedTireIDSetting=-1//None Available
 
 [BASIC]
@@ -867,120 +870,119 @@ Custom=1`
 
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
-    // Destructure initial required fields from the request body
-    const { car, track, request, selectedCarCategory } = req.body; // Added selectedCarCategory
+    // Safely destructure all possible values from the request body
+    const { car, track, request, selectedCarCategory,
+        selectedCarDisplay, selectedTrackDisplay, setupGoal,
+        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
+    } = req.body;
 
-    // Validate essential parameters
-    if (!car || !track || !request || !selectedCarCategory) {
-        return res.status(400).json({ error: "Please provide Car, Track, Setup Request, and Car Category details." });
-    }
+    // Validate essential parameters (using 'request' as setupGoal is expected by the server now)
+    if (!car || !track || !setupGoal || !selectedCarCategory) {
+        return res.status(400).json({ error: "Please provide Car, Track, Setup Goal, and Car Category details." });
+    }
+    
+    // Handle potential category key mismatch (e.g., front-end sends 'LMGT3' but template key is 'GT3')
+    let finalCategory = selectedCarCategory;
+    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) { // If LMGT3 sent, but template is GT3
+        finalCategory = 'GT3';
+    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) { // If GT3 sent, but template is LMGT3
+        finalCategory = 'LMGT3';
+    }
 
-    // Select the appropriate template based on selectedCarCategory
-    const exampleTemplate = LMU_VEH_TEMPLATES[selectedCarCategory];
+    const exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
+    if (!exampleTemplate) {
+        return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.` });
+    }
 
-    if (!exampleTemplate) {
-        return res.status(400).json({ error: `No .VEH template found for car category: ${selectedCarCategory}` });
-    }
+    // Capture or define additional prompt variables with default fallbacks
+    // These are already destructured and will be undefined if not provided, so use default directly
+    const sessionDuration = req.body.sessionDuration || 'N/A'; // Default to N/A if not provided
+    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
+                                `Estimate fuel for a ${sessionDuration} minute race.` : '';
+    const weatherGuidance = `Current weather is ${selectedWeather}.`;
+    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
 
-    // Capture or define additional prompt variables with defaults if not provided by client
-    const selectedCarValue = car; // Using 'car' from request body
-    const selectedCarDisplay = req.body.selectedCarDisplay || car; // Use client's display name or 'car' value
-    // selectedCarCategory is already destructured
-    const selectedTrackValue = track; // Using 'track' from request body
-    const selectedTrackDisplay = req.body.selectedTrackDisplay || track; // Use client's display name or 'track' value
-    const setupGoal = request; // Using 'request' from request body as the setup goal
-    const sessionGoal = req.body.sessionGoal || 'Optimal Lap Time'; // Default or get from client
-    const selectedWeather = req.body.selectedWeather || 'Dry'; // Default or get from client
-    const weatherGuidance = req.body.weatherGuidance || `Track is ${selectedWeather.toLowerCase()}.`; // Basic guidance based on selection
-    const trackTemp = req.body.trackTemp || 25; // Default to 25°C or get from client
-    const specificRequest = req.body.specificRequest || 'None'; // Default or get from client
-    const fuelEstimateRequest = req.body.fuelEstimateRequest || ''; // Default or get from client
-    const tireCompoundGuidance = req.body.tireCompoundGuidance || 'Choose appropriate compound for dry conditions (e.g., 0 for Soft, 1 for Medium, 2 for Hard).'; // Default or get from client
 
-    // Construct the prompt for the AI
-    const prompt = `You are a Le Mans Ultimate (LMU) car setup expert. Your task is to provide a detailed car setup 
-IN THE EXACT LMU .VEH FILE FORMAT. 
-Your response MUST start with 'VehicleClassSetting="...' and include ALL standard LMU sections and parameters as shown in the example below.
-Ensure all parameters within sections are valid LMU parameters and are properly formatted as Setting=Value//Comment (even if the comment is "N/A" or "Non-adjustable").
-DO NOT include any conversational text, explanations, or extra formatting like markdown code blocks (e.g., \`\`\`).
-Only provide the complete and valid .VEH file content.
+    // Construct the prompt for the AI
+    // Removed problematic hyphen and ensured consistent phrasing.
+    const prompt = `
+// --- PRIME DIRECTIVE ---
+Your sole mission is to act as an expert LMU race engineer and generate a complete .VEH setup file. The final setup MUST be a direct and logical response to the user's primary selections for **Setup Goal (Safe, Balanced, Aggressive)**, **Track**, **Car**, and any specific **Driver Feedback**. Every parameter you choose must be justified by these inputs. This is your primary directive.
+
+// --- PERSONA & PHILOSOPHY ---
+You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable and perfectly suited to the driver's requested style and feedback.
+
+**Thought Process (Follow these steps internally):**
+1.  **Prioritize the Driver:** My main objective is to create a setup that is SUITABLE FOR THE DRIVER. First, I will analyze the 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') and any specific problem in the 'Driver Problem to Solve' field. These are my most important instructions.
+2.  **Formulate a Plan:** Based on the driver's needs and the track characteristics, I will form a plan. For example: "The driver wants a 'Safe' setup for Le Mans and is reporting 'unstable braking'. I will use slightly higher wings than optimal, soften the suspension, and move brake bias forward to address this first."
+3.  **Generate Values:** I will generate numerical values for every parameter, always keeping the driver's needs as my primary guide.
+4.  **Review and Refine:** I will look over the generated values to ensure they are logical and directly address the driver's request.
+5.  **Format Output:** I will format the final output strictly as a .VEH file with no other text.
+
+**CRITICAL INSTRUCTION: The template below uses example values and placeholder comments (e.g., '//Adjust for track type'). You MUST replace these with your new, calculated, and numerically valid values. A setup returned with generic example values or comments like 'Adjust for X' or 'MUST be changed' is a complete failure and will be rejected. Remove ALL such placeholder comments and replace them with actual calculations or 'N/A'/'Non-adjustable' where appropriate.**
+
+Crucial LMU Setup Principles to Apply:
+
+// --- NEW IMPROVEMENT TO MAKE SETUPS BETTER ---
+Track-Type Philosophy: My entire setup approach must change based on the track. 
+- For High-Speed tracks (e.g., Circuit de la Sarthe (Le Mans), Monza, Spa-Francorchamps), I must prioritize top speed by using low wing angles, longer gear ratios (numerically higher FinalDriveSetting values, numerically lower individual gears like Gear1-7), and stiffer springs/dampers for high-speed stability.
+- For Technical/Bumpy tracks (e.g., Sebring International Raceway, Autódromo Internacional do Algarve (Portimão)), I must prioritize braking stability and cornering grip by using higher wing angles (if beneficial for downforce balance), shorter gear ratios for acceleration (numerically lower FinalDriveSetting values, numerically higher individual gears), and softer, more compliant suspension settings.
+
+Driver-Centric Adjustments:
+- For a 'Safe' or 'Stable' request, I will prioritize predictability: using slightly softer suspension settings, higher wing angles for stability (if appropriate for track type), and less aggressive differential locking.
+- For an 'Aggressive' request, I will prioritize responsiveness and rotation: using stiffer springs and dampers, more negative front camber for sharp turn-in, and differential settings that allow the rear to rotate.
+- If the driver reports 'understeer', I will focus on changes that increase front-end grip (e.g., soften front anti-roll bar, stiffen rear anti-roll bar, more negative front camber, slightly increase front ride height).
+- If the driver reports 'oversteer', I will focus on changes that increase rear-end stability (e.g., stiffen front anti-roll bar, soften rear anti-roll bar, less negative rear camber, slightly reduce rear ride height).
+
+Qualifying vs. Race Philosophy: For a race setup, I will prioritize stability and tire preservation over ultimate one-lap pace. For qualifying, maximize raw pace.
+
+Engineer's Commentary in Notes: The [GENERAL] Notes section is critical. I must use it to briefly explain the setup's core philosophy (e.g., "Le Mans setup: Low wings for top speed, stiff springs for stability.") and include the fuel calculation.
+
+**Specific Guidance for ENGINE and DRIVELINE (Crucial for fixing the issue):**
+- **RegenerationMapSetting (for Hybrids like Hypercars):** For Race sessions, aim for 10 (max regen). For Qualifying, a lower value like 8 or 9 might be used. For non-hybrids, this should be 0//N/A.
+- **ElectricMotorMapSetting (for Hybrids like Hypercars):** For Race sessions, use 3 or 4 for usable electric power. For Qualifying, 4 for maximum boost. For non-hybrids (LMP2, GT3, GTE), this *must* be 0//Not Applicable. Do NOT output "safety-car" or any other non-numerical value.
+- **EngineMixtureSetting:** For Qualifying, use 0//Full. For Race sessions, use 1//Race unless fuel saving is a very specific request, then consider 2//Lean.
+- **FinalDriveSetting & Gears (Gear1Setting-Gear7Setting):** These are paramount for track type.
+    - **High-Speed Tracks (e.g., Le Mans, Monza):** Choose a longer FinalDriveSetting (e.g., 5-7 for higher top speed) and adjust individual gears to stretch them for top speed. The comments for individual gears should reflect the calculated speed.
+    - **Technical Tracks (e.g., Sebring, Imola):** Choose a shorter FinalDriveSetting (e.g., 0-3 for better acceleration) and adjust individual gears for quicker acceleration out of corners.
+- **DiffPowerSetting (on-throttle):** Higher for more traction, lower for more rotation. Adjust based on setup goal and driver feedback. (e.g., 0-15 typical range).
+- **DiffCoastSetting (off-throttle):** Higher for more stability on lift-off, lower for more rotation. Adjust based on setup goal and driver feedback. (e.g., 0-20 typical range).
+- **DiffPreloadSetting:** Affects low-speed stability. Higher for more stability, lower for more maneuverability. (e.g., 0-100 Nm typical range).
+- **RatioSetSetting:** 0 for Standard, 1 for Long/High Speed, etc. Adjust based on track type.
 
 Here are the details for the setup request:
-Car: ${selectedCarValue} (Display Name: ${selectedCarDisplay}, Category: ${selectedCarCategory})
-Track: ${selectedTrackValue} (Display Name: ${selectedTrackDisplay})
+Car: ${car} (Display Name: ${selectedCarDisplay}, Category: ${selectedCarCategory})
+Track: ${track} (Display Name: ${selectedTrackDisplay})
 Setup Goal: ${setupGoal}
+Driver Problem to Solve: ${driverFeedback}
 Session Goal: ${sessionGoal}
+Session Duration: ${sessionDuration} minutes
 Weather: ${selectedWeather} (${weatherGuidance})
 Track Temperature: ${trackTemp}°C
 Specific User Request: ${specificRequest}
 ${fuelEstimateRequest}
+${tireCompoundGuidance}
 
-**Crucial LMU Setup Principles to Apply:**
-- **Gear ratios (FinalDriveSetting, Gear1Setting-Gear7Setting) MUST be adjusted realistically for the specific track and car, NOT fixed or generic.**
-- **For Circuit de la Sarthe (Le Mans) and its layouts, ensure a high top speed by selecting a LONG FinalDriveSetting and adjusting individual gears - **Engine settings like RegenerationMapSetting and ElectricMotorMapSetting (for hybrid cars) MUST be performance-oriented (e.g., 10 for regen, 3 or 4 for motor map if applicable), NOT "Safety-car" or "N/A".**
-- **Tyre Compound (CompoundSetting) MUST be a numerical value (0 for Soft/Wet, 1 for Medium, 2 for Hard). ${tireCompoundGuidance}**
-- **Tyre Pressure (PressureSetting) MUST be a numerical value (e.g., 0 for 135kPa, 1 for 136kPa, etc.) corresponding to realistic pressures, NOT "N/A" or a fixed kPa value in the setting itself.**
-- **All Suspension settings (AntiSway, Toe, Camber, Spring, RideHeight, Bump, Rebound, Packers) must be adjusted for the car/track/goal.**
-- **Brake settings (RearBrakeSetting, BrakePressureSetting) must be adjusted for the car/track/goal.**
-- **Traction Control/ABS maps MUST be adjusted for the car/track/goal.**
-- **Aerodynamic efficiency is crucial.** Balance downforce for cornering grip with minimal drag for top speed, especially on tracks with long straights (like Le Mans or Monza).
-- **Front and Rear Wing settings MUST be proportional to the track's downforce demands.** High downforce for technical tracks (e.g., Imola, COTA), lower for high-speed tracks.
-- **Brake Duct settings MUST be minimized for aero efficiency** (e.g., 0-3 for front, 0-5 for rear) unless brake temperatures are consistently overheating (check if track temp is high).
-- **Overall Balance: The setup should aim for a neutral handling balance, avoiding extreme understeer or oversteer unless explicitly requested (e.g., 'aggressive' setup). Predictability is key for faster lap times.**
-- **Weight Distribution: Settings should implicitly balance front-to-rear weight distribution for optimal grip. Higher front ride height or softer front springs can shift balance rearward, and vice-versa.**
-- **Compliance: Ensure sufficient suspension compliance over bumps and curbs to maintain tire contact, especially on tracks like Sebring or Spa.**
-- **Rake Angle: Adjust front and rear ride heights to create an optimal rake angle (rear ride height typically higher than front) for maximizing diffuser performance and overall downforce without excessive drag.**
-- **Fender Flares (FenderFlareSetting): These are usually set to 0 ("N/A") unless specifically needed for tire clearance on a very aggressive setup, which is rare for performance.**
-- **Anti-Sway Bars (FrontAntiSwaySetting, RearAntiSwaySetting) should be tuned for handling balance.** Stiffer front promotes understeer, softer front promotes oversteer. Stiffer rear promotes oversteer, softer rear promotes understeer. Adjust to achieve desired balance (e.g., softer for safe, stiffer for aggressive).
-- **Ride Heights (FrontRideHeightSetting, RearRideHeightSetting) should be set low for maximum downforce** but ensure sufficient clearance for curbs and bumps. Maintain appropriate rake (rear higher than front) for diffuser efficiency.
-- **Spring Rates (SpringSetting) should match track characteristics.** Softer springs for bumpy tracks (e.g., Sebring) or long-distance comfort/tire wear. Stiffer springs for smooth tracks and sharp responsiveness.
-- **Dampers (Slow/Fast Bump/Rebound) are critical for weight transfer and tire contact.** Soft bump settings for better mechanical grip and compliance over bumps. Stiffer rebound settings for better body control and stability after compression.
-- **Slow vs. Fast Damper Adjustments: Slow Bump/Rebound affects car behavior during slow weight transfers (braking, acceleration, corner entry/exit). Stiffer slow bump provides more initial support. Stiffer slow rebound helps the car settle. Fast Bump/Rebound affects car behavior over quick events (curbs, bumps). Softer fast bump provides better absorption. Softer fast rebound allows quicker wheel return after impacts. Tune Dampers for predictable handling through transitions and over track imperfections.**
-- **Toe-in/Toe-out (FrontToeInSetting, RearToeInSetting) should be precise.** Front toe-out for sharper turn-in. Rear toe-in for stability. Rear toe-out (if allowed/used) for aggressive rotation.
-- **Brake Bias (RearBrakeSetting) MUST be adjusted for stability under braking and turn-in.** Shift forward for stability, shift rearward for rotation. Common range 52-58%.
-- **Brake Pressure (BrakePressureSetting) should be maximized for stopping power** without causing excessive lock-ups for the specific car/track/ABS setting.
-- **Steer Lock (SteerLockSetting): Should be set to allow full lock without hitting mechanical limits and provide comfortable steering sensitivity for the track.**
-- **Brake Migration (BrakeMigrationSetting): Typically set to 0.0 unless a specific dynamic brake bias change through the braking zone is desired.**
-- **Handbrake settings (HandfrontbrakePressSetting, HandbrakePressSetting): Always '0' unless specified for very specific rally or drift scenarios (not applicable to LMU endurance racing).**
-- **TC/ABS Mapping (TractionControlMapSetting, TCPowerCutMapSetting, TCSlipAngleMapSetting, AntilockBrakeSystemMapSetting): Tune these for the specific car's power delivery and driver preference. Lower values provide more direct control but require smoother input; higher values provide more assistance for stability.**
-- **Engine Mixture (EngineMixtureSetting): Usually '0' (Full power) for qualifying and '1' (Race) for races, unless fuel saving is prioritized.**
-- **Ratio Set (RatioSetSetting): Choose '0' (Standard) or '1' (Short/Long) based on the track and required acceleration/top speed balance.**
-- **Differential Power (DiffPowerSetting) affects on-throttle stability.** Higher values provide more traction but can induce on-throttle oversteer. Lower values promote rotation but might lose traction.
-- **Differential Coast (DiffCoastSetting) affects off-throttle stability.** Higher values increase stability on lift-off. Lower values promote lift-off oversteer.
-- **Differential Preload (DiffPreloadSetting) affects low-speed and overall stability.** Higher values increase stability but can cause understeer on turn-in.
-- **Differential Pump (DiffPumpSetting) & Split (RearSplitSetting, FrontDiff settings): For RWD cars, these are usually '0' or "N/A" unless the car has a specific AWD or active differential system that allows adjustment. Default to '0' or "N/A".**
-- **Automatic Shifting (GearAutoUpShiftSetting, GearAutoDownShiftSetting): Always '0' (Off) for performance setups.**
-- **Tender Springs/Travel (TenderSpringSetting, TenderTravelSetting): These are often '0' or 'Detached' in default LMU GT cars/Hypercars unless a specific progressive spring rate is needed. Default to '0' or 'Detached'.**
-- **Tire Pressures (PressureSetting in [FRONTLEFT]/[FRONTRIGHT]/[REARLEFT]/[REARRIGHT]) should target optimal hot temperatures.** A common goal for hot pressure is around 180-200 kPa. Cold pressure settings like 0-5 are often common starting points in LMU. These values are highly car/track dependent.
-- **Camber (CamberSetting in wheel sections) must be set for optimal cornering grip and even tire wear.** More negative camber increases cornering grip but can reduce straight-line traction and wear the inner edge.
-
-Example of expected LMU .VEH structure (use this as the exact template to fill in values):
+This is the required LMU .VEH structure and format. You must use this exact structure, replacing all placeholder values (especially those with "MUST be changed" comments).
 ${exampleTemplate}
 
-Now generate the setup:
+Now, generate the complete and valid .VEH file. Your response must contain ONLY the file content and nothing else.
 `;
 
-    try {
-        // --- CORRECTED API CALL SECTION ---
-        console.log("Sending prompt to OpenRouter AI for car:", car, "track:", track, "category:", selectedCarCategory, "using model:", PRIMARY_MODEL);
-
+    try {
         const openrouterResponse = await fetch(OPENROUTER_API_URL, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
                 'Content-Type': 'application/json',
-                // Recommended headers for OpenRouter
                 'HTTP-Referer': 'https://test-hrwc.onrender.com', // Your app's URL
-                'X-Title': 'LMU Setup Generator', // Your app's name
+                'X-Title': 'LMU Setup Generator',
             },
             body: JSON.stringify({
                 model: PRIMARY_MODEL,
-                messages: [
-                    { role: "system", content: "You are a helpful assistant that generates LMU car setups. You must respond only with the .VEH file content and strictly adhere to the provided LMU .VEH format and section structure. DO NOT include markdown code blocks or any other extraneous text." },
-                    { role: "user", content: prompt }
-                ],
+                messages: [{ role: "user", content: prompt }],
                 max_tokens: 4096,
-                temperature: 0.4,
+                temperature: 0.4, // Keep temperature low to encourage adherence to format
             }),
         });
 
@@ -995,7 +997,7 @@ Now generate the setup:
         const chatCompletion = await openrouterResponse.json();
         let text = chatCompletion.choices[0].message.content;
 
-        // Trim leading/trailing whitespace AND markdown code blocks (if present)
+        // Trim leading/trailing whitespace AND remove markdown code blocks (if present)
         text = text.trim();
         if (text.startsWith('```') && text.endsWith('```')) {
             text = text.replace(/^```[a-zA-Z]*\n|\n```$/g, '').trim();
