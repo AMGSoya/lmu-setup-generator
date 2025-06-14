@@ -1,4 +1,4 @@
-// --- server.js (Final Version) ---
+// --- server.js (for OpenRouter API - Primary AI Service) ---More actions
 
 // 1. Load environment variables from .env file
 require('dotenv').config();
@@ -6,33 +6,48 @@ require('dotenv').config();
 // 2. Import necessary libraries
 const express = require('express');
 const path = require('path');
-// 3. Initialize Express app and define port
+// Node.js v18+ has a built-in fetch API, so node-fetch is no longer needed
 
+// 3. Initialize Express app and define port
 const app = express();
 const port = process.env.PORT || 3000;
+
 // 4. Middleware to parse JSON bodies
 app.use(express.json());
 
-// 5. Serve static files
+// 5. Serve static files (assuming your index.html and client-side JS are in the same directory)
 app.use(express.static(path.join(__dirname)));
 
-// 6. Get API Keys from .env file
+// 6. Get your API keys from the .env file
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY; // Loaded but not used in primary flow
+// The HUGGINGFACE_API_KEY is loaded and available for use,
+// but the primary setup generation uses OpenRouter as configured below.
+const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
 
-// 7. API Key Validation
+// --- Validation for API Keys ---
 if (!OPENROUTER_API_KEY) {
-    console.error("ERROR: OPENROUTER_API_KEY not found in your .env file.");
-    process.exit(1);
+    console.error("ERROR: OPENROUTER_API_KEY not found in your .env file.");
+    console.error("Please ensure you have a .env file in the same directory as server.js");
+    console.error("And it contains the line: OPENROUTER_API_KEY=YOUR_ACTUAL_OPENROUTER_KEY_HERE");
+    process.exit(1);
 }
 
-// 8. Define OpenRouter API endpoint and Model
+if (!HUGGINGFACE_API_KEY) {
+    // This is a warning because the primary function uses OpenRouter.
+    console.warn("WARN: HUGGINGFACE_API_KEY not found in your .env file.");
+    console.warn("The application will continue, but features relying on direct Hugging Face calls will fail.");
+}
+
+// 7. Define OpenRouter API endpoint and Model
+// The user has requested to use deepseek-ai/DeepSeek-R1-0528 as the primary model.
+// This model is available through the OpenRouter API.
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+// CORRECT
 const PRIMARY_MODEL = 'NousResearch/Hermes-2-Pro-Llama-3-8B';
 
 // --- Define LMU .VEH Example Templates by Category ---
 const LMU_VEH_TEMPLATES = {
-    'Hypercar': `VehicleClassSetting="Ferrari_499P Hypercar WEC2024"
+    'Hypercar': `VehicleClassSetting="Ferrari_499P Hypercar WEC2024"
 UpgradeSetting=(2,0,0,0)
 //UpgradeClass=
 //Tyre Restrictions=2
@@ -88,7 +103,7 @@ LeftTrackBarSetting=0//N/A
 RightTrackBarSetting=0//N/A
 Front3rdPackerSetting=8//0.8 cm
 Front3rdSpringSetting=8//8
-Front3rdTenderSpringSetting=0//Detache
+Front3rdTenderSpringSetting=0//Detached
 Front3rdTenderTravelSetting=0//Detached
 Front3rdSlowBumpSetting=0//1
 Front3rdFastBumpSetting=2//3
@@ -98,12 +113,11 @@ Rear3rdPackerSetting=10//1.0 cm
 Rear3rdSpringSetting=7//7
 Rear3rdTenderSpringSetting=0//Detached
 Rear3rdTenderTravelSetting=0//Detached
-Rear3rdSlowBumpSetting=0//
+Rear3rdSlowBumpSetting=0//1
 Rear3rdFastBumpSetting=2//3
 Rear3rdSlowReboundSetting=0//1
 Rear3rdFastReboundSetting=2//3
-ChassisAdj00Setting=0//Alernative
-
+ChassisAdj00Setting=0//Alternative
 ChassisAdj01Setting=0//N/A
 ChassisAdj02Setting=0//N/A
 ChassisAdj03Setting=0//N/A
@@ -162,72 +176,72 @@ GearAutoUpShiftSetting=0//Off
 GearAutoDownShiftSetting=0//Off
 
 [FRONTLEFT]
-CamberSetting=20//MUST be changed for track
-PressureSetting=5//MUST be changed for weather and track
-PackerSetting=10//MUST be changed for track
-SpringSetting=8//MUST be changed for track
+CamberSetting=35//-0.5 deg
+PressureSetting=0//135 kPa
+PackerSetting=5//0.5 cm
+SpringSetting=12//16.44mm
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=15//MUST be changed for track (and rake)
-SlowBumpSetting=5//MUST be changed for track
-FastBumpSetting=5//MUST be changed for track
-SlowReboundSetting=5//MUST be changed for track
-FastReboundSetting=5//MUST be changed for track
+RideHeightSetting=10//5.0 cm
+SlowBumpSetting=7//8
+FastBumpSetting=4//5
+SlowReboundSetting=6//7
+FastReboundSetting=4//5
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
+CompoundSetting=0//Soft
 
 [FRONTRIGHT]
-CamberSetting=20//MUST be changed for track
-PressureSetting=5//MUST be changed for weather and track
-PackerSetting=10//MUST be changed for track
-SpringSetting=8//MUST be changed for track
+CamberSetting=35//-0.5 deg
+PressureSetting=0//135 kPa
+PackerSetting=5//0.5 cm
+SpringSetting=12//16.44mm
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=15//MUST be changed for tack (and rake)
-SlowBumpSetting=5//MUST be changed for track
-FastBumpSetting=5//MUST be changed for track
-SlowReboundSetting=5//MUST be changed for track
-FastReboundSetting=5//MUST be changed for track
+RideHeightSetting=10//5.0 cm
+SlowBumpSetting=7//8
+FastBumpSetting=4//5
+SlowReboundSetting=6//7
+FastReboundSetting=4//5
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
+CompoundSetting=0//Soft
 
 [REARLEFT]
-CamberSetting=20//MUST be changed for track
-PressureSetting=5//MUST be changed for weather and track
-PackerSetting=10//MUST be changed for track
-SpringSetting=8//MUST be changed for track
+CamberSetting=35//-0.5 deg
+PressureSetting=0//135 kPa
+PackerSetting=8//0.8 cm
+SpringSetting=0//13.33mm
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=15//MUST be changed for track (and rake)
-SlowBumpSetting=5//MUST be changed for track
-FastBumpSetting=5//MUST be changed for track
-SlowReboundSetting=5//MUST be changed for track
-FastReboundSetting=5//MUST be changed for track
+RideHeightSetting=5//6.5 cm
+SlowBumpSetting=2//3
+FastBumpSetting=1//2
+SlowReboundSetting=3//4
+FastReboundSetting=2//3
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
+CompoundSetting=0//Soft
 
 [REARRIGHT]
-CamberSetting=20//MUST be changed for track
-PressureSetting=5//MUST be changed for weather and track
-PackerSetting=10//MUST be changed for track
-SpringSetting=8//MUST be changed for track
+CamberSetting=35//-0.5 deg
+PressureSetting=0//135 kPa
+PackerSetting=8//0.8 cm
+SpringSetting=0//13.33mm
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=15//MUST be changed for track (and rake)
-SlowBumpSetting=5//MUST be changed for track
-FastBumpSetting=5//MUST be changed for track
-SlowReboundSetting=5//MUST be changed for track
-FastReboundSetting=5//MUST be changed for track
+RideHeightSetting=5//6.5 cm
+SlowBumpSetting=2//3
+FastBumpSetting=1//2
+SlowReboundSetting=3//4
+FastReboundSetting=2//3
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
+CompoundSetting=0//Soft
 
 [BASIC]
 Downforce=0.500000
@@ -236,7 +250,7 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'LMP2': `VehicleClassSetting="LMP2 Oreca_07"
+    'LMP2': `VehicleClassSetting="LMP2 Oreca_07"
 UpgradeSetting=(12,0,0,0)
 //UpgradeClass=
 //Fuel tank=0
@@ -269,7 +283,7 @@ FuelSetting=11//16L (3laps)
 //FWSetting=0//Le Mans
 
 [REARWING]
-RWSetting=0//P1-P9
+RWSetting=0//P1
 
 [BODYAERO]
 WaterRadiatorSetting=2//50%
@@ -290,7 +304,7 @@ RearToeInSetting=22//0.35 deg
 //RightCasterSetting=0//Non-adjustable
 //LeftTrackBarSetting=0//N/A
 //RightTrackBarSetting=0//N/A
-Front3rdPackerSetting=6//0. cm
+Front3rdPackerSetting=6//0.6 cm
 Front3rdSpringSetting=0//N/A
 //Front3rdTenderSpringSetting=0//Detached
 //Front3rdTenderTravelSetting=0//Detached
@@ -364,72 +378,75 @@ DiffPreloadSetting=10//MUST be changed for track (affects overall stability)
 //GearAutoDownShiftSetting=0//Off
 
 [FRONTLEFT]
-CamberSetting=15//MUST be changed for track
-PressureSetting=5//MUST be changed for weather and track
-PackerSetting=10//MUST be changed for track
-SpringSetting=8//MUST be changed for track
-TenderSpringSetting=0//Detached
-TenderTravelSetting=0//Detached
-SpringRubberSetting=0//Detached
-RideHeightSetting=15//MUST be changed for track (and rake)
-SlowBumpSetting=5//MUST be changed for track
-FastBumpSetting=5//MUST be changed for track
-SlowReboundSetting=5//MUST be changed for track
-FastReboundSetting=5//MUST be changed for track
-BrakeDiscSetting=0//3.20 cm
-BrakePadSetting=0//1
-CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
+CamberSetting=11//-1.5 deg
+//PressureSetting=0//140 kPa
+PackerSetting=3//0.3 cm
+SpringSetting=0//150N/mm
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=10//4.5 cm
+SlowBumpSetting=4//5
+FastBumpSetting=1//2
+SlowReboundSetting=2//3
+FastReboundSetting=1//2
+//BrakeDiscSetting=0//3.20 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Medium
+//EquippedTireIDSetting=-1//None Available
 
 [FRONTRIGHT]
-CamberSetting=15//MUST be changed for track
-PressureSetting=5//MUST be changed for weather and track
-PackerSetting=10//MUST be changed for track
-SpringSetting=8//MUST be changed for track
-TenderSpringSetting=0//Detached
-TenderTravelSetting=0//Detached
-SpringRubberSetting=0//Detached
-RideHeightSetting=15//MUST be changed for track (and rake)
-SlowBumpSetting=5//MUST be changed for track
-FastBumpSetting=5//MUST be changed for track
-SlowReboundSetting=5//MUST be changed for track
-FastReboundSetting=5//MUST be changed for track
-BrakeDiscSetting=0//3.20 cm
-BrakePadSetting=0//1
-CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
+CamberSetting=11//-1.5 deg
+//PressureSetting=0//140 kPa
+PackerSetting=3//0.3 cm
+SpringSetting=0//150N/mm
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=10//4.5 cm
+SlowBumpSetting=4//5
+FastBumpSetting=1//2
+SlowReboundSetting=2//3
+FastReboundSetting=1//2
+//BrakeDiscSetting=0//3.20 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Medium
+//EquippedTireIDSetting=-1//None Available
 
 [REARLEFT]
-CamberSetting=15//MUST be changed for track
-PressureSetting=5//MUST be changed for weather and track
-PackerSetting=10//MUST be changed for track
-SpringSetting=8//MUST be changed for track
-TenderSpringSetting=0//Detached
-TenderTravelSetting=0//Detached
-SpringRubberSetting=0//Detached
-RideHeightSetting=15//MUST be changed for track (and rake)
-SlowBumpSetting=5//MUST be changed for track
-FastBumpSetting=5//MUST be changed for track
-SlowReboundSetting=5//MUST be changed for track
-FastReboundSetting=5//MUST be changed for track
-BrakeDiscSetting=0//3.20 cm
-BrakePadSetting=0//1
-CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
+CamberSetting=5//-1.0 deg
+//PressureSetting=0//140 kPa
+PackerSetting=1//0.1 cm
+//SpringSetting=3//1100lbf/in
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=24//7.0 cm
+SlowBumpSetting=0//1 (soft)
+FastBumpSetting=0//1 (soft)
+SlowReboundSetting=1//2
+FastReboundSetting=0//1 (soft)
+//BrakeDiscSetting=0//3.20 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Medium
+//EquippedTireIDSetting=-1//None Available
 
 [REARRIGHT]
-CamberSetting=15//MUST be changed for track
-PressureSetting=5//MUST be changed for weather and track
-PackerSetting=10//MUST be changed for track
-SpringSetting=8//MUST be changed for track
-TenderSpringSetting=0//Detached
-TenderTravelSetting=0//Detached
-SpringRubberSetting=0//Detached
-RideHeightSetting=15//MUST be changed for track (and rake)
-SlowBumpSetting=5//MUST be changed for track
-FastBumpSetting=5//MUST be changed for track
-SlowReboundSetting=5//MUST be changed for track
-FastReboundSetting=5//MUST be changed for track
-BrakeDiscSetting=0//3.20 cm
-BrakePadSetting=0//1
-CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
+CamberSetting=5//-1.0 deg
+//PressureSetting=0//140 kPa
+PackerSetting=1//0.1 cm
+//SpringSetting=3//1100lbf/in
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=24//7.0 cm
+SlowBumpSetting=0//1 (soft)
+FastBumpSetting=0//1 (soft)
+SlowReboundSetting=1//2
+FastReboundSetting=0//1 (soft)
+//BrakeDiscSetting=0//3.20 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Medium
 //EquippedTireIDSetting=-1//None Available
 
 [BASIC]
@@ -850,154 +867,120 @@ Custom=1`
 
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
-    // Safely destructure all possible values from the request body
-    const { car, track, request, selectedCarCategory,
-        selectedCarDisplay, selectedTrackDisplay, setupGoal,
-        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
-    } = req.body;
+    // Destructure initial required fields from the request body
+    const { car, track, request, selectedCarCategory } = req.body; // Added selectedCarCategory
 
-    // Validate essential parameters (using 'request' as setupGoal is expected by the server now)
-    if (!car || !track || !setupGoal || !selectedCarCategory) {
-        return res.status(400).json({ error: "Please provide Car, Track, Setup Goal, and Car Category details." });
-    }
-    
-    // Handle potential category key mismatch (e.g., front-end sends 'LMGT3' but template key is 'GT3')
-    let finalCategory = selectedCarCategory;
-    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) { // If LMGT3 sent, but template is GT3
-        finalCategory = 'GT3';
-    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) { // If GT3 sent, but template is LMGT3
-        finalCategory = 'LMGT3';
-    }
+    // Validate essential parameters
+    if (!car || !track || !request || !selectedCarCategory) {
+        return res.status(400).json({ error: "Please provide Car, Track, Setup Request, and Car Category details." });
+    }
 
-    const exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
-    if (!exampleTemplate) {
-        return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.` });
-    }
+    // Select the appropriate template based on selectedCarCategory
+    const exampleTemplate = LMU_VEH_TEMPLATES[selectedCarCategory];
 
-    // Capture or define additional prompt variables with default fallbacks
-    // These are already destructured and will be undefined if not provided, so use default directly
-    const sessionDuration = req.body.sessionDuration || 'N/A'; // Default to N/A if not provided
-    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
-                                `Estimate fuel for a ${sessionDuration} minute race.` : '';
-    const weatherGuidance = `Current weather is ${selectedWeather}.`;
-    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+    if (!exampleTemplate) {
+        return res.status(400).json({ error: `No .VEH template found for car category: ${selectedCarCategory}` });
+    }
 
+    // Capture or define additional prompt variables with defaults if not provided by client
+    const selectedCarValue = car; // Using 'car' from request body
+    const selectedCarDisplay = req.body.selectedCarDisplay || car; // Use client's display name or 'car' value
+    // selectedCarCategory is already destructured
+    const selectedTrackValue = track; // Using 'track' from request body
+    const selectedTrackDisplay = req.body.selectedTrackDisplay || track; // Use client's display name or 'track' value
+    const setupGoal = request; // Using 'request' from request body as the setup goal
+    const sessionGoal = req.body.sessionGoal || 'Optimal Lap Time'; // Default or get from client
+    const selectedWeather = req.body.selectedWeather || 'Dry'; // Default or get from client
+    const weatherGuidance = req.body.weatherGuidance || `Track is ${selectedWeather.toLowerCase()}.`; // Basic guidance based on selection
+    const trackTemp = req.body.trackTemp || 25; // Default to 25°C or get from client
+    const specificRequest = req.body.specificRequest || 'None'; // Default or get from client
+    const fuelEstimateRequest = req.body.fuelEstimateRequest || ''; // Default or get from client
+    const tireCompoundGuidance = req.body.tireCompoundGuidance || 'Choose appropriate compound for dry conditions (e.g., 0 for Soft, 1 for Medium, 2 for Hard).'; // Default or get from client
 
-    // Construct the prompt for the AI
-   // 8. Define a route for AI setup requests
-app.post('/generate-setup', async (req, res) => {
-    // Safely destructure all possible values from the request body
-    const { car, track, request, selectedCarCategory,
-        selectedCarDisplay, selectedTrackDisplay, setupGoal,
-        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
-    } = req.body;
-
-    // Validate essential parameters (using 'request' as setupGoal is expected by the server now)
-    if (!car || !track || !setupGoal || !selectedCarCategory) {
-        return res.status(400).json({ error: "Please provide Car, Track, Setup Goal, and Car Category details." });
-    }
-    
-    // Handle potential category key mismatch (e.g., front-end sends 'LMGT3' but template key is 'GT3')
-    let finalCategory = selectedCarCategory;
-    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) { // If LMGT3 sent, but template is GT3
-        finalCategory = 'GT3';
-    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) { // If GT3 sent, but template is LMGT3
-        finalCategory = 'LMGT3';
-    }
-
-    const exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
-    if (!exampleTemplate) {
-        return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.` });
-    }
-
-    // Capture or define additional prompt variables with default fallbacks
-    // These are already destructured and will be undefined if not provided, so use default directly
-    const sessionDuration = req.body.sessionDuration || 'N/A'; // Default to N/A if not provided
-    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
-                                `Estimate fuel for a ${sessionDuration} minute race.` : '';
-    const weatherGuidance = `Current weather is ${selectedWeather}.`;
-    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
-
-
-    // Construct the prompt for the AI
-    const prompt = `
-// --- PRIME DIRECTIVE ---
-Your sole mission is to act as an expert LMU race engineer and generate a complete .VEH setup file. The final setup MUST be a direct and logical response to the user's primary selections for **Setup Goal (Safe, Balanced, Aggressive)**, **Track**, **Car**, and any specific **Driver Feedback**. Every parameter you choose must be justified by these inputs. This is your primary directive.
-
-// --- PERSONA & PHILOSOPHY ---
-You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable and perfectly suited to the driver's requested style and feedback.
-
-**Thought Process (Follow these steps internally):**
-1.  **Prioritize the Driver:** My main objective is to create a setup that is SUITABLE FOR THE DRIVER. First, I will analyze the 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') and any specific problem in the 'Driver Problem to Solve' field. These are my most important instructions.
-2.  **Formulate a Plan:** Based on the driver's needs and the track characteristics, I will form a plan. For example: "The driver wants a 'Safe' setup for Le Mans and is reporting 'unstable braking'. I will use slightly higher wings than optimal, soften the suspension, and move brake bias forward to address this first."
-3.  **Generate Values:** I will generate numerical values for every parameter, always keeping the driver's needs as my primary guide.
-4.  **Review and Refine:** I will look over the generated values to ensure they are logical and directly address the driver's request.
-5.  **Format Output:** I will format the final output strictly as a .VEH file with no other text.
-
-**CRITICAL INSTRUCTION: The template below uses OBVIOUS PLACEHOLDER values (e.g., 'Gear1Setting=0//MUST be changed for the track'). You MUST replace these placeholders with your new, calculated, and numerically valid values. A setup returned with placeholder values like 'Gear1Setting=0//MUST be changed for the track' is a complete failure and will be rejected. Remove ALL 'MUST be changed' comments and replace with actual calculations or 'N/A'/'Non-adjustable' where appropriate.**
-
-Crucial LMU Setup Principles to Apply:
-
-// --- NEW IMPROVEMENT TO MAKE SETUPS BETTER ---
-Track-Type Philosophy: My entire setup approach must change based on the track. 
-- For High-Speed tracks (e.g., Circuit de la Sarthe (Le Mans), Monza, Spa-Francorchamps), I must prioritize top speed by using low wing angles, longer gear ratios (higher FinalDriveSetting values, numerically lower individual gears like Gear1-7), and stiffer springs/dampers for high-speed stability.
-- For Technical/Bumpy tracks (e.g., Sebring International Raceway, Autódromo Internacional do Algarve (Portimão)), I must prioritize braking stability and cornering grip by using higher wing angles (if beneficial for downforce balance), shorter gear ratios for acceleration (lower FinalDriveSetting values, numerically higher individual gears), and softer, more compliant suspension settings.
-
-Driver-Centric Adjustments:
-- For a 'Safe' or 'Stable' request, I will prioritize predictability: using slightly softer suspension settings, higher wing angles for stability (if appropriate for track type), and less aggressive differential locking.
-- For an 'Aggressive' request, I will prioritize responsiveness and rotation: using stiffer springs and dampers, more negative front camber for sharp turn-in, and differential settings that allow the rear to rotate.
-- If the driver reports 'understeer', I will focus on changes that increase front-end grip (e.g., soften front anti-roll bar, stiffen rear anti-roll bar, more negative front camber, slightly increase front ride height).
-- If the driver reports 'oversteer', I will focus on changes that increase rear-end stability (e.g., stiffen front anti-roll bar, soften rear anti-roll bar, less negative rear camber, slightly reduce rear ride height).
-
-Qualifying vs. Race Philosophy: For a race setup, I will prioritize stability and tire preservation over ultimate one-lap pace. For qualifying, maximize raw pace.
-
-Engineer's Commentary in Notes: The [GENERAL] Notes section is critical. I must use it to briefly explain the setup's core philosophy (e.g., "Le Mans setup: Low wings for top speed, stiff springs for stability.") and include the fuel calculation.
-
-**Specific Guidance for ENGINE and DRIVELINE (Crucial for fixing the issue):**
-- **RegenerationMapSetting (for Hybrids like Hypercars):** For Race sessions, aim for 10 (max regen). For Qualifying, a lower value like 8 or 9 might be used. For non-hybrids, this should be 0//N/A.
-- **ElectricMotorMapSetting (for Hybrids like Hypercars):** For Race sessions, use 3 or 4 for usable electric power. For Qualifying, 4 for maximum boost. For non-hybrids (LMP2, GT3, GTE), this *must* be 0//Not Applicable. Do NOT output "safety-car" or any other non-numerical value.
-- **EngineMixtureSetting:** For Qualifying, use 0//Full. For Race sessions, use 1//Race unless fuel saving is a very specific request, then consider 2//Lean.
-- **FinalDriveSetting & Gears (Gear1Setting-Gear7Setting):** These are paramount for track type.
-    - **High-Speed Tracks (e.g., Le Mans, Monza):** Choose a **longer** FinalDriveSetting (numerically higher values like 0-7, depending on car) and adjust individual gears to stretch them for top speed. The comments for individual gears should reflect the calculated speed.
-    - **Technical Tracks (e.g., Sebring, Imola):** Choose a **shorter** FinalDriveSetting (numerically lower values, or 0 if default is short) and adjust individual gears for quicker acceleration out of corners.
-- **DiffPowerSetting (on-throttle):** Higher for more traction, lower for more rotation. Adjust based on setup goal and driver feedback. (e.g., 0-15 typical range).
-- **DiffCoastSetting (off-throttle):** Higher for more stability on lift-off, lower for more rotation. Adjust based on setup goal and driver feedback. (e.g., 0-20 typical range).
-- **DiffPreloadSetting:** Affects low-speed stability. Higher for more stability, lower for more maneuverability. (e.g., 0-100 Nm typical range).
-- **RatioSetSetting:** 0 for Standard, 1 for Long/High Speed, etc. Adjust based on track type.
+    // Construct the prompt for the AI
+    const prompt = `You are a Le Mans Ultimate (LMU) car setup expert. Your task is to provide a detailed car setup 
+IN THE EXACT LMU .VEH FILE FORMAT. 
+Your response MUST start with 'VehicleClassSetting="...' and include ALL standard LMU sections and parameters as shown in the example below.
+Ensure all parameters within sections are valid LMU parameters and are properly formatted as Setting=Value//Comment (even if the comment is "N/A" or "Non-adjustable").
+DO NOT include any conversational text, explanations, or extra formatting like markdown code blocks (e.g., \`\`\`).
+Only provide the complete and valid .VEH file content.
 
 Here are the details for the setup request:
-Car: ${car} (Display Name: ${selectedCarDisplay}, Category: ${selectedCarCategory})
-Track: ${track} (Display Name: ${selectedTrackDisplay})
+Car: ${selectedCarValue} (Display Name: ${selectedCarDisplay}, Category: ${selectedCarCategory})
+Track: ${selectedTrackValue} (Display Name: ${selectedTrackDisplay})
 Setup Goal: ${setupGoal}
-Driver Problem to Solve: ${driverFeedback}
 Session Goal: ${sessionGoal}
-Session Duration: ${sessionDuration} minutes
 Weather: ${selectedWeather} (${weatherGuidance})
 Track Temperature: ${trackTemp}°C
 Specific User Request: ${specificRequest}
 ${fuelEstimateRequest}
-${tireCompoundGuidance}
 
-This is the required LMU .VEH structure and format. You must use this exact structure, replacing all placeholder values (especially those with "MUST be changed" comments).
+**Crucial LMU Setup Principles to Apply:**
+- **Gear ratios (FinalDriveSetting, Gear1Setting-Gear7Setting) MUST be adjusted realistically for the specific track and car, NOT fixed or generic.**
+- **For Circuit de la Sarthe (Le Mans) and its layouts, ensure a high top speed by selecting a LONG FinalDriveSetting and adjusting individual gears - **Engine settings like RegenerationMapSetting and ElectricMotorMapSetting (for hybrid cars) MUST be performance-oriented (e.g., 10 for regen, 3 or 4 for motor map if applicable), NOT "Safety-car" or "N/A".**
+- **Tyre Compound (CompoundSetting) MUST be a numerical value (0 for Soft/Wet, 1 for Medium, 2 for Hard). ${tireCompoundGuidance}**
+- **Tyre Pressure (PressureSetting) MUST be a numerical value (e.g., 0 for 135kPa, 1 for 136kPa, etc.) corresponding to realistic pressures, NOT "N/A" or a fixed kPa value in the setting itself.**
+- **All Suspension settings (AntiSway, Toe, Camber, Spring, RideHeight, Bump, Rebound, Packers) must be adjusted for the car/track/goal.**
+- **Brake settings (RearBrakeSetting, BrakePressureSetting) must be adjusted for the car/track/goal.**
+- **Traction Control/ABS maps MUST be adjusted for the car/track/goal.**
+- **Aerodynamic efficiency is crucial.** Balance downforce for cornering grip with minimal drag for top speed, especially on tracks with long straights (like Le Mans or Monza).
+- **Front and Rear Wing settings MUST be proportional to the track's downforce demands.** High downforce for technical tracks (e.g., Imola, COTA), lower for high-speed tracks.
+- **Brake Duct settings MUST be minimized for aero efficiency** (e.g., 0-3 for front, 0-5 for rear) unless brake temperatures are consistently overheating (check if track temp is high).
+- **Overall Balance: The setup should aim for a neutral handling balance, avoiding extreme understeer or oversteer unless explicitly requested (e.g., 'aggressive' setup). Predictability is key for faster lap times.**
+- **Weight Distribution: Settings should implicitly balance front-to-rear weight distribution for optimal grip. Higher front ride height or softer front springs can shift balance rearward, and vice-versa.**
+- **Compliance: Ensure sufficient suspension compliance over bumps and curbs to maintain tire contact, especially on tracks like Sebring or Spa.**
+- **Rake Angle: Adjust front and rear ride heights to create an optimal rake angle (rear ride height typically higher than front) for maximizing diffuser performance and overall downforce without excessive drag.**
+- **Fender Flares (FenderFlareSetting): These are usually set to 0 ("N/A") unless specifically needed for tire clearance on a very aggressive setup, which is rare for performance.**
+- **Anti-Sway Bars (FrontAntiSwaySetting, RearAntiSwaySetting) should be tuned for handling balance.** Stiffer front promotes understeer, softer front promotes oversteer. Stiffer rear promotes oversteer, softer rear promotes understeer. Adjust to achieve desired balance (e.g., softer for safe, stiffer for aggressive).
+- **Ride Heights (FrontRideHeightSetting, RearRideHeightSetting) should be set low for maximum downforce** but ensure sufficient clearance for curbs and bumps. Maintain appropriate rake (rear higher than front) for diffuser efficiency.
+- **Spring Rates (SpringSetting) should match track characteristics.** Softer springs for bumpy tracks (e.g., Sebring) or long-distance comfort/tire wear. Stiffer springs for smooth tracks and sharp responsiveness.
+- **Dampers (Slow/Fast Bump/Rebound) are critical for weight transfer and tire contact.** Soft bump settings for better mechanical grip and compliance over bumps. Stiffer rebound settings for better body control and stability after compression.
+- **Slow vs. Fast Damper Adjustments: Slow Bump/Rebound affects car behavior during slow weight transfers (braking, acceleration, corner entry/exit). Stiffer slow bump provides more initial support. Stiffer slow rebound helps the car settle. Fast Bump/Rebound affects car behavior over quick events (curbs, bumps). Softer fast bump provides better absorption. Softer fast rebound allows quicker wheel return after impacts. Tune Dampers for predictable handling through transitions and over track imperfections.**
+- **Toe-in/Toe-out (FrontToeInSetting, RearToeInSetting) should be precise.** Front toe-out for sharper turn-in. Rear toe-in for stability. Rear toe-out (if allowed/used) for aggressive rotation.
+- **Brake Bias (RearBrakeSetting) MUST be adjusted for stability under braking and turn-in.** Shift forward for stability, shift rearward for rotation. Common range 52-58%.
+- **Brake Pressure (BrakePressureSetting) should be maximized for stopping power** without causing excessive lock-ups for the specific car/track/ABS setting.
+- **Steer Lock (SteerLockSetting): Should be set to allow full lock without hitting mechanical limits and provide comfortable steering sensitivity for the track.**
+- **Brake Migration (BrakeMigrationSetting): Typically set to 0.0 unless a specific dynamic brake bias change through the braking zone is desired.**
+- **Handbrake settings (HandfrontbrakePressSetting, HandbrakePressSetting): Always '0' unless specified for very specific rally or drift scenarios (not applicable to LMU endurance racing).**
+- **TC/ABS Mapping (TractionControlMapSetting, TCPowerCutMapSetting, TCSlipAngleMapSetting, AntilockBrakeSystemMapSetting): Tune these for the specific car's power delivery and driver preference. Lower values provide more direct control but require smoother input; higher values provide more assistance for stability.**
+- **Engine Mixture (EngineMixtureSetting): Usually '0' (Full power) for qualifying and '1' (Race) for races, unless fuel saving is prioritized.**
+- **Ratio Set (RatioSetSetting): Choose '0' (Standard) or '1' (Short/Long) based on the track and required acceleration/top speed balance.**
+- **Differential Power (DiffPowerSetting) affects on-throttle stability.** Higher values provide more traction but can induce on-throttle oversteer. Lower values promote rotation but might lose traction.
+- **Differential Coast (DiffCoastSetting) affects off-throttle stability.** Higher values increase stability on lift-off. Lower values promote lift-off oversteer.
+- **Differential Preload (DiffPreloadSetting) affects low-speed and overall stability.** Higher values increase stability but can cause understeer on turn-in.
+- **Differential Pump (DiffPumpSetting) & Split (RearSplitSetting, FrontDiff settings): For RWD cars, these are usually '0' or "N/A" unless the car has a specific AWD or active differential system that allows adjustment. Default to '0' or "N/A".**
+- **Automatic Shifting (GearAutoUpShiftSetting, GearAutoDownShiftSetting): Always '0' (Off) for performance setups.**
+- **Tender Springs/Travel (TenderSpringSetting, TenderTravelSetting): These are often '0' or 'Detached' in default LMU GT cars/Hypercars unless a specific progressive spring rate is needed. Default to '0' or 'Detached'.**
+- **Tire Pressures (PressureSetting in [FRONTLEFT]/[FRONTRIGHT]/[REARLEFT]/[REARRIGHT]) should target optimal hot temperatures.** A common goal for hot pressure is around 180-200 kPa. Cold pressure settings like 0-5 are often common starting points in LMU. These values are highly car/track dependent.
+- **Camber (CamberSetting in wheel sections) must be set for optimal cornering grip and even tire wear.** More negative camber increases cornering grip but can reduce straight-line traction and wear the inner edge.
+
+Example of expected LMU .VEH structure (use this as the exact template to fill in values):
 ${exampleTemplate}
 
-Now, generate the complete and valid .VEH file. Your response must contain ONLY the file content and nothing else.
+Now generate the setup:
 `;
 
-    try {
+    try {
+        // --- CORRECTED API CALL SECTION ---
+        console.log("Sending prompt to OpenRouter AI for car:", car, "track:", track, "category:", selectedCarCategory, "using model:", PRIMARY_MODEL);
+
         const openrouterResponse = await fetch(OPENROUTER_API_URL, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
                 'Content-Type': 'application/json',
+                // Recommended headers for OpenRouter
                 'HTTP-Referer': 'https://test-hrwc.onrender.com', // Your app's URL
-                'X-Title': 'LMU Setup Generator',
+                'X-Title': 'LMU Setup Generator', // Your app's name
             },
             body: JSON.stringify({
                 model: PRIMARY_MODEL,
-                messages: [{ role: "user", content: prompt }],
-                max_tokens: 4096,
-                temperature: 0.4, // Keep temperature low to encourage adherence to format
+                messages: [
+                    { role: "system", content: "You are a helpful assistant that generates LMU car setups. You must respond only with the .VEH file content and strictly adhere to the provided LMU .VEH format and section structure. DO NOT include markdown code blocks or any other extraneous text." },
+                    { role: "user", content: prompt }
+                ],
+                max_tokens: 4000,
+                temperature: 0.7,
             }),
         });
 
@@ -1010,9 +993,10 @@ Now, generate the complete and valid .VEH file. Your response must contain ONLY 
         }
 
         const chatCompletion = await openrouterResponse.json();
-        let text = chatCompletion.choices[0].message.content.trim();
+        let text = chatCompletion.choices[0].message.content;
 
-        // Remove markdown code blocks if the AI still includes them
+        // Trim leading/trailing whitespace AND markdown code blocks (if present)
+        text = text.trim();
         if (text.startsWith('```') && text.endsWith('```')) {
             text = text.replace(/^```[a-zA-Z]*\n|\n```$/g, '').trim();
         }
@@ -1020,13 +1004,24 @@ Now, generate the complete and valid .VEH file. Your response must contain ONLY 
         if (text && text.startsWith('VehicleClassSetting=')) {
             res.json({ setup: text });
         } else {
-            console.error("AI generated an invalid setup format.");
-            console.error("AI Raw Response (first 500 chars):", text ? text.substring(0, 500) : '[Empty Response]');
-            res.status(500).json({ error: `AI generated an invalid setup format or incomplete response. Raw AI response snippet: ${text ? text.substring(0, 200) : '[Empty Response]'}` });
+            console.error("AI generated an invalid setup format or empty response.");
+            console.error("AI Raw Response (first 500 chars):", text ? text.substring(0, 500) : '[Empty Response]'); // Log a snippet
+            res.status(500).json({
+                error: `AI generated an invalid setup format. Please refine your request or try again. Raw AI response snippet: ${text ? text.substring(0, 200) : '[Empty Response]'}`
+            });
         }
 
     } catch (error) {
-        console.error("Error communicating with OpenRouter:", error);
-        res.status(500).json({ error: `Failed to connect to AI service. Error: ${error.message}` });
+        console.error("Error communicating with OpenRouter or generating setup:", error);
+        res.status(500).json({
+            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
+        });
     }
+});
+
+// 9. Start the server
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Open your web browser and navigate to http://localhost:${port}`);
+    console.log("Keep this terminal window open while using the generator.");
 });
