@@ -176,72 +176,72 @@ GearAutoUpShiftSetting=0//Off
 GearAutoDownShiftSetting=0//Off
 
 [FRONTLEFT]
-CamberSetting=35//-0.5 deg
-PressureSetting=0//135 kPa
-PackerSetting=5//0.5 cm
-SpringSetting=12//16.44mm
+CamberSetting=20//MUST be changed for track
+PressureSetting=5//MUST be changed for weather and track
+PackerSetting=10//MUST be changed for track
+SpringSetting=8//MUST be changed for track
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=10//5.0 cm
-SlowBumpSetting=7//8
-FastBumpSetting=4//5
-SlowReboundSetting=6//7
-FastReboundSetting=4//5
+RideHeightSetting=15//MUST be changed for track (and rake)
+SlowBumpSetting=5//MUST be changed for track
+FastBumpSetting=5//MUST be changed for track
+SlowReboundSetting=5//MUST be changed for track
+FastReboundSetting=5//MUST be changed for track
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=0//Soft
+CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
 
 [FRONTRIGHT]
-CamberSetting=35//-0.5 deg
-PressureSetting=0//135 kPa
-PackerSetting=5//0.5 cm
-SpringSetting=12//16.44mm
+CamberSetting=20//MUST be changed for track
+PressureSetting=5//MUST be changed for weather and track
+PackerSetting=10//MUST be changed for track
+SpringSetting=8//MUST be changed for track
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=10//5.0 cm
-SlowBumpSetting=7//8
-FastBumpSetting=4//5
-SlowReboundSetting=6//7
-FastReboundSetting=4//5
+RideHeightSetting=15//MUST be changed for track (and rake)
+SlowBumpSetting=5//MUST be changed for track
+FastBumpSetting=5//MUST be changed for track
+SlowReboundSetting=5//MUST be changed for track
+FastReboundSetting=5//MUST be changed for track
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=0//Soft
+CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
 
 [REARLEFT]
-CamberSetting=35//-0.5 deg
-PressureSetting=0//135 kPa
-PackerSetting=8//0.8 cm
-SpringSetting=0//13.33mm
+CamberSetting=20//MUST be changed for track
+PressureSetting=5//MUST be changed for weather and track
+PackerSetting=10//MUST be changed for track
+SpringSetting=8//MUST be changed for track
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=5//6.5 cm
-SlowBumpSetting=2//3
-FastBumpSetting=1//2
-SlowReboundSetting=3//4
-FastReboundSetting=2//3
+RideHeightSetting=15//MUST be changed for track (and rake)
+SlowBumpSetting=5//MUST be changed for track
+FastBumpSetting=5//MUST be changed for track
+SlowReboundSetting=5//MUST be changed for track
+FastReboundSetting=5//MUST be changed for track
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=0//Soft
+CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
 
 [REARRIGHT]
-CamberSetting=35//-0.5 deg
-PressureSetting=0//135 kPa
-PackerSetting=8//0.8 cm
-SpringSetting=0//13.33mm
+CamberSetting=20//MUST be changed for track
+PressureSetting=5//MUST be changed for weather and track
+PackerSetting=10//MUST be changed for track
+SpringSetting=8//MUST be changed for track
 TenderSpringSetting=0//Detached
 TenderTravelSetting=0//Detached
 SpringRubberSetting=0//Detached
-RideHeightSetting=5//6.5 cm
-SlowBumpSetting=2//3
-FastBumpSetting=1//2
-SlowReboundSetting=3//4
-FastReboundSetting=2//3
+RideHeightSetting=15//MUST be changed for track (and rake)
+SlowBumpSetting=5//MUST be changed for track
+FastBumpSetting=5//MUST be changed for track
+SlowReboundSetting=5//MUST be changed for track
+FastReboundSetting=5//MUST be changed for track
 BrakeDiscSetting=0//4.00 cm
 BrakePadSetting=0//1
-CompoundSetting=0//Soft
+CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
 
 [BASIC]
 Downforce=0.500000
@@ -378,75 +378,72 @@ DiffPreloadSetting=10//MUST be changed for track (affects overall stability)
 //GearAutoDownShiftSetting=0//Off
 
 [FRONTLEFT]
-CamberSetting=11//-1.5 deg
-//PressureSetting=0//140 kPa
-PackerSetting=3//0.3 cm
-SpringSetting=0//150N/mm
-//TenderSpringSetting=0//Detached
-//TenderTravelSetting=0//Detached
-//SpringRubberSetting=0//Detached
-RideHeightSetting=10//4.5 cm
-SlowBumpSetting=4//5
-FastBumpSetting=1//2
-SlowReboundSetting=2//3
-FastReboundSetting=1//2
-//BrakeDiscSetting=0//3.20 cm
-//BrakePadSetting=0//1
-//CompoundSetting=0//Medium
-//EquippedTireIDSetting=-1//None Available
+CamberSetting=15//MUST be changed for track
+PressureSetting=5//MUST be changed for weather and track
+PackerSetting=10//MUST be changed for track
+SpringSetting=8//MUST be changed for track
+TenderSpringSetting=0//Detached
+TenderTravelSetting=0//Detached
+SpringRubberSetting=0//Detached
+RideHeightSetting=15//MUST be changed for track (and rake)
+SlowBumpSetting=5//MUST be changed for track
+FastBumpSetting=5//MUST be changed for track
+SlowReboundSetting=5//MUST be changed for track
+FastReboundSetting=5//MUST be changed for track
+BrakeDiscSetting=0//3.20 cm
+BrakePadSetting=0//1
+CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
 
 [FRONTRIGHT]
-CamberSetting=11//-1.5 deg
-//PressureSetting=0//140 kPa
-PackerSetting=3//0.3 cm
-SpringSetting=0//150N/mm
-//TenderSpringSetting=0//Detached
-//TenderTravelSetting=0//Detached
-//SpringRubberSetting=0//Detached
-RideHeightSetting=10//4.5 cm
-SlowBumpSetting=4//5
-FastBumpSetting=1//2
-SlowReboundSetting=2//3
-FastReboundSetting=1//2
-//BrakeDiscSetting=0//3.20 cm
-//BrakePadSetting=0//1
-//CompoundSetting=0//Medium
-//EquippedTireIDSetting=-1//None Available
+CamberSetting=15//MUST be changed for track
+PressureSetting=5//MUST be changed for weather and track
+PackerSetting=10//MUST be changed for track
+SpringSetting=8//MUST be changed for track
+TenderSpringSetting=0//Detached
+TenderTravelSetting=0//Detached
+SpringRubberSetting=0//Detached
+RideHeightSetting=15//MUST be changed for track (and rake)
+SlowBumpSetting=5//MUST be changed for track
+FastBumpSetting=5//MUST be changed for track
+SlowReboundSetting=5//MUST be changed for track
+FastReboundSetting=5//MUST be changed for track
+BrakeDiscSetting=0//3.20 cm
+BrakePadSetting=0//1
+CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
 
 [REARLEFT]
-CamberSetting=5//-1.0 deg
-//PressureSetting=0//140 kPa
-PackerSetting=1//0.1 cm
-//SpringSetting=3//1100lbf/in
-//TenderSpringSetting=0//Detached
-//TenderTravelSetting=0//Detached
-//SpringRubberSetting=0//Detached
-RideHeightSetting=24//7.0 cm
-SlowBumpSetting=0//1 (soft)
-FastBumpSetting=0//1 (soft)
-SlowReboundSetting=1//2
-FastReboundSetting=0//1 (soft)
-//BrakeDiscSetting=0//3.20 cm
-//BrakePadSetting=0//1
-//CompoundSetting=0//Medium
-//EquippedTireIDSetting=-1//None Available
+CamberSetting=15//MUST be changed for track
+PressureSetting=5//MUST be changed for weather and track
+PackerSetting=10//MUST be changed for track
+SpringSetting=8//MUST be changed for track
+TenderSpringSetting=0//Detached
+TenderTravelSetting=0//Detached
+SpringRubberSetting=0//Detached
+RideHeightSetting=15//MUST be changed for track (and rake)
+SlowBumpSetting=5//MUST be changed for track
+FastBumpSetting=5//MUST be changed for track
+SlowReboundSetting=5//MUST be changed for track
+FastReboundSetting=5//MUST be changed for track
+BrakeDiscSetting=0//3.20 cm
+BrakePadSetting=0//1
+CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
 
 [REARRIGHT]
-CamberSetting=5//-1.0 deg
-//PressureSetting=0//140 kPa
-PackerSetting=1//0.1 cm
-//SpringSetting=3//1100lbf/in
-//TenderSpringSetting=0//Detached
-//TenderTravelSetting=0//Detached
-//SpringRubberSetting=0//Detached
-RideHeightSetting=24//7.0 cm
-SlowBumpSetting=0//1 (soft)
-FastBumpSetting=0//1 (soft)
-SlowReboundSetting=1//2
-FastReboundSetting=0//1 (soft)
-//BrakeDiscSetting=0//3.20 cm
-//BrakePadSetting=0//1
-//CompoundSetting=0//Medium
+CamberSetting=15//MUST be changed for track
+PressureSetting=5//MUST be changed for weather and track
+PackerSetting=10//MUST be changed for track
+SpringSetting=8//MUST be changed for track
+TenderSpringSetting=0//Detached
+TenderTravelSetting=0//Detached
+SpringRubberSetting=0//Detached
+RideHeightSetting=15//MUST be changed for track (and rake)
+SlowBumpSetting=5//MUST be changed for track
+FastBumpSetting=5//MUST be changed for track
+SlowReboundSetting=5//MUST be changed for track
+FastReboundSetting=5//MUST be changed for track
+BrakeDiscSetting=0//3.20 cm
+BrakePadSetting=0//1
+CompoundSetting=1//MUST be changed for session (0=Soft, 1=Med, 2=Hard)
 //EquippedTireIDSetting=-1//None Available
 
 [BASIC]
@@ -919,10 +916,24 @@ Specific User Request: ${specificRequest}
 ${fuelEstimateRequest}
 
 **Crucial LMU Setup Principles to Apply:**
+- **Qualifying vs. Race Philosophy: The Trade-Off Between Pace and Consistency.**
+A qualifying setup is for a single, perfect lap. It can be aggressive, unstable ("on a knife-edge"), and hard on tires. A race setup must be stable, predictable, and gentle on tires for an entire stint, even as fuel burns off and tires wear out. The AI should adjust its entire approach based on the `Session Goal`, not just the fuel load. For a race setup, it should prioritize stability and tire preservation over ultimate one-lap pace.
+
+- **The Aero-Mechanical Balance: How a Change in One Area Affects Another.**
+A car's setup is a web of interconnected settings. A significant change to aerodynamics must be balanced by a change to the suspension. For example, adding a lot of rear wing (`[REARWING]`) to increase rear downforce will shift the car's aero balance rearward, potentially creating understeer. A real engineer would then consider stiffening the front anti-sway bar (`FrontAntiSwaySetting`) or softening the rear to bring the car's mechanical handling balance back to neutral. The AI should understand this relationship.
+
 - **Gear ratios (FinalDriveSetting, Gear1Setting-Gear7Setting) MUST be adjusted realistically for the specific track and car, NOT fixed or generic.**
-- **For Circuit de la Sarthe (Le Mans) and its layouts, ensure a high top speed by selecting a LONG FinalDriveSetting and adjusting individual gears - **Engine settings like RegenerationMapSetting and ElectricMotorMapSetting (for hybrid cars) MUST be performance-oriented (e.g., 10 for regen, 3 or 4 for motor map if applicable), NOT "Safety-car" or "N/A".**
+- **For Circuit de la Sarthe (Le Mans) and its layouts, ensure a high top speed by selecting a LONG FinalDriveSetting and adjusting individual gears accordingly. Avoid short gearing.**
+- **Engine settings like RegenerationMapSetting and ElectricMotorMapSetting (for hybrid cars) MUST be performance-oriented (e.g., 10 for regen, 3 or 4 for motor map if applicable), NOT "Safety-car" or "N/A".**
+
+- **Tire Temperature as the Ultimate Goal: The "Why" Behind Pressure and Camber.**
+The ultimate goal for any tire setting (Pressure, Camber, Toe) is to have the tire's core temperature consistently in the optimal grip window (typically 85-100°C for GTs and prototypes) during a run. The AI should see pressure and camber not as independent settings, but as tools to achieve this critical temperature target across the tire's surface.
+
+- **Tire Pressures (PressureSetting in [FRONTLEFT]/[FRONTRIGHT]/[REARLEFT]/[REARRIGHT]) should target optimal hot temperatures.** A common goal for hot pressure is around 180-200 kPa. Cold pressure settings like 0-5 are often common starting points in LMU. These values are highly car/track dependent.
 - **Tyre Compound (CompoundSetting) MUST be a numerical value (0 for Soft/Wet, 1 for Medium, 2 for Hard). ${tireCompoundGuidance}**
 - **Tyre Pressure (PressureSetting) MUST be a numerical value (e.g., 0 for 135kPa, 1 for 136kPa, etc.) corresponding to realistic pressures, NOT "N/A" or a fixed kPa value in the setting itself.**
+- **Camber (CamberSetting in wheel sections) must be set for optimal cornering grip and even tire wear.** More negative camber increases cornering grip but can reduce straight-line traction and wear the inner edge.
+
 - **All Suspension settings (AntiSway, Toe, Camber, Spring, RideHeight, Bump, Rebound, Packers) must be adjusted for the car/track/goal.**
 - **Brake settings (RearBrakeSetting, BrakePressureSetting) must be adjusted for the car/track/goal.**
 - **Traction Control/ABS maps MUST be adjusted for the car/track/goal.**
@@ -930,32 +941,20 @@ ${fuelEstimateRequest}
 - **Front and Rear Wing settings MUST be proportional to the track's downforce demands.** High downforce for technical tracks (e.g., Imola, COTA), lower for high-speed tracks.
 - **Brake Duct settings MUST be minimized for aero efficiency** (e.g., 0-3 for front, 0-5 for rear) unless brake temperatures are consistently overheating (check if track temp is high).
 - **Overall Balance: The setup should aim for a neutral handling balance, avoiding extreme understeer or oversteer unless explicitly requested (e.g., 'aggressive' setup). Predictability is key for faster lap times.**
-- **Weight Distribution: Settings should implicitly balance front-to-rear weight distribution for optimal grip. Higher front ride height or softer front springs can shift balance rearward, and vice-versa.**
 - **Compliance: Ensure sufficient suspension compliance over bumps and curbs to maintain tire contact, especially on tracks like Sebring or Spa.**
 - **Rake Angle: Adjust front and rear ride heights to create an optimal rake angle (rear ride height typically higher than front) for maximizing diffuser performance and overall downforce without excessive drag.**
-- **Fender Flares (FenderFlareSetting): These are usually set to 0 ("N/A") unless specifically needed for tire clearance on a very aggressive setup, which is rare for performance.**
 - **Anti-Sway Bars (FrontAntiSwaySetting, RearAntiSwaySetting) should be tuned for handling balance.** Stiffer front promotes understeer, softer front promotes oversteer. Stiffer rear promotes oversteer, softer rear promotes understeer. Adjust to achieve desired balance (e.g., softer for safe, stiffer for aggressive).
 - **Ride Heights (FrontRideHeightSetting, RearRideHeightSetting) should be set low for maximum downforce** but ensure sufficient clearance for curbs and bumps. Maintain appropriate rake (rear higher than front) for diffuser efficiency.
 - **Spring Rates (SpringSetting) should match track characteristics.** Softer springs for bumpy tracks (e.g., Sebring) or long-distance comfort/tire wear. Stiffer springs for smooth tracks and sharp responsiveness.
 - **Dampers (Slow/Fast Bump/Rebound) are critical for weight transfer and tire contact.** Soft bump settings for better mechanical grip and compliance over bumps. Stiffer rebound settings for better body control and stability after compression.
-- **Slow vs. Fast Damper Adjustments: Slow Bump/Rebound affects car behavior during slow weight transfers (braking, acceleration, corner entry/exit). Stiffer slow bump provides more initial support. Stiffer slow rebound helps the car settle. Fast Bump/Rebound affects car behavior over quick events (curbs, bumps). Softer fast bump provides better absorption. Softer fast rebound allows quicker wheel return after impacts. Tune Dampers for predictable handling through transitions and over track imperfections.**
 - **Toe-in/Toe-out (FrontToeInSetting, RearToeInSetting) should be precise.** Front toe-out for sharper turn-in. Rear toe-in for stability. Rear toe-out (if allowed/used) for aggressive rotation.
 - **Brake Bias (RearBrakeSetting) MUST be adjusted for stability under braking and turn-in.** Shift forward for stability, shift rearward for rotation. Common range 52-58%.
 - **Brake Pressure (BrakePressureSetting) should be maximized for stopping power** without causing excessive lock-ups for the specific car/track/ABS setting.
-- **Steer Lock (SteerLockSetting): Should be set to allow full lock without hitting mechanical limits and provide comfortable steering sensitivity for the track.**
-- **Brake Migration (BrakeMigrationSetting): Typically set to 0.0 unless a specific dynamic brake bias change through the braking zone is desired.**
-- **Handbrake settings (HandfrontbrakePressSetting, HandbrakePressSetting): Always '0' unless specified for very specific rally or drift scenarios (not applicable to LMU endurance racing).**
-- **TC/ABS Mapping (TractionControlMapSetting, TCPowerCutMapSetting, TCSlipAngleMapSetting, AntilockBrakeSystemMapSetting): Tune these for the specific car's power delivery and driver preference. Lower values provide more direct control but require smoother input; higher values provide more assistance for stability.**
 - **Engine Mixture (EngineMixtureSetting): Usually '0' (Full power) for qualifying and '1' (Race) for races, unless fuel saving is prioritized.**
-- **Ratio Set (RatioSetSetting): Choose '0' (Standard) or '1' (Short/Long) based on the track and required acceleration/top speed balance.**
 - **Differential Power (DiffPowerSetting) affects on-throttle stability.** Higher values provide more traction but can induce on-throttle oversteer. Lower values promote rotation but might lose traction.
 - **Differential Coast (DiffCoastSetting) affects off-throttle stability.** Higher values increase stability on lift-off. Lower values promote lift-off oversteer.
 - **Differential Preload (DiffPreloadSetting) affects low-speed and overall stability.** Higher values increase stability but can cause understeer on turn-in.
-- **Differential Pump (DiffPumpSetting) & Split (RearSplitSetting, FrontDiff settings): For RWD cars, these are usually '0' or "N/A" unless the car has a specific AWD or active differential system that allows adjustment. Default to '0' or "N/A".**
 - **Automatic Shifting (GearAutoUpShiftSetting, GearAutoDownShiftSetting): Always '0' (Off) for performance setups.**
-- **Tender Springs/Travel (TenderSpringSetting, TenderTravelSetting): These are often '0' or 'Detached' in default LMU GT cars/Hypercars unless a specific progressive spring rate is needed. Default to '0' or 'Detached'.**
-- **Tire Pressures (PressureSetting in [FRONTLEFT]/[FRONTRIGHT]/[REARLEFT]/[REARRIGHT]) should target optimal hot temperatures.** A common goal for hot pressure is around 180-200 kPa. Cold pressure settings like 0-5 are often common starting points in LMU. These values are highly car/track dependent.
-- **Camber (CamberSetting in wheel sections) must be set for optimal cornering grip and even tire wear.** More negative camber increases cornering grip but can reduce straight-line traction and wear the inner edge.
 
 Example of expected LMU .VEH structure (use this as the exact template to fill in values):
 ${exampleTemplate}
