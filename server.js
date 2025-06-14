@@ -1,4 +1,3 @@
-javascript
 // --- server.js (Final Version with Syntax Fix and Improved AI Output Directives) ---
 
 // 1. Load environment variables from .env file
