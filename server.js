@@ -798,7 +798,7 @@ app.post('/generate-setup', async (req, res) => {
 ## - **Individual Gear Settings:** Fine-tunes the ratio for each specific gear. Longer gears provide higher speed per gear, shorter gears provide faster acceleration. Must be chosen logically relative to the Final Drive and track type.
 ## - **Differential (DiffPower, DiffCoast, DiffPreload):** Controls how power is distributed between the drive wheels.
 ##    - **Diff Power (on-throttle):** Higher locking provides more traction on acceleration but can induce understeer on exit. Lower allows more rotation.
-##    - **Diff Coast (off-throttle):** Higher locking provides more stability on lift-off/braking but can cause snap oversteer. Lower allows more rotation on entry.
+##    - **Diff Coast (off-throttle):):** Higher locking provides more stability on lift-off/braking but can cause snap oversteer. Lower allows more rotation on entry.
 ##    - **Diff Preload:** Constant locking effect. Higher preload provides more stability and traction at very low speeds, but can cause understeer.
 
 ## **Brakes:**
