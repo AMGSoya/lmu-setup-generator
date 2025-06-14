@@ -633,7 +633,7 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
+    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(0,0,0,0)
 //Aero package=0
 //Note: settings commented out if using the default
@@ -838,44 +838,44 @@ Custom=1`
 
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
-    // Safely destructure all possible values from the request body
-    const { car, track, request, selectedCarCategory,
-        selectedCarDisplay, selectedTrackDisplay, setupGoal,
-        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
-    } = req.body;
+    // Safely destructure all possible values from the request body
+    const { car, track, request, selectedCarCategory,
+        selectedCarDisplay, selectedTrackDisplay, setupGoal,
+        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
+    } = req.body;
 
-    // Validate essential parameters
-    if (!car || !track || !setupGoal || !selectedCarCategory) {
-        return res.status(400).json({ error: "Please provide Car, Track, Setup Goal, and Car Category details." });
-    }
-    
-    // Handle potential category key mismatch
-    let finalCategory = selectedCarCategory;
-    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
-        finalCategory = 'GT3';
-    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
-        finalCategory = 'LMGT3';
-    }
+    // Validate essential parameters
+    if (!car || !track || !setupGoal || !selectedCarCategory) {
+        return res.status(400).json({ error: "Please provide Car, Track, Setup Goal, and Car Category details." });
+    }
+    
+    // Handle potential category key mismatch
+    let finalCategory = selectedCarCategory;
+    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
+        finalCategory = 'GT3';
+    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
+        finalCategory = 'LMGT3';
+    }
 
-    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
-    if (!exampleTemplate) {
-        return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.` });
-    }
+    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
+    if (!exampleTemplate) {
+        return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.` });
+    }
 
-    // UPGRADE: Dynamically insert the user's selected car name into the template
-    exampleTemplate = exampleTemplate.replace('[[CAR_NAME]]', car);
+    // UPGRADE: Dynamically insert the user's selected car name into the template
+    exampleTemplate = exampleTemplate.replace('[[CAR_NAME]]', car);
 
-    const sessionDuration = req.body.sessionDuration || 'N/A';
-    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
-                                `Estimate fuel for a ${sessionDuration} minute race.` : '';
-    const weatherGuidance = `Current weather is ${selectedWeather}.`;
-    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+    const sessionDuration = req.body.sessionDuration || 'N/A';
+    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
+                                `Estimate fuel for a ${sessionDuration} minute race.` : '';
+    const weatherGuidance = `Current weather is ${selectedWeather}.`;
+    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
 
 
-    // =====================================================================================
-    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
-    // =====================================================================================
-    const prompt = `
+    // =====================================================================================
+    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
+    // =====================================================================================
+    const prompt = `
 ## --- PRIME DIRECTIVE ---
 ## Your sole mission is to act as a virtual LMU race engineer and generate a complete, physically realistic, and numerically valid .VEH setup file. You must replace every placeholder value with a calculated, logical number based on a strict engineering hierarchy. Returning a file with '0' for gears or other critical settings where a non-zero, adjustable value is applicable is a failure.
 
@@ -885,18 +885,18 @@ app.post('/generate-setup', async (req, res) => {
 ## **CRITICAL INSTRUCTION: You MUST populate the '[GENERAL] Notes' section with your engineering debrief, using the exact format specified in 'THE ENGINEER'S DEBRIEF DIRECTIVE'. This is not optional.**
 
 ## --- THOUGHT PROCESS & HIERARCHY OF TUNING PRIORITIES (You MUST follow this order) ---
-## 1.  **Session Type (Qualifying vs. Race):** This is the first and most fundamental decision. Is it a 'race' or 'qualifying' session? This choice dictates the entire setup philosophy (e.g., tire preservation vs. peak performance) and must be referenced in my notes.
-## 2.  **Driver Feedback is KING:** Is there a specific handling complaint in 'Driver Problem to Solve'? If yes, fixing this is my next highest priority. I will consult the 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX' and apply the Primary and Secondary solutions. All other decisions must work around this fix.
-## 3.  **Track DNA & Weather:** What are the physical demands of the specific track according to the 'TRACK DNA DATABASE' and the weather? I will consult the 'ADVANCED WEATHER & TIRE STRATEGY' and 'SETUP SANITY CHECKS' sections to make baseline decisions. I must mention the track-specific compromise in my notes (e.g., "Le Mans requires a low wing/long gear compromise for the straights.").
-## 4.  **Car Architecture:** What is the car's inherent nature according to the 'CAR ARCHITECTURE PHILOSOPHY'? I will apply gentle adjustments to either tame a car's negative traits or enhance its strengths.
-## 5.  **Overall Setup Goal:** Finally, I will use the 'Setup Goal' (Safe, Balanced, Aggressive) to fine-tune the settings within the context of the decisions I've already made.
+## 1.  **Session Type (Qualifying vs. Race):** This is the first and most fundamental decision. Is it a 'race' or 'qualifying' session? This choice dictates the entire setup philosophy (e.g., tire preservation vs. peak performance) and must be referenced in my notes.
+## 2.  **Driver Feedback is KING:** Is there a specific handling complaint in 'Driver Problem to Solve'? If yes, fixing this is my next highest priority. I will consult the 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX' and apply the Primary and Secondary solutions. All other decisions must work around this fix.
+## 3.  **Track DNA & Weather:** What are the physical demands of the specific track according to the 'TRACK DNA DATABASE' and the weather? I will consult the 'ADVANCED WEATHER & TIRE STRATEGY' and 'SETUP SANITY CHECKS' sections to make baseline decisions. I must mention the track-specific compromise in my notes (e.g., "Le Mans requires a low wing/long gear compromise for the straights.").
+## 4.  **Car Architecture:** What is the car's inherent nature according to the 'CAR ARCHITECTURE PHILOSOPHY'? I will apply gentle adjustments to either tame a car's negative traits or enhance its strengths.
+## 5.  **Overall Setup Goal:** Finally, I will use the 'Setup Goal' (Safe, Balanced, Aggressive) to fine-tune the settings within the context of the decisions I've already made.
 ## 5.5. **Tune [BASIC] Parameters (MANDATORY ADJUSTMENT):** Based on the above decisions, you MUST dynamically adjust the Downforce, Balance, Ride, and Gearing values in the [BASIC] section (0.000000 to 1.000000 scale). These are NOT default placeholders and MUST be calculated and outputted as new values based on the setup goal, car, and track. Setting them to 0.500000 (or any template default) is a critical failure unless that value is the mathematically derived optimal.
-##    - **Downforce:** Reflects overall aero strategy. Lower wings for low-drag setups (e.g., 0.050000 - 0.300000). Higher wings for high-downforce/grip setups (e.g., 0.700000 - 0.950000). Mid-range for balanced (0.300000 - 0.700000).
-##    - **Balance:** Reflects overall aero/mechanical balance. For aggressive oversteer tendency (0.100000 - 0.400000). For neutral balance (0.400000 - 0.600000). For stable understeer tendency (0.600000 - 0.900000). Adjust based on driver feedback and track.
-##    - **Ride:** Reflects overall suspension compliance. For very stiff/low ride (0.050000 - 0.300000). For compliant/high ride (0.700000 - 0.950000). Mid-range for balanced (0.300000 - 0.700000). Adjust based on track bumps.
-##    - **Gearing:** Reflects overall gear length strategy. For very long gears/high top speed (0.800000 - 1.000000). For very short gears/quick acceleration (0.000000 - 0.200000). Mid-range for balanced (0.200000 - 0.800000). MUST directly correspond to the detailed gear selections.
-##    - **Custom:** Always 1.
-## 6.  **Engineer's Debrief:** After generating all values, I will write a concise summary in the '[GENERAL] Notes' section explaining my choices, as per 'THE ENGINEER'S DEBRIEF DIRECTIVE'.
+##    - **Downforce:** Reflects overall aero strategy. Lower wings for low-drag setups (e.g., 0.050000 - 0.300000). Higher wings for high-downforce/grip setups (e.g., 0.700000 - 0.950000). Mid-range for balanced (0.300000 - 0.700000).
+##    - **Balance:** Reflects overall aero/mechanical balance. For aggressive oversteer tendency (0.100000 - 0.400000). For neutral balance (0.400000 - 0.600000). For stable understeer tendency (0.600000 - 0.900000). Adjust based on driver feedback and track.
+##    - **Ride:** Reflects overall suspension compliance. For very stiff/low ride (0.050000 - 0.300000). For compliant/high ride (0.700000 - 0.950000). Mid-range for balanced (0.300000 - 0.700000). Adjust based on track bumps.
+##    - **Gearing:** Reflects overall gear length strategy. For very long gears/high top speed (0.800000 - 1.000000). For very short gears/quick acceleration (0.000000 - 0.200000). Mid-range for balanced (0.200000 - 0.800000). MUST directly correspond to the detailed gear selections.
+##    - **Custom:** Always 1.
+## 6.  **Engineer's Debrief:** After generating all values, I will write a concise summary in the '[GENERAL] Notes' section explaining my choices, as per 'THE ENGINEER'S DEBRIEF DIRECTIVE'.
 
 ## =====================================================================================
 ## --- LMU GAME MECHANICS & NUANCES (CRITICAL) ---
@@ -905,8 +905,8 @@ app.post('/generate-setup', async (req, res) => {
 ##
 ## **LMU Gearing Index Behavior:**
 ## - In LMU, for individual gears (Gear1Setting to Gear7Setting), there is often an **INVERSE relationship** between the numerical index chosen and the actual "length" of the gear.
-##    - **LOWER numerical index (e.g., 0, 1, 2) often results in a LONGER gear (higher top speed for that gear).**
-##    - **HIGHER numerical index (e.g., 10, 15, 20) often results in a SHORTER gear (quicker acceleration for that gear).**
+##    - **LOWER numerical index (e.g., 0, 1, 2) often results in a LONGER gear (higher top speed for that gear).**
+##    - **HIGHER numerical index (e.g., 10, 15, 20) often results in a SHORTER gear (quicker acceleration for that gear).**
 ## - **FinalDriveSetting:** A HIGHER index for FinalDriveSetting always means longer overall gearing (higher top speed, slower acceleration).
 ## - You MUST apply this LMU-specific gearing logic when selecting indices and predicting speeds.
 ##
@@ -926,17 +926,17 @@ app.post('/generate-setup', async (req, res) => {
 ## **Suspension:**
 ## - **Springs (Packer/SpringSetting):** Primary control over ride height and overall stiffness. Stiffer springs reduce body roll and dive/squat, improving responsiveness but can make the car nervous over bumps. Softer springs improve mechanical grip and ride quality over bumps but increase body motion.
 ## - **Dampers (Slow Bump/Fast Bump, Slow Rebound/Fast Rebound):** Control the rate of suspension movement.
-##    - **Bump:** Controls wheel movement *into* the chassis. "Slow" affects weight transfer (e.g., braking, acceleration, cornering entry). "Fast" affects reaction to bumps and curbs.
-##    - **Rebound:** Controls wheel movement *out of* the chassis. "Slow" affects weight transfer release. "Fast" affects how quickly the wheel returns to the road after hitting a bump.
-##    - **Stiffer Bump:** More resistance to compression, can make car "jumpy" over bumps.
-##    - **Softer Bump:** More compression, better bump absorption.
-##    - **Stiffer Rebound:** Holds wheel down longer after compression, can "pack down" over consecutive bumps.
-##    - **Softer Rebound:** Allows wheel to extend quickly, maintaining tire contact over undulations.
+##    - **Bump:** Controls wheel movement *into* the chassis. "Slow" affects weight transfer (e.g., braking, acceleration, cornering entry). "Fast" affects reaction to bumps and curbs.
+##    - **Rebound:** Controls wheel movement *out of* the chassis. "Slow" affects weight transfer release. "Fast" affects how quickly the wheel returns to the road after hitting a bump.
+##    - **Stiffer Bump:** More resistance to compression, can make car "jumpy" over bumps.
+##    - **Softer Bump:** More compression, better bump absorption.
+##    - **Stiffer Rebound:** Holds wheel down longer after compression, can "pack down" over consecutive bumps.
+##    - **Softer Rebound:** Allows wheel to extend quickly, maintaining tire contact over undulations.
 ## - **Anti-Roll Bars (AntiSwaySetting):** Controls body roll and affects load transfer across the axle. Stiffer anti-roll bar on an axle transfers more load to the outside tire, increasing grip on that axle at the expense of grip on the other axle (e.g., stiffer front increases understeer, stiffer rear increases oversteer).
 ## - **Camber Setting:** The vertical angle of the tire. Negative camber ($<0$) allows the tire to sit flatter when the suspension compresses and the car rolls, maximizing tire contact patch during cornering. Too much negative camber reduces straight-line grip and braking performance. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
 ## - **Toe In/Out (ToeInSetting):** The horizontal angle of the tires.
-##    - **Toe-in ($>0$):):** Tires point inwards. Increases straight-line stability, reduces turn-in sharpness.
-##    - **Toe-out ($<0$):):** Tires point outwards. Increases turn-in sharpness, reduces straight-line stability.
+##    - **Toe-in ($>0$):):** Tires point inwards. Increases straight-line stability, reduces turn-in sharpness.
+##    - **Toe-out ($<0$):):** Tires point outwards. Increases turn-in sharpness, reduces straight-line stability.
 ## - **Ride Height:** Distance between the chassis and the ground. Lower ride height reduces drag and lowers the center of gravity, improving stability and aero performance. Too low can cause bottoming out on bumps/kerbs. Rake (front vs. rear ride height) impacts aero balance.
 ## - **Packers:** Limit suspension travel. Prevents bottoming out on stiff setups or very bumpy tracks.
 
@@ -944,9 +944,9 @@ app.post('/generate-setup', async (req, res) => {
 ## - **Final Drive Setting:** The overall gearing ratio. A *higher index* (longer final drive) results in higher top speeds but slower acceleration. A *lower index* (shortter final drive) results in quicker acceleration but lower top speeds.
 ## - **Individual Gear Settings:** Fine-tunes the ratio for each specific gear. Longer gears provide higher speed per gear, shorter gears provide faster acceleration. Must be chosen logically relative to the Final Drive and track type.
 ## - **Differential (DiffPower, DiffCoast, DiffPreload):** Controls how power is distributed between the drive wheels.
-##    - **Diff Power (on-throttle):** Higher locking provides more traction on acceleration but can induce understeer on exit. Lower allows more rotation.
-##    - **Diff Coast (off-throttle):):** Higher locking provides more stability on lift-off/braking but can cause snap oversteer. Lower allows more rotation on entry.
-##    - **Diff Preload:** Constant locking effect. Higher preload provides more stability and traction at very low speeds, but can cause understeer.
+##    - **Diff Power (on-throttle):** Higher locking provides more traction on acceleration but can induce understeer on exit. Lower allows more rotation.
+##    - **Diff Coast (off-throttle):):** Higher locking provides more stability on lift-off/braking but can cause snap oversteer. Lower allows more rotation on entry.
+##    - **Diff Preload:** Constant locking effect. Higher preload provides more stability and traction at very low speeds, but can cause understeer.
 
 ## **Brakes:**
 ## - **Brake Pressure (BrakePressureSetting):** Controls overall braking force. Higher pressure means more stopping power but higher risk of wheel lockup.
@@ -964,11 +964,11 @@ app.post('/generate-setup', async (req, res) => {
 ##
 ## **Aero:**
 ## - **FrontWing/RearWing (FWSetting/RWSetting):** Indices (0=low, higher=more downforce). Max values are car-specific.
-##    - Hypercar FW: (Min: 0, Max: 2). Hypercar RW: (Min: 0, Max: 7).
-##    - LMP2 RW: (Min: 0, Max: 8).
-##    - GT3 RW: (Min: 0, Max: 5).
-##    - GTE RW: (Min: 0, Max: 10).
-##    - General Rule: High-speed tracks = lower indices. Technical tracks = higher indices.
+##    - Hypercar FW: (Min: 0, Max: 2). Hypercar RW: (Min: 0, Max: 7).
+##    - LMP2 RW: (Min: 0, Max: 8).
+##    - GT3 RW: (Min: 0, Max: 5).
+##    - GTE RW: (Min: 0, Max: 10).
+##    - General Rule: High-speed tracks = lower indices. Technical tracks = higher indices.
 ## - **BrakeDucts:** Indices (0=open/max cooling, higher=more closed/less cooling/more aero). Max values are car-specific (e.g., Max: 3 for Hypercar, 2 for GT3).
 ##
 ## **Suspension:**
@@ -978,8 +978,8 @@ app.post('/generate-setup', async (req, res) => {
 ## - **CamberSetting:** (Min: 0 / ~-0.5 deg, Max: 40 / ~-4.0 deg). Most racing cars use negative camber. Front typically more negative than rear. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
 ## - **ToeInSetting/RearToeInSetting:** (Min: 0 / ~-0.2 deg, Max: 30 / ~+0.2 deg). Slight toe-out on front for turn-in, slight toe-in on rear for stability.
 ## - **Damper Settings (Slow/Fast Bump/Rebound):** (Min: 0, Max: 10). Relative adjustments are key.
-##    - Soft = lower index (0-3). Medium = mid-index (4-7). Stiff = higher index (8-10).
-##    - Bumpy tracks need softer Fast Bump/Rebound. High-speed stability needs balanced/stiffer Slow Bump/Rebound.
+##    - Soft = lower index (0-3). Medium = mid-index (4-7). Stiff = higher index (8-10).
+##    - Bumpy tracks need softer Fast Bump/Rebound. High-speed stability needs balanced/stiffer Slow Bump/Rebound.
 ##
 ## **Drivetrain:**
 ## - **FinalDriveSetting:** (Min: 0, Max: typically 5-10 depending on car. Higher index = longer gear for higher top speed). **For Le Mans/Monza, aim for the highest available index (e.g., 5-7).**
@@ -1001,15 +1001,15 @@ app.post('/generate-setup', async (req, res) => {
 ## This is the MOST IMPORTANT section for gearing. Follow these rules precisely:
 ##
 ## **1. High-Speed Tracks (e.g., Le Mans, Monza, Spa-Francorchamps):**
-##    - **FinalDriveSetting:** You MUST select one of the **HIGHEST available indices** for the car (e.g., if max is 7, choose 5, 6, or 7). This makes the overall gearing "longer" for high top speed.
-##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **VERY LOW non-negative integer index from the absolute bottom of the range (e.g., 0, 1, or 2 from a max of 20, using the absolute lowest available if possible for extreme top speed)** to make that individual gear **significantly LONGER**. Specifically, for a 7-speed Hypercar or LMP2 on Le Mans, you MUST choose indices for Gear1-7 following a pattern of **"0-0-1-2-3-4-5"** (or the lowest sequential available indices for all applicable gears, starting with 0). This sequential use of very low indices is paramount for long gearing.
-##    - **Comments:** For each GearXSetting, you MUST dynamically calculate and insert a **realistic approximate speed in km/h (e.g., ~Y km/h) and mph (e.g., ~Z mph)** based on the chosen gear index and final drive. Example: \`Gear1Setting=X//~Y km/h (approx. Z mph)\`. Ensure the speeds *increase logically* and are *very high* with each successive gear, reflecting a long gear setup for Le Mans (e.g., 6th or 7th gear often well over 300 km/h / 185 mph).
-##    - **Self-Verification:** Mentally confirm that 6th or 7th gear top speed reaches *over 300 km/h (or 185 mph)* for Hypercars/LMP2s on tracks like Le Mans, indicating truly long gearing.
+##    - **FinalDriveSetting:** You MUST select one of the **HIGHEST available indices** for the car (e.g., if max is 7, choose 5, 6, or 7). This makes the overall gearing "longer" for high top speed.
+##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **VERY LOW non-negative integer index from the absolute bottom of the range (e.g., 0, 1, or 2 from a max of 20, using the absolute lowest available if possible for extreme top speed)** to make that individual gear **significantly LONGER**. Specifically, for a 7-speed Hypercar or LMP2 on Le Mans, you MUST choose indices for Gear1-7 following a pattern of **"0-0-1-2-3-4-5"** (or the lowest sequential available indices for all applicable gears, starting with 0). This sequential use of very low indices is paramount for long gearing.
+##    - **Comments:** For each GearXSetting, you MUST dynamically calculate and insert a **realistic approximate speed in km/h (e.g., ~Y km/h) and mph (e.g., ~Z mph)** based on the chosen gear index and final drive. Example: \`Gear1Setting=X//~Y km/h (approx. Z mph)\`. Ensure the speeds *increase logically* and are *very high* with each successive gear, reflecting a long gear setup for Le Mans (e.g., 6th or 7th gear often well over 300 km/h / 185 mph).
+##    - **Self-Verification:** Mentally confirm that 6th or 7th gear top speed reaches *over 300 km/h (or 185 mph)* for Hypercars/LMP2s on tracks like Le Mans, indicating truly long gearing.
 ##
 ## **2. Technical/Accelerative Tracks (e.g., Sebring, Portimão, Imola):**
-##    - **FinalDriveSetting:** You MUST select one of the **LOWER available indices** for the car (e.g., 0-3) for quicker acceleration.
-##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **HIGHER index** (e.g., 5-15 from a max of 20) to make that individual gear "shorter" for better acceleration.
-##    - **Comments:** As above, dynamically calculate and insert a **realistic approximate speed** in km/h or mph for each gear. Ensure the speeds *increase logically* and are *appropriate for an accelerative track*.
+##    - **FinalDriveSetting:** You MUST select one of the **LOWER available indices** for the car (e.g., 0-3) for quicker acceleration.
+##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **HIGHER index** (e.g., 5-15 from a max of 20) to make that individual gear "shorter" for better acceleration.
+##    - **Comments:** As above, dynamically calculate and insert a **realistic approximate speed** in km/h or mph for each gear. Ensure the speeds *increase logically* and are *appropriate for an accelerative track*.
 ##
 ## **ALWAYS ensure a non-zero index is chosen for any adjustable gear setting unless it's explicitly fixed to 0.** Leaving them at '0' for non-fixed gears is a critical failure.
 ##
@@ -1120,7 +1120,6 @@ Now, generate the complete and valid .VEH file. Your response MUST contain ONLY 
             headers: {
                 'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
                 'Content-Type': 'application/json',
-                'HTTP-Referer': '[https://test-hrwc.onrender.com](https://test-hrwc.onrender.com)', // Your app's URL
                 'X-Title': 'LMU Setup Generator',
             },
             body: JSON.stringify({
