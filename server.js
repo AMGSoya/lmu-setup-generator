@@ -155,13 +155,13 @@ EngineBrakingMapSetting=0//N/A (Fixed)
 [DRIVELINE]
 FinalDriveSetting=3//2.98:1 (AI adjusts for track type: 0=Standard/Short, higher values for Long) (Min: 0, Max: 7. Higher index = longer gear for higher top speed)
 ReverseSetting=0//2.07 (6.18) (Fixed)
-Gear1Setting=8//2.85 (~100 km/h) (Min: 0, Max: 20)
-Gear2Setting=8//2.20 (~130 km/h) (Min: 0, Max: 20)
-Gear3Setting=8//1.82 (~160 km/h) (Min: 0, Max: 20)
-Gear4Setting=8//1.56 (~190 km/h) (Min: 0, Max: 20)
-Gear5Setting=8//1.35 (~220 km/h) (Min: 0, Max: 20)
-Gear6Setting=8//1.19 (~250 km/h) (Min: 0, Max: 20)
-Gear7Setting=8//1.05 (~280 km/h) (Min: 0, Max: 20)
+Gear1Setting=0//2.85 (~100 km/h) (Min: 0, Max: 20)
+Gear2Setting=0//2.20 (~130 km/h) (Min: 0, Max: 20)
+Gear3Setting=1//1.82 (~160 km/h) (Min: 0, Max: 20)
+Gear4Setting=2//1.56 (~190 km/h) (Min: 0, Max: 20)
+Gear5Setting=3//1.35 (~220 km/h) (Min: 0, Max: 20)
+Gear6Setting=4//1.19 (~250 km/h) (Min: 0, Max: 20)
+Gear7Setting=5//1.05 (~280 km/h) (Min: 0, Max: 20)
 RatioSetSetting=0//Short (AI adjusts for track type: 0=Standard, 1=Long/High Speed) (Min: 0, Max: 1 or higher based on car)
 DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=3//25% (Min: 0, Max: 15)
@@ -211,7 +211,7 @@ CompoundSetting=0//76% Soft (Min: 0, Max: 2)
 
 [REARLEFT]
 CamberSetting=35//-0.5 deg (Min: 0, Max: 40)
-PressureSetting=5//135 kPa (Min: 0, Max: 10)
+PressureSetting=5//140 kPa (Min: 0, Max: 10)
 PackerSetting=12//1.2 cm (Min: 0, Max: 20)
 SpringSetting=0//13.33mm (Min: 0, Max: 20)
 TenderSpringSetting=0//Detached (Fixed)
@@ -228,7 +228,7 @@ CompoundSetting=0//86% Soft (Min: 0, Max: 2)
 
 [REARRIGHT]
 CamberSetting=35//-0.5 deg (Min: 0, Max: 40)
-PressureSetting=5//135 kPa (Min: 0, Max: 10)
+PressureSetting=5//140 kPa (Min: 0, Max: 10)
 PackerSetting=12//1.2 cm (Min: 0, Max: 20)
 SpringSetting=0//13.33mm (Min: 0, Max: 20)
 TenderSpringSetting=0//Detached (Fixed)
@@ -348,12 +348,12 @@ EngineMixtureSetting=1//Race (Min: 0, Max: 1)
 [DRIVELINE]
 FinalDriveSetting=3//2.88:1 (AI adjusts for track type: 0=Standard/Short, higher values=Long) (Min: 0, Max: 5. Higher index = longer gear for higher top speed)
 ReverseSetting=0//2.85 (8.18) (Fixed)
-Gear1Setting=5//2.85 (~90 km/h) (Min: 0, Max: 20)
-Gear2Setting=5//2.20 (~115 km/h) (Min: 0, Max: 20)
-Gear3Setting=5//1.88 (~135 km/h) (Min: 0, Max: 20)
-Gear4Setting=5//1.62 (~155 km/h) (Min: 0, Max: 20)
-Gear5Setting=5//1.42 (~175 km/h) (Min: 0, Max: 20)
-Gear6Setting=5//1.27 (~195 km/h) (Min: 0, Max: 20)
+Gear1Setting=0//2.85 (~90 km/h) (Min: 0, Max: 20)
+Gear2Setting=0//2.20 (~115 km/h) (Min: 0, Max: 20)
+Gear3Setting=1//1.88 (~135 km/h) (Min: 0, Max: 20)
+Gear4Setting=2//1.62 (~155 km/h) (Min: 0, Max: 20)
+Gear5Setting=3//1.42 (~175 km/h) (Min: 0, Max: 20)
+Gear6Setting=4//1.27 (~195 km/h) (Min: 0, Max: 20)
 RatioSetSetting=1//High Speed (AI adjusts for track type: 0=Standard, 1=High Speed) (Min: 0, Max: 1 or higher based on car)
 //DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=0//FF6-60 deg (Min: 0, Max: 15)
@@ -676,12 +676,12 @@ EngineBrakingMapSetting=8//Medium (Min: 0, Max: 10)
 
 [DRIVELINE]
 FinalDriveSetting=5//Long (AI adjusts for track type, Min: 0, Max: 10. Higher index = longer gear for higher top speed)
-Gear1Setting=10//~80 km/h (Min: 0, Max: 20)
-Gear2Setting=10//~120 km/h (Min: 0, Max: 20)
-Gear3Setting=10//~150 km/h (Min: 0, Max: 20)
-Gear4Setting=10//~180 km/h (Min: 0, Max: 20)
-Gear5Setting=10//~210 km/h (Min: 0, Max: 20)
-Gear6Setting=10//~240 km/h (Min: 0, Max: 20)
+Gear1Setting=0//~80 km/h (Min: 0, Max: 20)
+Gear2Setting=0//~120 km/h (Min: 0, Max: 20)
+Gear3Setting=1//~150 km/h (Min: 0, Max: 20)
+Gear4Setting=2//~180 km/h (Min: 0, Max: 20)
+Gear5Setting=3//~210 km/h (Min: 0, Max: 20)
+Gear6Setting=4//~240 km/h (Min: 0, Max: 20)
 RatioSetSetting=1//High Speed (Min: 0, Max: 1 or higher based on car)
 DiffPowerSetting=8//Medium (Min: 0, Max: 15)
 DiffCoastSetting=10//Medium (Min: 0, Max: 20)
@@ -692,14 +692,7 @@ FrontDiffCoastSetting=0//N/A (N/A for RWD) (Fixed)
 FrontDiffPreloadSetting=0//N/A (N/A for RWD) (Fixed)
 RearSplitSetting=0//RWD (Fixed)
 GearAutoUpShiftSetting=0//Off (Manual Shifting) (Fixed)
-GearAutoDownShiftSetting=0//Off (Manual Shifting) (Fixed)
-
-[BASIC]
-Downforce=0.500000
-Balance=0.500000
-Ride=0.500000
-Gearing=0.500000
-Custom=1`
+GearAutoDownShiftSetting=0//Off (Manual Shifting) (Fixed)`
 };
 
 // 8. Define a route for AI setup requests
@@ -795,13 +788,13 @@ app.post('/generate-setup', async (req, res) => {
 ## - **Anti-Roll Bars (AntiSwaySetting):** Controls body roll and affects load transfer across the axle. Stiffer anti-roll bar on an axle transfers more load to the outside tire, increasing grip on that axle at the expense of grip on the other axle (e.g., stiffer front increases understeer, stiffer rear increases oversteer).
 ## - **Camber Setting:** The vertical angle of the tire. Negative camber ($<0$) allows the tire to sit flatter when the suspension compresses and the car rolls, maximizing tire contact patch during cornering. Too much negative camber reduces straight-line grip and braking performance.
 ## - **Toe In/Out (ToeInSetting):** The horizontal angle of the tires.
-##    - **Toe-in ($>0$):** Tires point inwards. Increases straight-line stability, reduces turn-in sharpness.
-##    - **Toe-out ($<0$):** Tires point outwards. Increases turn-in sharpness, reduces straight-line stability.
+##    - **Toe-in ($>0$):):** Tires point inwards. Increases straight-line stability, reduces turn-in sharpness.
+##    - **Toe-out ($<0$):):** Tires point outwards. Increases turn-in sharpness, reduces straight-line stability.
 ## - **Ride Height:** Distance between the chassis and the ground. Lower ride height reduces drag and lowers the center of gravity, improving stability and aero performance. Too low can cause bottoming out on bumps/kerbs. Rake (front vs. rear ride height) impacts aero balance.
 ## - **Packers:** Limit suspension travel. Prevents bottoming out on stiff setups or very bumpy tracks.
 
 ## **Drivetrain:**
-## - **Final Drive Setting:** The overall gearing ratio. A *higher index* (longer final drive) results in higher top speeds but slower acceleration. A *lower index* (shorter final drive) results in quicker acceleration but lower top speeds.
+## - **Final Drive Setting:** The overall gearing ratio. A *higher index* (longer final drive) results in higher top speeds but slower acceleration. A *lower index* (shortter final drive) results in quicker acceleration but lower top speeds.
 ## - **Individual Gear Settings:** Fine-tunes the ratio for each specific gear. Longer gears provide higher speed per gear, shorter gears provide faster acceleration. Must be chosen logically relative to the Final Drive and track type.
 ## - **Differential (DiffPower, DiffCoast, DiffPreload):** Controls how power is distributed between the drive wheels.
 ##    - **Diff Power (on-throttle):** Higher locking provides more traction on acceleration but can induce understeer on exit. Lower allows more rotation.
@@ -862,8 +855,8 @@ app.post('/generate-setup', async (req, res) => {
 ##
 ## **1. High-Speed Tracks (e.g., Le Mans, Monza, Spa-Francorchamps):**
 ##    - **FinalDriveSetting:** You MUST select one of the **HIGHEST available indices** for the car (e.g., if max is 7, choose 5, 6, or 7). This makes the overall gearing "longer" for high top speed.
-##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **VERY LOW non-negative integer index from the absolute bottom of the range (e.g., 0, 1, or 2 from a max of 20, using the absolute lowest available if possible for extreme top speed)** to make that individual gear **significantly LONGER**.
-##    - **Comments:** For each GearXSetting, you MUST dynamically calculate and insert a **realistic approximate speed in km/h or mph** based on the chosen gear index and final drive. Example: \`Gear1Setting=X//~Y km/h (approx. Z mph)\`. Ensure the speeds *increase logically* and are *very high* with each successive gear, reflecting a long gear setup for Le Mans.
+##    - **Gear1Setting to Gear7Setting:** For *each* individual gear, you MUST select a **VERY LOW non-negative integer index from the absolute bottom of the range (e.g., 0, 1, or 2 from a max of 20, using the absolute lowest available if possible for extreme top speed)** to make that individual gear **significantly LONGER**. Specifically, for a 7-speed Hypercar or LMP2 on Le Mans, you MUST choose indices like **"0, 0, 1, 2, 3, 4, 5" for Gear1-7 respectively** (or the lowest sequential available indices). This sequential use of very low indices is paramount for long gearing.
+##    - **Comments:** For each GearXSetting, you MUST dynamically calculate and insert a **realistic approximate speed in km/h (e.g., ~Y km/h) and mph (e.g., ~Z mph)** based on the chosen gear index and final drive. Example: \`Gear1Setting=X//~Y km/h (approx. Z mph)\`. Ensure the speeds *increase logically* and are *very high* with each successive gear, reflecting a long gear setup for Le Mans (e.g., 6th or 7th gear often well over 300 km/h / 185 mph).
 ##    - **Self-Verification:** Mentally confirm that 6th or 7th gear top speed reaches *over 300 km/h (or 185 mph)* for Hypercars/LMP2s on tracks like Le Mans, indicating truly long gearing.
 ##
 ## **2. Technical/Accelerative Tracks (e.g., Sebring, Portimão, Imola):**
@@ -919,7 +912,7 @@ app.post('/generate-setup', async (req, res) => {
 ## 1. Low RideHeight REQUIRES Stiff Springs (to prevent bottoming out).
 ## 2. High Aero (RWSetting) REQUIRES Stiff Springs (to support downforce).
 ## 3. Bumpy Tracks (Sebring, Portimão) REQUIRE Softer Fast Damping (for bump absorption).
-## 4. **Gearing Sanity Check:** For High-Speed Tracks (Le Mans/Monza), confirm that `FinalDriveSetting` is set to a HIGH index and individual `GearXSetting` indices are set to VERY LOW indices, resulting in very long gears as indicated by their approximate speeds. Conversely, for Technical Tracks, confirm shorter gears.
+## 4. **Gearing Sanity Check:** For High-Speed Tracks (Le Mans/Monza), **ENSURE** that \`FinalDriveSetting\` is set to a HIGH index and individual \`GearXSetting\` indices are set to VERY LOW indices (e.g., "0, 0, 1, 2, 3, 4, 5"), resulting in very long gears as indicated by their approximate speeds. Conversely, for Technical Tracks, confirm shorter gears.
 ## 5. **Physics Check:** Ensure toe and camber settings are physically realistic for a racing car (e.g., negative camber for cornering grip, slight toe-out on front for sharper turn-in, slight toe-in on rear for stability).
 ## 6. **Physics Check:** Ensure damper settings (bump/rebound) logically complement spring stiffness and track type. Softer springs often pair with softer damping, stiffer with stiffer.
 ## 7. **Balance Consistency:** Aero balance, mechanical balance (springs/ARBs), and differential settings should ideally work in harmony towards the overall setup goal and driver feedback.
@@ -948,10 +941,10 @@ Specific User Request: ${specificRequest}
 ${fuelEstimateRequest}
 ${tireCompoundGuidance}
 
-This is the required LMU .VEH structure. You must use this exact structure, replacing all placeholder values with valid integers and dynamically calculated comments. Your response must begin IMMEDIATELY with 'VehicleClassSetting=' and contain ONLY the .VEH file content. Do not include any introductory text, explanations, or markdown formatting.
+This is the required LMU .VEH structure. You must use this exact structure, replacing all placeholder values with valid integers and dynamically calculated comments. Your response MUST begin IMMEDIATELY with 'VehicleClassSetting=' and contain ONLY the .VEH file content. No extra text, no markdown code block formatting (like \`\`\`), no introductory or concluding remarks whatsoever.
 ${exampleTemplate}
 
-Now, generate the complete and valid .VEH file. Your response must contain ONLY the file content and nothing else.
+Now, generate the complete and valid .VEH file. Your response MUST contain ONLY the file content and nothing else.
 `;
 
     try {
@@ -967,7 +960,7 @@ Now, generate the complete and valid .VEH file. Your response must contain ONLY 
                 model: PRIMARY_MODEL,
                 messages: [{ role: "user", content: prompt }],
                 max_tokens: 4096,
-                temperature: 0.8, // Adjusted to 0.8 for strong adherence to detailed instructions with some nuance
+                temperature: 0.7, // Adjusted for stricter adherence
             }),
         });
 
