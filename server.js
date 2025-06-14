@@ -898,12 +898,15 @@ app.post('/generate-setup', async (req, res) => {
     const tireCompoundGuidance = req.body.tireCompoundGuidance || 'Choose appropriate compound for dry conditions (e.g., 0 for Soft, 1 for Medium, 2 for Hard).'; // Default or get from client
 
     // Construct the prompt for the AI
-    const prompt = `You are a Le Mans Ultimate (LMU) car setup expert. Your task is to provide a detailed car setup 
-IN THE EXACT LMU .VEH FILE FORMAT. 
-Your response MUST start with 'VehicleClassSetting="...' and include ALL standard LMU sections and parameters as shown in the example below.
-Ensure all parameters within sections are valid LMU parameters and are properly formatted as Setting=Value//Comment (even if the comment is "N/A" or "Non-adjustable").
-DO NOT include any conversational text, explanations, or extra formatting like markdown code blocks (e.g., \`\`\`).
-Only provide the complete and valid .VEH file content.
+    const prompt = `You are a world-class Le Mans Ultimate (LMU) car setup engineer. Your goal is to generate a complete and valid .VEH file based on a user's request.
+
+**Thought Process (Follow these steps internally):**
+1.  Analyze the user's request: car, track, goals (e.g., stability, qualifying pace), weather, and temperature.
+2.  Based on the track (e.g., Le Mans long straights vs. Sebring bumps), reason about the key settings. For example: "This is Le Mans, so I need very long gear ratios, low wing settings for top speed, and stiff suspension for high-speed stability."
+3.  Generate the numerical values for every single parameter in the .VEH file, from aero and suspension to the full driveline and engine maps.
+4.  Format the final output strictly as a .VEH file, starting with 'VehicleClassSetting=...' and containing no other text.
+
+**CRITICAL INSTRUCTION: The template below uses OBVIOUS PLACEHOLDER values (e.g., 'Gear1Setting=5'). You MUST replace these placeholders with your new, calculated values. A setup returned with placeholder values like 'Gear1Setting=5' or 'RearBrakeSetting=15' is a complete failure. Do not copy the placeholder values.**
 
 Here are the details for the setup request:
 Car: ${selectedCarValue} (Display Name: ${selectedCarDisplay}, Category: ${selectedCarCategory})
