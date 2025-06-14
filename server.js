@@ -747,7 +747,7 @@ Specific User Request: ${specificRequest}
 ${fuelEstimateRequest}
 ${tireCompoundGuidance}
 
-This is the required LMU .VEH structure. You must use this exact structure, replacing all placeholder values with valid integers from the guide above.
+This is the required LMU .VEH structure. You must use this exact structure, replacing all placeholder values with valid integers from the guide above. Your response must begin IMMEDIATELY with 'VehicleClassSetting=' and contain ONLY the .VEH file content. Do not include any introductory text, explanations, or markdown formatting like \`\`\` around the code.
 ${exampleTemplate}
 
 Now, generate the complete and valid .VEH file. Your response must contain ONLY the file content and nothing else.
@@ -779,21 +779,29 @@ Now, generate the complete and valid .VEH file. Your response must contain ONLY 
         }
 
         const chatCompletion = await openrouterResponse.json();
-        let text = chatCompletion.choices[0].message.content;
+        const rawText = chatCompletion.choices[0].message.content;
 
-        // Trim leading/trailing whitespace AND remove markdown code blocks (if present)
-        text = text.trim();
-        if (text.startsWith('```') && text.endsWith('```')) {
-            text = text.replace(/^```[a-zA-Z]*\n|\n```$/g, '').trim();
-        }
+        // --- NEW ROBUST PARSING LOGIC ---
+        // Find the start of the actual .VEH content. The AI sometimes adds introductory text.
+        const setupStartIndex = rawText.indexOf('VehicleClassSetting=');
+        
+        if (setupStartIndex !== -1) {
+            // If the start string is found, extract everything from that point on.
+            let setupText = rawText.substring(setupStartIndex);
 
-        if (text && text.startsWith('VehicleClassSetting=')) {
-            res.json({ setup: text });
+            // Also remove any trailing markdown code blocks if they exist
+             if (setupText.trim().endsWith('```')) {
+                 setupText = setupText.trim().slice(0, -3).trim();
+            }
+
+            res.json({ setup: setupText });
+
         } else {
-            console.error("AI generated an invalid setup format or empty response.");
-            console.error("AI Raw Response (first 500 chars):", text ? text.substring(0, 500) : '[Empty Response]'); // Log a snippet
+            // If 'VehicleClassSetting=' is not found at all, the response is invalid.
+            console.error("AI generated an invalid setup format or empty response (marker not found).");
+            console.error("AI Raw Response (first 500 chars):", rawText ? rawText.substring(0, 500) : '[Empty Response]'); // Log a snippet
             res.status(500).json({
-                error: `AI generated an invalid setup format. Please refine your request or try again. Raw AI response snippet: ${text ? text.substring(0, 200) : '[Empty Response]'}`
+                error: `AI generated an invalid setup format. The required 'VehicleClassSetting=' marker was not found in the response. Please try again. Raw AI response snippet: ${rawText ? rawText.substring(0, 200) : '[Empty Response]'}`
             });
         }
 
