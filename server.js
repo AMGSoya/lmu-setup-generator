@@ -56,7 +56,7 @@ UpgradeSetting=(2,0,0,0)
 //Note: settings commented out if using the default
 
 [GENERAL]
-Notes="Quali 72% Energy 1.0 fuelÿ 0.90 fuel for drivingÿRace 100% Energy 1.1 fuelÿ0.95 while race"
+Notes=""
 Symmetric=1
 CGHeightSetting=0//Non-adjustable
 CGRightSetting=0//Non-adjustable
