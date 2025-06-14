@@ -895,7 +895,7 @@ app.post('/generate-setup', async (req, res) => {
     const tireCompoundGuidance = req.body.tireCompoundGuidance || 'Choose appropriate compound for dry conditions (e.g., 0 for Soft, 1 for Medium, 2 for Hard).'; // Default or get from client
 
     // Construct the prompt for the AI
-onst prompt = `You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable and perfectly suited to the driver's requested style and feedback.
+ const prompt = `You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable and perfectly suited to the driver's requested style and feedback.
 
 **Thought Process (Follow these steps internally):**
 1.  **Prioritize the Driver:** My main objective is to create a setup that is SUITABLE FOR THE DRIVER. First, I will analyze the 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') and any specific problem in the 'Driver Problem to Solve' field. These are my most important instructions.
@@ -908,39 +908,39 @@ onst prompt = `You are a world-class Le Mans Ultimate (LMU) race engineer. Your 
 
 Crucial LMU Setup Principles to Apply:
 Driver-Centric Adjustments:
-- For a 'Safe' or 'Stable' request, I will prioritize predictability: using slightly softer suspension settings, higher wing angles for stability, and less aggressive differential locking. The goal is a car with no sudden reactions.
+- For a 'Safe' or 'Stable' request, I will prioritize predictability: using slightly softer suspension settings, higher wing angles for stability, and less aggressive differential locking.
 - For an 'Aggressive' request, I will prioritize responsiveness and rotation: using stiffer springs and dampers, more negative front camber for sharp turn-in, and settings that allow the rear to rotate.
-- If the driver reports 'understeer', I will focus on changes that increase front-end grip (e.g., soften front anti-roll bar, stiffen rear anti-roll bar, increase front negative camber, lower front ride height).
-- If the driver reports 'oversteer', I will focus on changes that increase rear-end stability (e.g., stiffen front anti-roll bar, soften rear anti-roll bar, increase rear wing, add rear toe-in).
+- If the driver reports 'understeer', I will focus on changes that increase front-end grip (e.g., soften front anti-roll bar, stiffen rear anti-roll bar).
+- If the driver reports 'oversteer', I will focus on changes that increase rear-end stability (e.g., stiffen front anti-roll bar, soften rear anti-roll bar).
 
 Qualifying vs. Race Philosophy: The Trade-Off Between Pace and Consistency.
-For a race setup, I will prioritize stability and tire preservation over ultimate one-lap pace. A qualifying setup can be more aggressive and harder on tires.
+For a race setup, I will prioritize stability and tire preservation over ultimate one-lap pace.
 
 The Aero-Mechanical Balance: How a Change in One Area Affects Another.
-A car's setup is a web of interconnected settings. A significant change to aerodynamics must be balanced by a change to the suspension. For example, adding rear wing will require balancing the front of the car, perhaps with the front anti-roll bar.
+A significant change to aerodynamics must be balanced by a change to the suspension.
 
 Tire Temperature as the Ultimate Goal: The "Why" Behind Pressure and Camber.
-The ultimate goal for any tire setting is to have the tire's core temperature consistently in the optimal grip window (typically 85-100°C). All tire settings are tools to achieve this critical temperature target.
+The ultimate goal for any tire setting is to have the tire's core temperature consistently in the optimal grip window (typically 85-100°C).
 
 Engineer's Commentary in Notes:
-The [GENERAL] Notes section is critical. In addition to the fuel calculation, I must use it to briefly explain the setup's core philosophy. For example: "Le Mans setup: Low wings for top speed, stiff springs for stability in high-speed corners. Rear is planted but may understeer slightly in slow chicanes. Fuel for 11+1.5 laps." or "Sebring setup: Softer, compliant suspension for the bumps with high wings for braking stability. Shorter gears for acceleration. Fuel for a 45 min stint."
+The [GENERAL] Notes section is critical. In addition to the fuel calculation, I must use it to briefly explain the setup's core philosophy. For example: "Le Mans setup: Low wings for top speed, stiff springs for stability in high-speed corners."
 
 The Importance of Useful Comments:
-The '//Comment' part of each setting should also be a concise, useful description of the actual value being set (e.g., 'PressureSetting=5//140 kPa', 'RWSetting=3//P4').
+The '//Comment' part of each setting should also be a concise, useful description of the actual value being set (e.g., 'PressureSetting=5//140 kPa').
 
 Here are the details for the setup request:
-Car: ${selectedCarValue} (Display Name: ${selectedCarDisplay}, Category: ${selectedCarCategory})
-Track: ${selectedTrackValue} (Display Name: ${selectedTrackDisplay})
+Car: ${selectedCarValue}
+Track: ${selectedTrackValue}
 Setup Goal: ${setupGoal}
-Driver Problem to Solve: ${driverFeedback}
+Driver Problem to Solve: ${driverFeedback || 'None'}
 Session Goal: ${sessionGoal}
-Session Duration: ${sessionDuration} minutes
-Weather: ${selectedWeather} (${weatherGuidance})
+Session Duration: ${sessionDuration || 0} minutes
+Weather: ${selectedWeather}
 Track Temperature: ${trackTemp}°C
-Specific User Request: ${specificRequest}
+Specific User Request: ${specificRequest || 'None'}
 
 **Fuel & Strategy Calculation:**
-- This is a CRITICAL task. If the 'Session Goal' is 'Race' and 'Session Duration' is greater than 0, you must perform a fuel calculation based on time.
+- If 'Session Goal' is 'Race' and 'Session Duration' is greater than 0, you must perform a fuel calculation based on time.
 - **Methodology:**
     1.  Estimate a reasonable average race lap time (in minutes) for the car/track.
     2.  Calculate the number of laps possible in the stint by dividing 'Session Duration' by the estimated lap time. Round down.
@@ -949,9 +949,9 @@ Specific User Request: ${specificRequest}
     5.  Round the final result to the nearest whole number.
 - **Output:**
     1.  You MUST update the 'FuelSetting' in the [GENERAL] section with this final calculated value.
-    2.  You MUST update the 'Notes' field in the [GENERAL] section to contain BOTH the Engineer's Commentary and the fuel calculation results, as described in the principles above.
+    2.  You MUST update the 'Notes' field in the [GENERAL] section to contain BOTH the Engineer's Commentary and the fuel calculation results.
+- **Exception:** If 'Session Goal' is 'Qualifying', ignore the duration and use a standard low fuel amount.
 
-- **Exception:** If the 'Session Goal' is 'Qualifying', ignore the duration and use a standard low fuel amount suitable for 2-3 fast laps.
 Example of expected LMU .VEH structure (use this as the exact template to fill in values):
 ${exampleTemplate}
 
