@@ -43,9 +43,9 @@ const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const PRIMARY_MODEL = 'NousResearch/Hermes-2-Pro-Llama-3-8B';
 
 // --- Define LMU .VEH Example Templates by Category ---
-// Templates remain largely the same, the main fix is in the prompt sent to the AI.
+// UPGRADED: Added GTE class and made VehicleClassSetting a placeholder for dynamic insertion.
 const LMU_VEH_TEMPLATES = {
-    'Hypercar': `VehicleClassSetting="Ferrari_499P Hypercar WEC2024"
+    'Hypercar': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(2,0,0,0)
 //UpgradeClass=
 //Tyre Restrictions=2
@@ -250,7 +250,7 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'LMP2': `VehicleClassSetting="LMP2 Oreca_07"
+    'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(12,0,0,0)
 //UpgradeClass=
 //Fuel tank=0
@@ -446,7 +446,7 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'GT3': `VehicleClassSetting="GT3 Porsche_911_GT3_R_LMGT3 WEC2024"
+    'GT3': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(3276,0,0,0)
 //UpgradeClass=
 //Position lights=0
@@ -635,6 +635,111 @@ Downforce=0.500000
 Balance=0.500000
 Ride=0.500000
 Gearing=0.500000
+Custom=1`,
+    
+    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
+UpgradeSetting=(0,0,0,0)
+
+[GENERAL]
+Notes=""
+Symmetric=1
+FuelSetting=100
+FuelCapacitySetting=0
+NumPitstopsSetting=0
+
+[FRONTWING]
+FWSetting=0
+
+[REARWING]
+RWSetting=5
+
+[SUSPENSION]
+FrontAntiSwaySetting=8
+RearAntiSwaySetting=4
+FrontToeInSetting=12
+RearToeInSetting=18
+Front3rdPackerSetting=0
+Front3rdSpringSetting=0
+Rear3rdPackerSetting=0
+Rear3rdSpringSetting=0
+
+[CONTROLS]
+SteerLockSetting=15
+RearBrakeSetting=15
+BrakePressureSetting=95
+TCSetting=0
+TractionControlMapSetting=5
+TCPowerCutMapSetting=5
+TCSlipAngleMapSetting=5
+AntilockBrakeSystemMapSetting=5
+
+[ENGINE]
+RevLimitSetting=0
+EngineMixtureSetting=1
+EngineBrakingMapSetting=8
+
+[DRIVELINE]
+FinalDriveSetting=5
+Gear1Setting=10
+Gear2Setting=10
+Gear3Setting=10
+Gear4Setting=10
+Gear5Setting=10
+Gear6Setting=10
+RatioSetSetting=1
+DiffPowerSetting=8
+DiffCoastSetting=10
+DiffPreloadSetting=25
+
+[FRONTLEFT]
+CamberSetting=20
+PressureSetting=10
+PackerSetting=5
+SpringSetting=8
+RideHeightSetting=10
+SlowBumpSetting=10
+FastBumpSetting=10
+SlowReboundSetting=10
+FastReboundSetting=10
+
+[FRONTRIGHT]
+CamberSetting=20
+PressureSetting=10
+PackerSetting=5
+SpringSetting=8
+RideHeightSetting=10
+SlowBumpSetting=10
+FastBumpSetting=10
+SlowReboundSetting=10
+FastReboundSetting=10
+
+[REARLEFT]
+CamberSetting=15
+PressureSetting=10
+PackerSetting=5
+SpringSetting=6
+RideHeightSetting=20
+SlowBumpSetting=10
+FastBumpSetting=10
+SlowReboundSetting=10
+FastReboundSetting=10
+
+[REARRIGHT]
+CamberSetting=15
+PressureSetting=10
+PackerSetting=5
+SpringSetting=6
+RideHeightSetting=20
+SlowBumpSetting=10
+FastBumpSetting=10
+SlowReboundSetting=10
+FastReboundSetting=10
+
+[BASIC]
+Downforce=0.500000
+Balance=0.500000
+Ride=0.500000
+Gearing=0.500000
 Custom=1`
 };
 
@@ -659,10 +764,13 @@ app.post('/generate-setup', async (req, res) => {
         finalCategory = 'LMGT3';
     }
 
-    const exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
+    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
     if (!exampleTemplate) {
         return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.` });
     }
+
+    // UPGRADE: Dynamically insert the user's selected car name into the template
+    exampleTemplate = exampleTemplate.replace('[[CAR_NAME]]', car);
 
     const sessionDuration = req.body.sessionDuration || 'N/A';
     const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
@@ -685,8 +793,8 @@ You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philoso
 
 // --- THOUGHT PROCESS (Internal) ---
 1.  **Analyze Request:** What is the Setup Goal (Safe, Balanced, Aggressive), Track, Car, and Driver Feedback?
-2.  **Consult Parameter Guide:** Review the mandatory "PARAMETER RANGE GUIDE" below to understand the valid numerical limits for each setting.
-3.  **Formulate a Plan:** Based on the driver's needs and track type (High-Speed vs. Technical), form a plan. Example: "Driver wants a 'Safe' setup for Le Mans. I will use low wing settings from the guide for top speed, but slightly softer suspension settings and more stable differential settings to ensure predictability."
+2.  **Consult Parameter Guide:** Review the mandatory "PARAMETER RANGE GUIDE" below to understand the valid numerical limits and track-specific advice for each setting.
+3.  **Formulate a Plan:** Based on the driver's needs and track type (High-Speed vs. Technical), form a plan. Example: "Driver wants a 'Safe' setup for Le Mans. I will use low wing settings from the guide [0-3] for top speed, but slightly softer suspension settings and more stable differential settings to ensure predictability."
 4.  **Generate Values:** For EVERY parameter, choose a specific integer from within its valid range in the guide. For gears, '0' is almost never a valid choice. I must output a logical number.
 5.  **Write Justification:** In the [GENERAL] Notes section, I will explain my core tuning philosophy and the fuel estimate.
 
@@ -697,26 +805,24 @@ You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philoso
 // Logic: Low end of range = Softer/Less/Lower. High end of range = Stiffer/More/Higher.
 
 // [AERO]
-// RWSetting (Rear Wing): [0 - 12] (Lower for high speed tracks like Monza/Le Mans, higher for technical tracks like Sebring)
-// BrakeDuctSetting: [0 - 6] (Higher for more cooling, lower for less drag)
+// RWSetting (Rear Wing): [0 - 12] (Track specific advice: Le Mans/Monza: 0-3. Spa: 4-6. Sebring/Portimao: 7-10)
+// BrakeDuctSetting: [0 - 6] (Higher for more cooling, lower for less drag. Use higher values for hot tracks or heavy braking zones)
 
 // [SUSPENSION]
-// FrontAntiSwaySetting: [0 - 20] (Stiffer increases understeer)
-// RearAntiSwaySetting: [0 - 20] (Stiffer increases oversteer)
-// FrontToeInSetting: [0 - 30] (Negative values are typical, this is the setting index)
-// RearToeInSetting: [0 - 30]
-// PackerSetting: [0 - 20] (Affects bump stop engagement)
-// SpringSetting: [0 - 20] (Higher is stiffer)
-// RideHeightSetting: [0 - 40] (Higher is more ride height)
-// SlowBumpSetting: [0 - 20] (Controls slow suspension movement)
-// FastBumpSetting: [0 - 20] (Controls fast suspension movement, like curbs)
-// SlowReboundSetting: [0 - 20] (Controls slow suspension movement)
-// FastReboundSetting: [0 - 20] (Controls fast suspension movement)
+// FrontAntiSwaySetting: [0 - 20] (Stiffer increases understeer. Softer for bumpy tracks like Sebring)
+// RearAntiSwaySetting: [0 - 20] (Stiffer increases oversteer. Softer for better traction out of slow corners)
+// FrontToeInSetting: [0 - 30] (Index for negative toe. More negative toe aids turn-in but can make the car nervous)
+// RearToeInSetting: [0 - 30] (Index for positive toe. More positive toe increases stability but can increase tire wear)
+// PackerSetting: [0 - 20] (Affects bump stop engagement. Higher values for smooth tracks, lower for bumpy tracks)
+// SpringSetting: [0 - 20] (Higher is stiffer. Stiffer for high speed aero tracks, softer for bumpy/technical tracks)
+// RideHeightSetting: [0 - 40] (Lower for less drag, but risk of bottoming out. Higher for curb clearance)
+// SlowBumpSetting/SlowReboundSetting: [0 - 20] (Controls driver inputs - braking, accelerating, cornering)
+// FastBumpSetting/FastReboundSetting: [0 - 20] (Controls bumps and curbs. Softer for Sebring, stiffer for Monza)
 
 // [CONTROLS]
-// RearBrakeSetting (Bias): [0 - 30] (Higher value moves bias to the front)
-// BrakePressureSetting: [70 - 100] (Percent of max pressure)
-// TractionControlMapSetting: [0 - 12] (0 is off, higher is more intervention)
+// RearBrakeSetting (Bias): [0 - 30] (Higher value moves bias to the front, e.g. 18 = 54% Front)
+// BrakePressureSetting: [70 - 100] (Percent of max pressure. Lower to prevent lockups)
+// TractionControlMapSetting: [0 - 12] (0 is off, higher is more intervention. Use higher for rain or low grip)
 // TCPowerCutMapSetting: [0 - 12]
 // AntilockBrakeSystemMapSetting (ABS): [0 - 12] (0 is off, higher is more intervention)
 
@@ -726,12 +832,12 @@ You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philoso
 // EngineMixtureSetting: [0 - 2] (0=Quali, 1=Race, 2=Lean)
 
 // [DRIVELINE] - THIS IS THE MOST IMPORTANT SECTION TO FIX
-// FinalDriveSetting: [0 - 15] (Higher for longer overall gearing / top speed)
-// RatioSetSetting: [0 - 2] (e.g., 0=Short, 1=Standard, 2=Long)
-// Gear1Setting - Gear7Setting: [1 - 30] (You MUST pick a non-zero integer. Higher numbers mean longer/taller gears for higher top speed. Lower numbers mean shorter gears for better acceleration. DO NOT use 0.)
-// DiffPowerSetting: [0 - 20] (On-throttle lock. Higher is more lock/stability, can cause understeer)
-// DiffCoastSetting: [0 - 20] (Off-throttle lock. Higher is more lock/stability on entry)
-// DiffPreloadSetting: [0 - 50] (Static lock. Higher is more stable overall)
+// FinalDriveSetting: [0 - 15] (Higher for longer overall gearing. Le Mans/Monza: 10-15. Sebring: 2-6)
+// RatioSetSetting: [0 - 2] (e.g., 0=Short, 1=Standard, 2=Long. Match to FinalDrive)
+// Gear1Setting - Gear7Setting: [1 - 30] (You MUST pick a non-zero integer. Higher numbers = longer gears. Adjust for top speed vs acceleration)
+// DiffPowerSetting: [0 - 20] (On-throttle lock. Higher = more lock/stability, can cause understeer on exit)
+// DiffCoastSetting: [0 - 20] (Off-throttle lock. Higher = more lock/stability on entry, can cause understeer on entry)
+// DiffPreloadSetting: [0 - 50] (Static lock. Higher = more stable overall, but less responsive)
 // =====================================================================================
 
 Here are the details for the setup request:
