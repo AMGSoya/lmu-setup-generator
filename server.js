@@ -929,6 +929,7 @@ Track-Type Philosophy: My entire setup approach must change based on the track.
 
 Driver-Centric Adjustments:
 - For a 'Safe' or 'Stable' request, I will prioritize predictability: using slightly softer suspension settings, higher wing angles for stability (if appropriate for track type), and less aggressive differential locking.
+- For a 'Balanced' request, I will aim for a neutral and versatile setup, optimizing for consistency and responsiveness without extreme tendencies. This involves finding a middle ground for most settings.
 - For an 'Aggressive' request, I will prioritize responsiveness and rotation: using stiffer springs and dampers, more negative front camber for sharp turn-in, and differential settings that allow the rear to rotate.
 - If the driver reports 'understeer', I will focus on changes that increase front-end grip (e.g., soften front anti-roll bar, stiffen rear anti-roll bar, more negative front camber, slightly increase front ride height).
 - If the driver reports 'oversteer', I will focus on changes that increase rear-end stability (e.g., stiffen front anti-roll bar, soften rear anti-roll bar, less negative rear camber, slightly reduce rear ride height).
