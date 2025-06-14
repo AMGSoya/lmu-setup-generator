@@ -784,64 +784,66 @@ app.post('/generate-setup', async (req, res) => {
     // =====================================================================================
     const prompt = `
 // --- PRIME DIRECTIVE ---
-Your sole mission is to act as an expert LMU race engineer and generate a complete and numerically valid .VEH setup file. You must replace every placeholder value with a calculated, logical number based on the user's request and the provided parameter ranges. Returning a file with '0' for gears or other critical settings is a failure.
+Your sole mission is to act as an expert LMU race engineer and generate a complete and numerically valid .VEH setup file. You must replace every placeholder value with a calculated, logical number based on the user's request, the parameter ranges, and the sanity check rules. Returning a file with '0' for gears or other critical settings is a failure.
 
 // --- PERSONA & PHILOSOPHY ---
-You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable and perfectly suited to the driver's requested style and feedback.
+You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable, physically realistic, and perfectly suited to the driver's requested style and feedback.
 
-**CRITICAL INSTRUCTION: The template below uses example values. You MUST replace these with your new, calculated, and numerically valid values based on the logic and ranges provided. Remove ALL placeholder comments like '(AI adjusts for...)' and replace them with just the value and a brief justification (e.g., 'RWSetting=2//Low for Monza speed').**
+**CRITICAL INSTRUCTION: The template below uses example values. You MUST replace these with your new, calculated, and numerically valid values based on the logic, ranges, and sanity checks provided. Remove ALL placeholder comments like '(AI adjusts for...)' and replace them with just the value and a brief justification (e.g., 'RWSetting=2//Low for Monza speed').**
 
 // --- THOUGHT PROCESS (Internal) ---
-1.  **Analyze Request:** What is the Setup Goal (Safe, Balanced, Aggressive), Track, Car, and Driver Feedback?
-2.  **Consult Parameter Guide:** Review the mandatory "PARAMETER RANGE GUIDE" below to understand the valid numerical limits and track-specific advice for each setting.
-3.  **Formulate a Plan:** Based on the driver's needs and track type (High-Speed vs. Technical), form a plan. Example: "Driver wants a 'Safe' setup for Le Mans. I will use low wing settings from the guide [0-3] for top speed, but slightly softer suspension settings and more stable differential settings to ensure predictability."
-4.  **Generate Values:** For EVERY parameter, choose a specific integer from within its valid range in the guide. For gears, '0' is almost never a valid choice. I must output a logical number.
-5.  **Write Justification:** In the [GENERAL] Notes section, I will explain my core tuning philosophy and the fuel estimate.
+1.  **Analyze Request:** What is the Setup Goal (Safe, Balanced, Aggressive), Track, Car, Car Class, and Driver Feedback?
+2.  **Consult Parameter Guide:** Review the mandatory "PARAMETER RANGE GUIDE" for the specific Car Class to understand the valid numerical limits and track-specific advice.
+3.  **Apply Sanity Checks:** Review the "SETUP SANITY CHECKS" to ensure the combination of settings is physically realistic and cohesive.
+4.  **Formulate a Plan:** Based on all the above, form a plan. Example: "Driver wants a 'Safe' Hypercar setup for Le Mans. I will use low wing settings [0-3] and a long final drive [10-15]. Because the ride height will be low for aero, the Sanity Check dictates I must use stiff springs [15-20] to prevent bottoming out on the Mulsanne."
+5.  **Generate Values:** For EVERY parameter, choose a specific integer from within its valid range in the guide.
+6.  **Write Justification:** In the [GENERAL] Notes section, I will explain my core tuning philosophy, why I made key decisions (referencing the sanity checks), and the fuel estimate.
 
 // =====================================================================================
-// --- MANDATORY PARAMETER RANGE GUIDE (You MUST adhere to these values) ---
+// --- NEW: SETUP SANITY CHECKS (You MUST follow these relationship rules) ---
+// =====================================================================================
+// 1.  **Ride Height vs. Springs:** A very low RideHeightSetting REQUIRES a high (stiff) SpringSetting to prevent the car from bottoming out on bumps or under aerodynamic load. A higher ride height can use softer springs.
+// 2.  **Aero vs. Springs:** High downforce settings (e.g., high RWSetting) push the car down at speed. This REQUIRES stiffer springs (higher SpringSetting) to support the load and maintain a stable platform.
+// 3.  **Bumps vs. Dampers:** On a bumpy track (e.g., Sebring), use lower (softer) FastBumpSetting values to absorb bumps. On a smooth track (e.g., Monza), you can use higher (stiffer) settings for more responsiveness.
+// 4.  **Balance & ARBs:** To fix understeer, soften the FrontAntiSwaySetting and/or stiffen the RearAntiSwaySetting. To fix oversteer, do the opposite.
+// 5.  **Gearing & Track Type:** Do not use short gears (low FinalDriveSetting) on a high-speed track (Le Mans/Monza). Do not use long gears (high FinalDriveSetting) on a technical track (Sebring/Portimao).
+
+// =====================================================================================
+// --- MANDATORY PARAMETER RANGE GUIDE (Values are class-specific) ---
 // =====================================================================================
 // For each setting, pick an integer within the specified [Min - Max] range.
-// Logic: Low end of range = Softer/Less/Lower. High end of range = Stiffer/More/Higher.
 
 // [AERO]
-// RWSetting (Rear Wing): [0 - 12] (Track specific advice: Le Mans/Monza: 0-3. Spa: 4-6. Sebring/Portimao: 7-10)
-// BrakeDuctSetting: [0 - 6] (Higher for more cooling, lower for less drag. Use higher values for hot tracks or heavy braking zones)
+// RWSetting (Rear Wing): Hypercar [0-7], LMP2 [0-8], GT3/GTE [0-12]. (Track advice: Le Mans/Monza: use lowest 25% of range. Sebring: use highest 25% of range)
+// BrakeDuctSetting: [0 - 6] (Higher for more cooling, lower for less drag)
 
 // [SUSPENSION]
-// FrontAntiSwaySetting: [0 - 20] (Stiffer increases understeer. Softer for bumpy tracks like Sebring)
-// RearAntiSwaySetting: [0 - 20] (Stiffer increases oversteer. Softer for better traction out of slow corners)
-// FrontToeInSetting: [0 - 30] (Index for negative toe. More negative toe aids turn-in but can make the car nervous)
-// RearToeInSetting: [0 - 30] (Index for positive toe. More positive toe increases stability but can increase tire wear)
-// PackerSetting: [0 - 20] (Affects bump stop engagement. Higher values for smooth tracks, lower for bumpy tracks)
-// SpringSetting: [0 - 20] (Higher is stiffer. Stiffer for high speed aero tracks, softer for bumpy/technical tracks)
-// RideHeightSetting: [0 - 40] (Lower for less drag, but risk of bottoming out. Higher for curb clearance)
-// SlowBumpSetting/SlowReboundSetting: [0 - 20] (Controls driver inputs - braking, accelerating, cornering)
-// FastBumpSetting/FastReboundSetting: [0 - 20] (Controls bumps and curbs. Softer for Sebring, stiffer for Monza)
+// FrontAntiSwaySetting / RearAntiSwaySetting: [0 - 20]
+// SpringSetting: [0 - 20] (Stiffer for aero cars like Prototypes, can be softer for GTs)
+// RideHeightSetting: [0 - 40] (Prototypes run lower than GT cars)
+// SlowBumpSetting/SlowReboundSetting: [0 - 20]
+// FastBumpSetting/FastReboundSetting: [0 - 20]
 
 // [CONTROLS]
-// RearBrakeSetting (Bias): [0 - 30] (Higher value moves bias to the front, e.g. 18 = 54% Front)
-// BrakePressureSetting: [70 - 100] (Percent of max pressure. Lower to prevent lockups)
-// TractionControlMapSetting: [0 - 12] (0 is off, higher is more intervention. Use higher for rain or low grip)
-// TCPowerCutMapSetting: [0 - 12]
-// AntilockBrakeSystemMapSetting (ABS): [0 - 12] (0 is off, higher is more intervention)
+// RearBrakeSetting (Bias): [10 - 25] (Higher value moves bias to the front)
+// BrakePressureSetting: [70 - 100]
+// TractionControlMapSetting / AntilockBrakeSystemMapSetting: [0 - 12]
 
 // [ENGINE]
 // RegenerationMapSetting (Hybrid): [0 - 10] (Race: 10, Quali: 8-9. If not hybrid, must be 0)
 // ElectricMotorMapSetting (Hybrid): [1 - 4] (Race: 3, Quali: 4. If not hybrid, must be 0 and commented as '//Not Applicable')
 // EngineMixtureSetting: [0 - 2] (0=Quali, 1=Race, 2=Lean)
 
-// [DRIVELINE] - THIS IS THE MOST IMPORTANT SECTION TO FIX
-// FinalDriveSetting: [0 - 15] (Higher for longer overall gearing. Le Mans/Monza: 10-15. Sebring: 2-6)
-// RatioSetSetting: [0 - 2] (e.g., 0=Short, 1=Standard, 2=Long. Match to FinalDrive)
-// Gear1Setting - Gear7Setting: [1 - 30] (You MUST pick a non-zero integer. Higher numbers = longer gears. Adjust for top speed vs acceleration)
-// DiffPowerSetting: [0 - 20] (On-throttle lock. Higher = more lock/stability, can cause understeer on exit)
-// DiffCoastSetting: [0 - 20] (Off-throttle lock. Higher = more lock/stability on entry, can cause understeer on entry)
-// DiffPreloadSetting: [0 - 50] (Static lock. Higher = more stable overall, but less responsive)
+// [DRIVELINE]
+// FinalDriveSetting: [0 - 15] (Le Mans/Monza: 10-15. Sebring: 2-6)
+// RatioSetSetting: [0 - 2] (Match to FinalDrive)
+// Gear1Setting - Gear7Setting: [1 - 30] (MUST be non-zero. Higher numbers = longer gears)
+// DiffPowerSetting / DiffCoastSetting: [0 - 20]
+// DiffPreloadSetting: [0 - 50]
 // =====================================================================================
 
 Here are the details for the setup request:
-Car: ${car} (Display Name: ${selectedCarDisplay}, Category: ${selectedCarCategory})
+Car: ${car} (Display Name: ${selectedCarDisplay}, Category: ${finalCategory})
 Track: ${track} (Display Name: ${selectedTrackDisplay})
 Setup Goal: ${setupGoal}
 Driver Problem to Solve: ${driverFeedback}
@@ -853,7 +855,7 @@ Specific User Request: ${specificRequest}
 ${fuelEstimateRequest}
 ${tireCompoundGuidance}
 
-This is the required LMU .VEH structure. You must use this exact structure, replacing all placeholder values with valid integers from the guide above. Your response must begin IMMEDIATELY with 'VehicleClassSetting=' and contain ONLY the .VEH file content. Do not include any introductory text, explanations, or markdown formatting like \`\`\` around the code.
+This is the required LMU .VEH structure. You must use this exact structure, replacing all placeholder values with valid integers from the guide above. Your response must begin IMMEDIATELY with 'VehicleClassSetting=' and contain ONLY the .VEH file content. Do not include any introductory text, explanations, or markdown formatting.
 ${exampleTemplate}
 
 Now, generate the complete and valid .VEH file. Your response must contain ONLY the file content and nothing else.
