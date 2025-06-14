@@ -986,8 +986,8 @@ Now generate the setup:
                     { role: "system", content: "You are a helpful assistant that generates LMU car setups. You must respond only with the .VEH file content and strictly adhere to the provided LMU .VEH format and section structure. DO NOT include markdown code blocks or any other extraneous text." },
                     { role: "user", content: prompt }
                 ],
-                max_tokens: 4000,
-                temperature: 0.7,
+                max_tokens: 4096,
+                temperature: 0.4,
             }),
         });
 
