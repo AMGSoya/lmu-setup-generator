@@ -897,11 +897,11 @@ app.post('/generate-setup', async (req, res) => {
     // Construct the prompt for the AI
     const prompt = `You are a world-class Le Mans Ultimate (LMU) car setup engineer. Your goal is to generate a complete and valid .VEH file based on a user's request.
 
-**Thought Process (Follow these steps internally):**
 1.  Analyze the user's request: car, track, goals (e.g., stability, qualifying pace), weather, and temperature.
-2.  Based on the track (e.g., Le Mans long straights vs. Sebring bumps), reason about the key settings. For example: "This is Le Mans, so I need very long gear ratios, low wing settings for top speed, and stiff suspension for high-speed stability."
-3.  Generate the numerical values for every single parameter in the .VEH file, from aero and suspension to the full driveline and engine maps.
-4.  Format the final output strictly as a .VEH file, starting with 'VehicleClassSetting=...' and containing no other text.
+2.  Based on the track, reason about the key settings needed for a fast and drivable car. For example: "This is Le Mans, so I need very long gear ratios, low wing settings for top speed, and stiff suspension for high-speed stability."
+3.  Generate the numerical values for every single parameter in the .VEH file.
+4.  **Review and Refine:** Look over the generated values. Is the setup logical? Is the aero balance reasonable? Are the springs and dampers complementary? Ensure the setup will be stable and predictable, unless the user specifically asked for an 'aggressive' car. Make final adjustments for balance and drivability.
+5.  Format the final output strictly as a .VEH file, starting with 'VehicleClassSetting=...' and containing no other text.
 
 **CRITICAL INSTRUCTION: The template below uses OBVIOUS PLACEHOLDER values (e.g., 'Gear1Setting=5'). You MUST replace these placeholders with your new, calculated values. A setup returned with placeholder values like 'Gear1Setting=5' or 'RearBrakeSetting=15' is a complete failure. Do not copy the placeholder values.**
 
