@@ -335,40 +335,40 @@ Rear3rdPackerSetting=7//0.7 cm
 
 [CONTROLS]
 //SteerLockSetting=3//336 (13) deg
-//RearBrakeSetting=13//54.1:45.9
+RearBrakeSetting=10//MUST be changed for stability (e.g., 52:48 to 56:44)
 //BrakeMigrationSetting=0// 0.0
-//BrakePressureSetting=60//100 kgf (83%)
+BrakePressureSetting=50//MUST be changed for track/driver preference
 //HandfrontbrakePressSetting=0//0%
 //HandbrakePressSetting=0//N/A
 //TCSetting=0//Available
 //ABSSetting=0//N/A
-TractionControlMapSetting=7//7
-TCPowerCutMapSetting=4//4
-TCSlipAngleMapSetting=7//Linked
+TractionControlMapSetting=5//MUST be changed for track/driver preference
+TCPowerCutMapSetting=5//MUST be changed for track/driver preference
+TCSlipAngleMapSetting=5//MUST be changed for track/driver preference
 //AntilockBrakeSystemMapSetting=0//N/A
 
 [ENGINE]
 //RevLimitSetting=0//8000
 //EngineBoostSetting=0//N/A
 //RegenerationMapSetting=0//0%
-ElectricMotorMapSetting=0//Not Applicable 
-//EngineMixtureSetting=1//Race
+ElectricMotorMapSetting=0//Not Applicable
+EngineMixtureSetting=1//MUST be changed for session type (e.g., 0=Quali, 1=Race)
 //EngineBrakingMapSetting=0//N/A
 
 [DRIVELINE]
-//FinalDriveSetting=0//2.88:1
-//ReverseSetting=0//2.85 (8.18)
-Gear1Setting=0//2.85 (8.18)
-Gear2Setting=0//2.20 (6.33)
-Gear3Setting=1//1.88 (5.39)
-Gear4Setting=1//1.62 (4.67)
-Gear5Setting=1//1.42 (4.09)
-Gear6Setting=1//1.27 (3.66)
-//RatioSetSetting=1//High Speed
+FinalDriveSetting=0//MUST be changed for the track
+ReverseSetting=0//MUST be changed for the track
+Gear1Setting=0//MUST be changed for the track
+Gear2Setting=0//MUST be changed for the track
+Gear3Setting=0//MUST be changed for the track
+Gear4Setting=0//MUST be changed for the track
+Gear5Setting=0//MUST be changed for the track
+Gear6Setting=0//MUST be changed for the track
+RatioSetSetting=0//MUST be changed for the track (e.g., 0=Standard, 1=High Speed)
 //DiffPumpSetting=0//N/A
-DiffPowerSetting=0//FF6-60 deg
-DiffCoastSetting=2//FF6-45 deg
-DiffPreloadSetting=17//85 Nm
+DiffPowerSetting=0//MUST be changed for track (affects on-throttle stability)
+DiffCoastSetting=0//MUST be changed for track (affects off-throttle stability)
+DiffPreloadSetting=10//MUST be changed for track (affects overall stability)
 //FrontDiffPumpSetting=0//0%
 //FrontDiffPowerSetting=0//0%
 //FrontDiffCoastSetting=0//0%
