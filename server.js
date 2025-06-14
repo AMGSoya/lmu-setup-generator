@@ -850,58 +850,53 @@ Custom=1`
 
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
-    
-    // Destructure initial required fields from the request body
-    const { car, track, request, selectedCarCategory } = req.body; // Added selectedCarCategory
+    // Safely destructure all possible values from the request body
+    const { car, track, request, selectedCarCategory } = req.body;
+
+    // Validate essential parameters
+    if (!car || !track || !request || !selectedCarCategory) {
+        return res.status(400).json({ error: "Please provide Car, Track, Setup Request, and Car Category details." });
+    }
     
-    // Validate essential parameters
-    if (!car || !track || !request || !selectedCarCategory) {
-        return res.status(400).json({ error: "Please provide Car, Track, Setup Request, and Car Category details." });
+    // Handle potential category key mismatch (e.g., front-end sends 'GT3' but template key is 'LMGT3')
+    let finalCategory = selectedCarCategory;
+    if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
+        finalCategory = 'LMGT3';
+    } else if (selectedCarCategory === 'LMGT3' && !LMU_VEH_TEMPLATES['LMGT3']) {
+        if(LMU_VEH_TEMPLATES['GT3']) finalCategory = 'GT3';
+    }
+    
+    const exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
+    if (!exampleTemplate) {
+        return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}` });
+    }
 
-    }
+    // Safely define all optional variables with default fallbacks to prevent crashes
+    const sessionGoal = req.body.sessionGoal || 'Optimal Lap Time';
+    const sessionDuration = req.body.sessionDuration || 0;
+    const selectedWeather = req.body.selectedWeather || 'Dry';
+    const trackTemp = req.body.trackTemp || 25;
+    const specificRequest = req.body.specificRequest || 'None';
+    const driverFeedback = req.body.driverFeedback || 'None';
+    
+    // The final, complete prompt
+    const prompt = `
+// --- PRIME DIRECTIVE ---
+Your sole mission is to act as an expert LMU race engineer and generate a complete .VEH setup file. The final setup MUST be a direct and logical response to the user's primary selections for **Setup Goal (Safe, Balanced, Aggressive)**, **Track**, **Car**, and any specific **Driver Feedback**. Every parameter you choose must be justified by these inputs. This is your primary directive.
 
-    // Select the appropriate template based on selectedCarCategory
-    const exampleTemplate = LMU_VEH_TEMPLATES[selectedCarCategory];
-    if (!exampleTemplate) {
-
-        return res.status(400).json({ error: `No .VEH template found for car category: ${selectedCarCategory}` });
-
-    }
-
-    // Capture or define additional prompt variables with defaults if not provided by client
-
-    const selectedCarValue = car; // Using 'car' from request body
-    const selectedCarDisplay = req.body.selectedCarDisplay || car; // Use client's display name or 'car' value
-
-    // selectedCarCategory is already destructured
-    const selectedTrackValue = track; // Using 'track' from request body
-    const selectedTrackDisplay = req.body.selectedTrackDisplay || track; // Use client's display name or 'track' value
-    const setupGoal = request; // Using 'request' from request body as the setup goal
-    const sessionGoal = req.body.sessionGoal || 'Optimal Lap Time'; // Default or get from client
-    const selectedWeather = req.body.selectedWeather || 'Dry'; // Default or get from client
-    const weatherGuidance = req.body.weatherGuidance || `Track is ${selectedWeather.toLowerCase()}.`; // Basic guidance based on selection
-    const trackTemp = req.body.trackTemp || 25; // Default to 25°C or get from client
-    const specificRequest = req.body.specificRequest || 'None'; // Default or get from client
-    const fuelEstimateRequest = req.body.fuelEstimateRequest || ''; // Default or get from client
-    const tireCompoundGuidance = req.body.tireCompoundGuidance || 'Choose appropriate compound for dry conditions (e.g., 0 for Soft, 1 for Medium, 2 for Hard).'; // Default or get from client
-
-
-    // Construct the prompt for the AI
- const prompt = `You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable and perfectly suited to the driver's requested style and feedback.
-
+// --- PERSONA & PHILOSOPHY ---
+You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable and perfectly suited to the driver's requested style and feedback.
 
 **Thought Process (Follow these steps internally):**
+1.  **Prioritize the Driver:** My main objective is to create a setup that is SUITABLE FOR THE DRIVER. First, I will analyze the 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') and any specific problem in the 'Driver Problem to Solve' field. These are my most important instructions.
+2.  **Formulate a Plan:** Based on the driver's needs and the track characteristics, I will form a plan. For example: "The driver wants a 'Safe' setup for Le Mans and is reporting 'unstable braking'. I will use slightly higher wings than optimal, soften the suspension, and move brake bias forward to address this first."
+3.  **Generate Values:** I will generate numerical values for every parameter, always keeping the driver's needs as my primary guide.
+4.  **Review and Refine:** I will look over the generated values to ensure they are logical and directly address the driver's request.
+5.  **Format Output:** I will format the final output strictly as a .VEH file with no other text.
 
-1.  **Prioritize the Driver:** My main objective is to create a setup that is SUITABLE FOR THE DRIVER. First, I will analyze the 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') and any specific problem in the 'Driver Problem to Solve' field. These are my most important instructions.
-2.  **Formulate a Plan:** Based on the driver's needs and the track characteristics, I will form a plan. For example: "The driver wants a 'Safe' setup for Le Mans and is reporting 'unstable braking'. I will use slightly higher wings than optimal, soften the suspension, and move brake bias forward to address this first."
-3.  **Generate Values:** I will generate numerical values for every parameter, always keeping the driver's needs as my primary guide.
-4.  **Review and Refine:** I will look over the generated values to ensure they are logical. Is the aero balance reasonable? Are the springs and dampers complementary? Ensure the setup will be stable and predictable, unless the user specifically asked for an 'aggressive' car. I will make final adjustments for balance and drivability.
-5.  **Format Output:** I will format the final output strictly as a .VEH file with no other text.
-
-**CRITICAL INSTRUCTION: The template below uses OBVIOUS PLACEHOLDER values (e.g., 'Gear1Setting=5'). You MUST replace these placeholders with your new, calculated values. A setup returned with placeholder values like 'Gear1Setting=5' or 'RearBrakeSetting=15' is a complete failure. Do not copy the placeholder values.**
+**CRITICAL INSTRUCTION: The template below uses OBVIOUS PLACEHOLDER values (e.g., 'Gear1Setting=5'). You MUST replace these placeholders with your new, calculated values. A setup returned with placeholder values like 'Gear1Setting=5' is a complete failure.**
 
 Crucial LMU Setup Principles to Apply:
-
 Driver-Centric Adjustments:
 - For a 'Safe' or 'Stable' request, I will prioritize predictability: using slightly softer suspension settings, higher wing angles for stability, and less aggressive differential locking.
 - For an 'Aggressive' request, I will prioritize responsiveness and rotation: using stiffer springs and dampers, more negative front camber for sharp turn-in, and settings that allow the rear to rotate.
@@ -914,7 +909,6 @@ For a race setup, I will prioritize stability and tire preservation over ultimat
 The Aero-Mechanical Balance: How a Change in One Area Affects Another.
 A significant change to aerodynamics must be balanced by a change to the suspension.
 
-
 Tire Temperature as the Ultimate Goal: The "Why" Behind Pressure and Camber.
 The ultimate goal for any tire setting is to have the tire's core temperature consistently in the optimal grip window (typically 85-100°C).
 
@@ -925,97 +919,81 @@ The Importance of Useful Comments:
 The '//Comment' part of each setting should also be a concise, useful description of the actual value being set (e.g., 'PressureSetting=5//140 kPa').
 
 Here are the details for the setup request:
-Car: ${selectedCarValue}
-Track: ${selectedTrackValue}
-Setup Goal: ${setupGoal}
-Driver Problem to Solve: ${driverFeedback || 'None'}
+Car: ${car}
+Track: ${track}
+Setup Goal: ${request}
+Driver Problem to Solve: ${driverFeedback}
 Session Goal: ${sessionGoal}
-Session Duration: ${sessionDuration || 0} minutes
+Session Duration: ${sessionDuration} minutes
 Weather: ${selectedWeather}
 Track Temperature: ${trackTemp}°C
-Specific User Request: ${specificRequest || 'None'}
-
+Specific User Request: ${specificRequest}
 
 **Fuel & Strategy Calculation:**
-
 - If 'Session Goal' is 'Race' and 'Session Duration' is greater than 0, you must perform a fuel calculation based on time.
 - **Methodology:**
-    1.  Estimate a reasonable average race lap time (in minutes) for the car/track.
-    2.  Calculate the number of laps possible in the stint by dividing 'Session Duration' by the estimated lap time. Round down.
-    3.  Estimate the fuel consumption per lap (in Liters).
-    4.  Calculate total fuel: (fuel per lap * number of laps) + (fuel per lap * 1.5 for safety).
-    5.  Round the final result to the nearest whole number.
+    1.  Estimate a reasonable average race lap time (in minutes) for the car/track.
+    2.  Calculate the number of laps possible in the stint by dividing 'Session Duration' by the estimated lap time. Round down.
+    3.  Estimate the fuel consumption per lap (in Liters).
+    4.  Calculate total fuel: (fuel per lap * number of laps) + (fuel per lap * 1.5 for safety).
+    5.  Round the final result to the nearest whole number.
 - **Output:**
-    1.  You MUST update the 'FuelSetting' in the [GENERAL] section with this final calculated value.
-    2.  You MUST update the 'Notes' field in the [GENERAL] section to contain BOTH the Engineer's Commentary and the fuel calculation results.
+    1.  You MUST update the 'FuelSetting' in the [GENERAL] section with this final calculated value.
+    2.  You MUST update the 'Notes' field in the [GENERAL] section to contain BOTH the Engineer's Commentary and the fuel calculation results.
 - **Exception:** If 'Session Goal' is 'Qualifying', ignore the duration and use a standard low fuel amount.
 
-Example of expected LMU .VEH structure (use this as the exact template to fill in values):
+This is the required LMU .VEH structure and format. You must use this exact structure, replacing all placeholder values.
 ${exampleTemplate}
 
-Now generate the setup:
+Now, generate the complete and valid .VEH file. Your response must contain ONLY the file content and nothing else.
 `;
 
-    try {
-        // --- CORRECTED API CALL SECTION ---
-        console.log("Sending prompt to OpenRouter AI for car:", car, "track:", track, "category:", selectedCarCategory, "using model:", PRIMARY_MODEL);
-        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-                'Content-Type': 'application/json',
-                // Recommended headers for OpenRouter
-                'HTTP-Referer': 'https://test-hrwc.onrender.com', // Your app's URL
-                'X-Title': 'LMU Setup Generator', // Your app's name
-            },
-            body: JSON.stringify({
-                model: PRIMARY_MODEL,
-                messages: [
-                    { role: "system", content: "You are a helpful assistant that generates LMU car setups. You must respond only with the .VEH file content and strictly adhere to the provided LMU .VEH format and section structure. DO NOT include markdown code blocks or any other extraneous text." },
-                    { role: "user", content: prompt }
-                ],
-                max_tokens: 4096,
-                temperature: 0.4,
-            }),
-        });
-        if (!openrouterResponse.ok) {
-            const errorData = await openrouterResponse.json();
-            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
-            return res.status(openrouterResponse.status).json({
-                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
-            });
-        }
-        
-        const chatCompletion = await openrouterResponse.json();
-        let text = chatCompletion.choices[0].message.content;
+    try {
+        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://test-hrwc.onrender.com', // Your app's URL
+                'X-Title': 'LMU Setup Generator',
+            },
+            body: JSON.stringify({
+                model: PRIMARY_MODEL,
+                messages: [{ role: "user", content: prompt }],
+                max_tokens: 4096,
+                temperature: 0.4,
+            }),
+        });
 
-        // Trim leading/trailing whitespace AND markdown code blocks (if present)
-        text = text.trim();
-        if (text.startsWith('```') && text.endsWith('```')) {
-            text = text.replace(/^```[a-zA-Z]*\n|\n```$/g, '').trim();
-        }
-        
-        if (text && text.startsWith('VehicleClassSetting=')) {
-            res.json({ setup: text });
-        } else {
-            console.error("AI generated an invalid setup format or empty response.");
-            console.error("AI Raw Response (first 500 chars):", text ? text.substring(0, 500) : '[Empty Response]'); // Log a snippet
-            res.status(500).json({
-                error: `AI generated an invalid setup format. Please refine your request or try again. Raw AI response snippet: ${text ? text.substring(0, 200) : '[Empty Response]'}`
-            });
-        }
-        
-    } catch (error) {
-        console.error("Error communicating with OpenRouter or generating setup:", error);
-        res.status(500).json({
-            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
-        });
-    }
+        if (!openrouterResponse.ok) {
+            const errorData = await openrouterResponse.json();
+            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
+            return res.status(openrouterResponse.status).json({
+                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'}`
+            });
+        }
+
+        const chatCompletion = await openrouterResponse.json();
+        let text = chatCompletion.choices[0].message.content.trim();
+
+        if (text.startsWith('```') && text.endsWith('```')) {
+            text = text.replace(/^```[a-zA-Z]*\n|\n```$/g, '').trim();
+        }
+
+        if (text && text.startsWith('VehicleClassSetting=')) {
+            res.json({ setup: text });
+        } else {
+            console.error("AI generated an invalid setup format.");
+            res.status(500).json({ error: 'AI generated an invalid setup format.' });
+        }
+
+    } catch (error) {
+        console.error("Error communicating with OpenRouter:", error);
+        res.status(500).json({ error: `Failed to connect to AI service. Error: ${error.message}` });
+    }
 });
 
-// 9. Start the server
+// 10. Start the server
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-    console.log(`Open your web browser and navigate to http://localhost:${port}`);
-    console.log("Keep this terminal window open while using the generator.");
+    console.log(`Server is running at http://localhost:${port}`);
 });
