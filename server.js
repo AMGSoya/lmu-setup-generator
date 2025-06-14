@@ -884,6 +884,42 @@ app.post('/generate-setup', async (req, res) => {
 
 
     // Construct the prompt for the AI
+   // 8. Define a route for AI setup requests
+app.post('/generate-setup', async (req, res) => {
+    // Safely destructure all possible values from the request body
+    const { car, track, request, selectedCarCategory,
+        selectedCarDisplay, selectedTrackDisplay, setupGoal,
+        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
+    } = req.body;
+
+    // Validate essential parameters (using 'request' as setupGoal is expected by the server now)
+    if (!car || !track || !setupGoal || !selectedCarCategory) {
+        return res.status(400).json({ error: "Please provide Car, Track, Setup Goal, and Car Category details." });
+    }
+    
+    // Handle potential category key mismatch (e.g., front-end sends 'LMGT3' but template key is 'GT3')
+    let finalCategory = selectedCarCategory;
+    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) { // If LMGT3 sent, but template is GT3
+        finalCategory = 'GT3';
+    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) { // If GT3 sent, but template is LMGT3
+        finalCategory = 'LMGT3';
+    }
+
+    const exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
+    if (!exampleTemplate) {
+        return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.` });
+    }
+
+    // Capture or define additional prompt variables with default fallbacks
+    // These are already destructured and will be undefined if not provided, so use default directly
+    const sessionDuration = req.body.sessionDuration || 'N/A'; // Default to N/A if not provided
+    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
+                                `Estimate fuel for a ${sessionDuration} minute race.` : '';
+    const weatherGuidance = `Current weather is ${selectedWeather}.`;
+    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+
+
+    // Construct the prompt for the AI
     const prompt = `
 // --- PRIME DIRECTIVE ---
 Your sole mission is to act as an expert LMU race engineer and generate a complete .VEH setup file. The final setup MUST be a direct and logical response to the user's primary selections for **Setup Goal (Safe, Balanced, Aggressive)**, **Track**, **Car**, and any specific **Driver Feedback**. Every parameter you choose must be justified by these inputs. This is your primary directive.
@@ -918,16 +954,16 @@ Qualifying vs. Race Philosophy: For a race setup, I will prioritize stability an
 Engineer's Commentary in Notes: The [GENERAL] Notes section is critical. I must use it to briefly explain the setup's core philosophy (e.g., "Le Mans setup: Low wings for top speed, stiff springs for stability.") and include the fuel calculation.
 
 **Specific Guidance for ENGINE and DRIVELINE (Crucial for fixing the issue):**
-- **RegenerationMapSetting (for Hybrids like Hypercars):** For Race sessions, aim for `10` (max regen). For Qualifying, a lower value like `8` or `9` might be used. For non-hybrids, this should be `0//N/A`.
-- **ElectricMotorMapSetting (for Hybrids like Hypercars):** For Race sessions, use `3` or `4` for usable electric power. For Qualifying, `4` for maximum boost. For non-hybrids (LMP2, GT3, GTE), this *must* be `0//Not Applicable`. Do NOT output "safety-car" or any other non-numerical value.
-- **EngineMixtureSetting:** For Qualifying, use `0//Full`. For Race sessions, use `1//Race` unless fuel saving is a very specific request, then consider `2//Lean`.
+- **RegenerationMapSetting (for Hybrids like Hypercars):** For Race sessions, aim for 10 (max regen). For Qualifying, a lower value like 8 or 9 might be used. For non-hybrids, this should be 0//N/A.
+- **ElectricMotorMapSetting (for Hybrids like Hypercars):** For Race sessions, use 3 or 4 for usable electric power. For Qualifying, 4 for maximum boost. For non-hybrids (LMP2, GT3, GTE), this *must* be 0//Not Applicable. Do NOT output "safety-car" or any other non-numerical value.
+- **EngineMixtureSetting:** For Qualifying, use 0//Full. For Race sessions, use 1//Race unless fuel saving is a very specific request, then consider 2//Lean.
 - **FinalDriveSetting & Gears (Gear1Setting-Gear7Setting):** These are paramount for track type.
     - **High-Speed Tracks (e.g., Le Mans, Monza):** Choose a **longer** FinalDriveSetting (numerically higher values like 0-7, depending on car) and adjust individual gears to stretch them for top speed. The comments for individual gears should reflect the calculated speed.
     - **Technical Tracks (e.g., Sebring, Imola):** Choose a **shorter** FinalDriveSetting (numerically lower values, or 0 if default is short) and adjust individual gears for quicker acceleration out of corners.
 - **DiffPowerSetting (on-throttle):** Higher for more traction, lower for more rotation. Adjust based on setup goal and driver feedback. (e.g., 0-15 typical range).
 - **DiffCoastSetting (off-throttle):** Higher for more stability on lift-off, lower for more rotation. Adjust based on setup goal and driver feedback. (e.g., 0-20 typical range).
 - **DiffPreloadSetting:** Affects low-speed stability. Higher for more stability, lower for more maneuverability. (e.g., 0-100 Nm typical range).
-- **RatioSetSetting:** `0` for Standard, `1` for Long/High Speed, etc. Adjust based on track type.
+- **RatioSetSetting:** 0 for Standard, 1 for Long/High Speed, etc. Adjust based on track type.
 
 Here are the details for the setup request:
 Car: ${car} (Display Name: ${selectedCarDisplay}, Category: ${selectedCarCategory})
