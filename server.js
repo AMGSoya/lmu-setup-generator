@@ -783,75 +783,77 @@ app.post('/generate-setup', async (req, res) => {
     // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
     // =====================================================================================
     const prompt = `
-// --- PRIME DIRECTIVE ---
-Your sole mission is to act as an expert LMU race engineer and generate a complete and numerically valid .VEH setup file. You must replace every placeholder value with a calculated, logical number based on a strict engineering hierarchy. Returning a file with '0' for gears or other critical settings is a failure.
+## --- PRIME DIRECTIVE ---
+## Your sole mission is to act as a virtual LMU race engineer and generate a complete, physically realistic, and numerically valid .VEH setup file. You must replace every placeholder value with a calculated, logical number based on a strict engineering hierarchy. Returning a file with '0' for gears or other critical settings is a failure.
 
-// --- PERSONA & PHILOSOPHY ---
-You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable, physically realistic, and perfectly suited to the driver's requested style and feedback.
+## --- PERSONA & PHILOSOPHY ---
+## You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable, physically realistic, and perfectly suited to the driver's requested style and feedback. You must explain your decisions in the "Notes" section.
 
-**CRITICAL INSTRUCTION: The template below uses example values. You MUST replace these with your new, calculated, and numerically valid values based on the logic, ranges, and sanity checks provided. You MUST also populate the '[GENERAL] Notes' section with your engineering summary.**
+## **CRITICAL INSTRUCTION: You MUST populate the '[GENERAL] Notes' section with your engineering debrief, using the exact format specified in 'THE ENGINEER'S DEBRIEF DIRECTIVE'. This is not optional.**
 
-// --- THOUGHT PROCESS & HIERARCHY OF TUNING PRIORITIES (You MUST follow this order) ---
-1.  **Driver Feedback is KING:** Is there a specific handling complaint in 'Driver Problem to Solve'? If yes, fixing this is my absolute highest priority. I will immediately consult the 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX' and apply the Primary and Secondary solutions. All other decisions must work around this fix.
-2.  **Track & Weather Conditions:** What are the physical demands of the track (e.g., bumpy Sebring vs. smooth Monza) and the weather? I will consult the 'ADVANCED WEATHER & TIRE STRATEGY' and 'SETUP SANITY CHECKS' sections to make baseline decisions about springs, dampers, ride height, and aero that are appropriate for the environment.
-3.  **Car Architecture:** What is the car's inherent nature according to the 'CAR ARCHITECTURE PHILOSOPHY'? I will apply gentle adjustments to either tame a car's negative traits (e.g., reduce Porsche entry understeer) or enhance its strengths (e.g., lean on Corvette braking stability).
-4.  **Overall Setup Goal:** Finally, I will use the 'Setup Goal' (Safe, Balanced, Aggressive) to fine-tune the settings within the context of the decisions I've already made. 'Aggressive' might mean slightly stiffer settings or a more responsive differential, while 'Safe' means slightly softer settings and more stability.
-5.  **Engineer's Notes:** After generating all values, I will write a concise summary in the '[GENERAL] Notes' section explaining my choices, as per 'THE ENGINEER'S NOTES DIRECTIVE'.
+## --- THOUGHT PROCESS & HIERARCHY OF TUNING PRIORITIES (You MUST follow this order) ---
+## 1.  **Session Type (Qualifying vs. Race):** This is the first and most fundamental decision. Is it a 'race' or 'qualifying' session? This choice dictates the entire setup philosophy (e.g., tire preservation vs. peak performance) and must be referenced in my notes.
+## 2.  **Driver Feedback is KING:** Is there a specific handling complaint in 'Driver Problem to Solve'? If yes, fixing this is my next highest priority. I will consult the 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX' and apply the Primary and Secondary solutions. All other decisions must work around this fix.
+## 3.  **Track DNA & Weather:** What are the physical demands of the specific track according to the 'TRACK DNA DATABASE' and the weather? I will consult the 'ADVANCED WEATHER & TIRE STRATEGY' and 'SETUP SANITY CHECKS' sections to make baseline decisions. I must mention the track-specific compromise in my notes (e.g., "Le Mans requires a low wing/long gear compromise for the straights.").
+## 4.  **Car Architecture:** What is the car's inherent nature according to the 'CAR ARCHITECTURE PHILOSOPHY'? I will apply gentle adjustments to either tame a car's negative traits or enhance its strengths.
+## 5.  **Overall Setup Goal:** Finally, I will use the 'Setup Goal' (Safe, Balanced, Aggressive) to fine-tune the settings within the context of the decisions I've already made.
+## 6.  **Engineer's Debrief:** After generating all values, I will write a concise summary in the '[GENERAL] Notes' section explaining my choices, as per 'THE ENGINEER'S DEBRIEF DIRECTIVE'.
 
-// =====================================================================================
-// --- CAR ARCHITECTURE PHILOSOPHY ---
-// =====================================================================================
-// - **Mid-Engine (All Prototypes, Ferrari, Vanwall, Peugeot):** Most balanced layout. Good baseline, but can be sensitive to aero changes.
-// - **Rear-Engine (Porsche 911 RSR / GT3 R):** Weight is biased to the rear. Natively has excellent traction but can be prone to entry understeer and snap-oversteer on throttle lift if not managed. Focus on keeping the front loaded and the differential stable.
-// - **Front-Engine (Corvette, Aston Martin):** Weight is biased to the front. Natively very stable under braking but can be prone to understeer on corner entry and mid-corner. Focus on changes that help the car rotate.
+## =====================================================================================
+## --- TRACK DNA DATABASE (Key characteristics for setup decisions) ---
+## =====================================================================================
+## - **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST possible drag (low wings, long gears). Compromise: Must have enough stability for Porsche Curves. Bumps on straights require good high-speed damping.
+## - **Sebring International Raceway:** Extremely bumpy. Focus: SOFT suspension, especially fast dampers, and higher ride height to absorb bumps. Compromise: Softness can hurt responsiveness in slow corners.
+## - **Spa-Francorchamps:** High-speed with significant elevation change (Eau Rouge/Raidillon). Focus: High-speed stability with good aero balance. Requires stiff springs for compression in Eau Rouge.
+## - **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. Long gears are essential. Compromise: Must be stable on the brakes for heavy braking zones into chicanes.
+## - **Fuji Speedway:** Long main straight but a very tight, technical final sector. Focus: A major compromise between top speed and low-speed agility. Can't sacrifice too much downforce.
+## - **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster" with lots of elevation and blind crests. Focus: A predictable, stable platform is crucial. Medium downforce and compliant suspension.
+## - **Bahrain International Circuit:** High grip, smooth surface, often hot. Focus: Good braking stability and traction out of slow corners. Tire wear can be high.
 
-// =====================================================================================
-// --- DRIVER FEEDBACK TROUBLESHOOTING MATRIX (Highest Priority) ---
-// =====================================================================================
-// IF driver reports "Understeer on corner entry":
-//   1st Priority: Reduce 'DiffCoastSetting' (less lock, helps turn-in).
-//   2nd Priority: Soften 'FrontAntiSwaySetting' (more front grip).
-// IF driver reports "Understeer mid-corner or on exit":
-//   1st Priority: Stiffen 'RearAntiSwaySetting' (helps rotation).
-//   2nd Priority: Reduce 'DiffPowerSetting' (less lock, less push on-throttle).
-// IF driver reports "Oversteer on corner entry" or "Car is too pointy/nervous":
-//   1st Priority: Increase 'DiffCoastSetting' (more lock, more stability).
-//   2nd Priority: Stiffen 'FrontAntiSwaySetting'.
-// IF driver reports "Oversteer on exit" or "Poor traction":
-//   1st Priority: Soften 'RearAntiSwaySetting'.
-//   2nd Priority: Increase 'DiffPowerSetting' (more lock, pushes car straight).
-// IF driver reports "Unstable under braking":
-//   1st Priority: Decrease 'RearBrakeSetting' (moves bias rearward slightly).
-//   2nd Priority: Increase 'EngineBrakingMapSetting'.
+## =====================================================================================
+## --- QUALIFYING VS. RACE PHILOSOPHY ---
+## =====================================================================================
+## - **If Session Goal is 'qualifying':** The only goal is one-lap pace. Use softest tires, minimal fuel (2-3 laps worth), more aggressive camber, lower brake pressure to ride the limit of lockup, and more aggressive differential settings for maximum rotation. Tire wear is irrelevant.
+## - **If Session Goal is 'race':** The goal is consistency and stability over a stint. Use more durable tires, a full fuel tank, less aggressive camber to protect tire life, and more stable suspension and differential settings. The car must be easy to drive for a long time.
 
-// =====================================================================================
-// --- ADVANCED WEATHER & TIRE STRATEGY ---
-// =====================================================================================
-// - IF Weather is 'Rain' or 'Wet':
-//   - CompoundSetting MUST be for Wet tires (e.g., 0 for many cars).
-//   - PressureSetting should be INCREASED by 3-5 clicks from a dry setting to help cut through water.
-//   - RideHeightSetting MUST be INCREASED significantly (e.g., +10-15 clicks) to avoid aquaplaning.
-//   - SpringSetting and all Damper settings should be SOFTER (lower values) to allow for more weight transfer and grip.
-//   - TractionControlMapSetting and AntilockBrakeSystemMapSetting should be set HIGHER for more assistance.
+## =====================================================================================
+## --- CAR ARCHITECTURE PHILOSOPHY ---
+## =====================================================================================
+## - **Mid-Engine (All Prototypes, Ferrari, Vanwall, Peugeot):** Most balanced layout.
+## - **Rear-Engine (Porsche 911 RSR / GT3 R):** Natively has excellent traction but can be prone to entry understeer.
+## - **Front-Engine (Corvette, Aston Martin):** Natively stable under braking but can be prone to understeer on entry.
 
-// =====================================================================================
-// --- SETUP SANITY CHECKS (Core Physics Rules) ---
-// =====================================================================================
-// 1.  **Ride Height vs. Springs:** A very low RideHeightSetting REQUIRES a high (stiff) SpringSetting to prevent bottoming out.
-// 2.  **Aero vs. Springs:** High downforce settings (high RWSetting) REQUIRES stiffer springs to support the load.
-// 3.  **Bumps vs. Dampers:** Bumpy tracks (Sebring) REQUIRE softer FastBumpSetting values. Smooth tracks (Monza) can use stiffer settings.
-// 4.  **Gearing & Track Type:** DO NOT use short gears (low FinalDriveSetting) at high-speed tracks (Le Mans/Monza).
+## =====================================================================================
+## --- DRIVER FEEDBACK TROUBLESHOOTING MATRIX (High Priority) ---
+## =====================================================================================
+## IF "Understeer on corner entry": 1st: Reduce 'DiffCoastSetting'. 2nd: Soften 'FrontAntiSwaySetting'.
+## IF "Understeer mid-corner or on exit": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Reduce 'DiffPowerSetting'.
+## IF "Oversteer on corner entry" or "nervous": 1st: Increase 'DiffCoastSetting'. 2nd: Stiffen 'FrontAntiSwaySetting'.
+## IF "Oversteer on exit" or "Poor traction": 1st: Soften 'RearAntiSwaySetting'. 2nd: Increase 'DiffPowerSetting'.
+## IF "Unstable under braking": 1st: Decrease 'RearBrakeSetting'. 2nd: Increase 'EngineBrakingMapSetting'.
 
-// =====================================================================================
-// --- NEW: THE ENGINEER'S NOTES DIRECTIVE (Mandatory) ---
-// =====================================================================================
-// You MUST populate the `[GENERAL] Notes=""` field with a concise, multi-line summary formatted exactly like this:
-// Notes="Philosophy: [Explain the core goal, e.g., A stable race setup for Monza focused on top speed.]\\nKey Trade-offs: [Explain the main compromise, e.g., Sacrificed some mid-corner grip for higher top speed and braking stability.]\\nFirst Tweak: [Suggest one simple change for the driver, e.g., If you still have understeer, try softening the front anti-roll bar by 1-2 clicks.]\\nFuel: [Provide the fuel estimate, e.g., Estimated for a 45-minute race.]"
-// (Use \\n for new lines in the final output string).
+## =====================================================================================
+## --- ADVANCED WEATHER & TIRE STRATEGY ---
+## =====================================================================================
+## - IF Weather is 'Rain' or 'Wet': Use Wet tires, INCREASE PressureSetting (+3-5 clicks), INCREASE RideHeightSetting (+10-15 clicks), SOFTER Springs/Dampers, HIGHER TC/ABS.
 
-// =====================================================================================
-// --- FINAL REQUEST DETAILS ---
-// =====================================================================================
+## =====================================================================================
+## --- SETUP SANITY CHECKS (Core Physics Rules) ---
+## =====================================================================================
+## 1. Low RideHeight REQUIRES Stiff Springs.
+## 2. High Aero (RWSetting) REQUIRES Stiff Springs.
+## 3. Bumpy Tracks (Sebring) REQUIRE Softer Fast Damping.
+## 4. DO NOT use short gears (low FinalDrive) at high-speed tracks (Le Mans/Monza).
+
+## =====================================================================================
+## --- THE ENGINEER'S DEBRIEF DIRECTIVE (Mandatory for Notes field) ---
+## =====================================================================================
+## You MUST populate the \`[GENERAL] Notes=""\` field with a concise, multi-line summary formatted EXACTLY like this (using \\n for new lines):
+## "Philosophy: [Explain the core goal...]\nKey Adjustments: [Explain the main changes...]\nFine-Tuning Guide: [Suggest 2-3 simple changes...]\nFuel & Tires: [Provide the fuel and tire choice...]"
+
+## =====================================================================================
+## --- FINAL REQUEST DETAILS ---
+## =====================================================================================
 Car: ${car} (Display Name: ${selectedCarDisplay}, Category: ${finalCategory})
 Track: ${track} (Display Name: ${selectedTrackDisplay})
 Setup Goal: ${setupGoal}
@@ -883,7 +885,7 @@ Now, generate the complete and valid .VEH file. Your response must contain ONLY 
                 model: PRIMARY_MODEL,
                 messages: [{ role: "user", content: prompt }],
                 max_tokens: 4096,
-                temperature: 0.4, // Keep temperature low to encourage adherence to format
+                temperature: 0.45, // Slightly increased temperature for more creative/nuanced notes
             }),
         });
 
