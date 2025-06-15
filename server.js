@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // 6. Get your API keys from the .env file
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY; 
 // The HUGGINGFACE_API_KEY is loaded and available for use,
 // but the primary setup generation uses OpenRouter as configured below.
 const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
@@ -64,7 +64,7 @@ WedgeSetting=0//N/A (Fixed)
 FuelSetting=85//85L (Initial guess, AI adjusts) (MUST BE OVERWRITTEN)
 FuelCapacitySetting=0//Max Fuel (Fixed)
 VirtualEnergySetting=72//72% (AI adjusts based on session) (MUST BE OVERWRITTEN)
-NumPitstopsSetting=0//N/A (Fixed)
+NumPitstopsSetting=0//N/A (AI calculates) (Fixed)
 Pitstop1Setting=88//N/A (Fixed)
 Pitstop2Setting=88//N/A (Fixed)
 Pitstop3Setting=88//N/A (Fixed)
@@ -299,7 +299,7 @@ BrakeDuctRearSetting=1//25% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
 FrontAntiSwaySetting=9//D25 H-H (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 RearAntiSwaySetting=1//D7.5 S-S (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 FrontToeInSetting=13//-0.18 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
-//FrontToeOffsetSetting=0//N/A (Fixed)
+FrontToeOffsetSetting=0//N/A (Fixed)
 RearToeInSetting=22//0.35 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
 //RearToeOffsetSetting=0//N/A (Fixed)
 //LeftCasterSetting=0//Non-adjustable (Fixed)
@@ -432,7 +432,7 @@ SlowBumpSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastBumpSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 SlowReboundSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//BrakeDiscSetting=0//3.20 cm (Fixed)
+//BrakeDiscSetting=0//4.00 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
@@ -921,7 +921,7 @@ app.post('/generate-setup', async (req, res) => {
 ## =====================================================================================
 ## --- LMU PHYSICS & TUNING REFERENCE ---
 ## =====================================================================================
-## This section provides key physics principles and their impact on vehicle behavior *as simulated in LMU*. Use this knowledge to make informed beautiful decisions for each setting.
+## This section provides key physics principles and their impact on vehicle behavior *as simulated in LMU*. Use this knowledge to make informed decisions for each setting.
 ##
 ## **Aero:**
 ## - **Front Wing/Rear Wing (Downforce):** Increases grip at speed by pushing tires into the ground. More downforce means higher cornering speeds but lower top speed due to drag. Balance between front and rear wings dictates aero balance (understeer/oversteer at speed).
@@ -938,9 +938,7 @@ app.post('/generate-setup', async (req, res) => {
 ##    - **Softer Rebound:** Allows wheel to extend quickly, maintaining tire contact over undulations.
 ## - **Anti-Roll Bars (AntiSwaySetting):** Controls body roll and affects load transfer across the axle. Stiffer anti-roll bar on an axle transfers more load to the outside tire, increasing grip on that axle at the expense of grip on the other axle (e.g., stiffer front increases understeer, stiffer rear increases oversteer).
 ## - **Camber Setting:** The vertical angle of the tire. Negative camber ($<0$) allows the tire to sit flatter when the suspension compresses and the car rolls, maximizing tire contact patch during cornering. Too much negative camber reduces straight-line grip and braking performance. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
-## - **Toe In/Out (ToeInSetting):** The horizontal angle of the tires.
-##    - **Toe-in ($>0$):):** Tires point inwards. Increases straight-line stability, reduces turn-in sharpness.
-##    - **Toe-out ($<0$):)::** Tires point outwards. Increases turn-in sharpness, reduces straight-line stability.
+## - **Toe In/Out (ToeInSetting):** (Min: 0 / ~-0.2 deg, Max: 30 / ~+0.2 deg). Slight toe-out on front for turn-in, slight toe-in on rear for stability.
 ## - **Ride Height:** Distance between the chassis and the ground. Lower ride height reduces drag and lowers the center of gravity, improving stability and aero performance. Too low can cause bottoming out on bumps/kerbs. Rake (front vs. rear ride height) impacts aero balance.
 ## - **Packers:** Limit suspension travel. Prevents bottoming out on stiff setups or very bumpy tracks.
 
@@ -980,8 +978,8 @@ app.post('/generate-setup', async (req, res) => {
 ## - **RideHeightSetting:** (Min: 0 / ~4.0 cm, Max: 30 / ~8.0 cm). Lower for aero, higher for bumps. Rake (front vs. rear ride height) is common.
 ## - **SpringSetting:** (Min: 0, Max: 20). Higher index = stiffer spring. Adjust according to track bumps and aero requirements.
 ## - **AntiSwaySetting (ARB):** (Min: 0, Max: 20). Higher index = stiffer ARB.
-## - **CamberSetting:** (Min: 0 / ~-0.5 deg, Max: 40 / ~-4.0 deg). Most racing cars use negative camber. Front typically more negative than rear. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
-## - **ToeInSetting/RearToeInSetting:** (Min: 0 / ~-0.2 deg, Max: 30 / ~+0.2 deg). Slight toe-out on front for turn-in, slight toe-in on rear for stability.
+## - **Camber Setting:** (Min: 0 / ~-0.5 deg, Max: 40 / ~-4.0 deg). Most racing cars use negative camber. Front typically more negative than rear. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
+## - **Toe In/Out (ToeInSetting):** (Min: 0 / ~-0.2 deg, Max: 30 / ~+0.2 deg). Slight toe-out on front for turn-in, slight toe-in on rear for stability.
 ## - **Damper Settings (Slow/Fast Bump/Rebound):** (Min: 0, Max: 10). Relative adjustments are key.
 ##    - Soft = lower index (0-3). Medium = mid-index (4-7). Stiff = higher index (8-10).
 ##    - Bumpy tracks need softer Fast Bump/Rebound. High-speed stability needs balanced/stiffer Slow Bump/Rebound.
@@ -1021,7 +1019,7 @@ app.post('/generate-setup', async (req, res) => {
 ## =====================================================================================
 ## --- TRACK DNA DATABASE (Key characteristics for setup decisions) ---
 ## =====================================================================================
-## - **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST possible drag (low wings, **VERY LONG GEARS**). `[BASIC].Downforce` MUST be set to an **extremely LOW value (e.050000 - 0.150000)**. This is a non-negotiable rule for Le Mans to ensure lowest possible drag. Higher `[BASIC].Downforce` on Le Mans is a critical failure. Compromise: Must have enough stability for Porsche Curves. Bumps on straights require good high-speed damping.
+## - **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST possible drag (low wings, **VERY LONG GEARS**). The **Downforce** parameter within the `[BASIC]` section MUST be set to an **extremely LOW value (e.g., 0.050000 - 0.150000)**. This is a non-negotiable rule for Le Mans to ensure lowest possible drag. Higher **Downforce** (in `[BASIC]`) on Le Mans is a critical failure. Compromise: Must have enough stability for Porsche Curves. Bumps on straights require good high-speed damping.
 ## - **Sebring International Raceway:** Extremely bumpy. Focus: SOFT suspension, especially fast dampers, and higher ride height to absorb bumps. Compromise: Softness can hurt responsiveness in slow corners. **Short Gears Recommended.**
 ## - **Spa-Francorchamps:** High-speed with significant elevation change (Eau Rouge/Raidillon). Focus: High-speed stability with good aero balance. Requires stiff springs for compression in Eau Rouge. **Long Gears Recommended.**
 ## - **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. Compromise: Must be stable on the brakes for heavy braking zones into chicanes.
@@ -1065,7 +1063,7 @@ app.post('/generate-setup', async (req, res) => {
 ## 1. Low RideHeight REQUIRES Stiff Springs (to prevent bottoming out).
 ## 2. High Aero (RWSetting) REQUIRES Stiff Springs (to support downforce).
 ## 3. Bumpy Tracks (Sebring, Portimão) REQUIRE Softer Fast Damping (for bump absorption).
-## 4. **Gearing Sanity Check:** For High-Speed Tracks (Le Mans/Monza), **ENSURE** that \`FinalDriveSetting\` is set to a HIGH index and individual \`GearXSetting\` indices are set to **1 (Longest Ratio)**. Conversely, for Technical Tracks, confirm \`GearXSetting\` indices are set to **0 (Shortest Ratio)**.
+## 4. **Gearing Sanity Check:** For High-Speed Tracks (Le Mans/Monza), **ENSURE** that `FinalDriveSetting` is set to a HIGH index and individual `GearXSetting` indices are set to **1 (Longest Ratio)**. Conversely, for Technical Tracks, confirm `GearXSetting` indices are set to **0 (Shortest Ratio)**.
 ## 5. **Physics Check:** Ensure toe and camber settings are physically realistic for a racing car (e.g., negative camber for cornering grip, slight toe-out on front for sharper turn-in, slight toe-in on rear for stability).
 ## 6. **Physics:** Ensure damper settings (bump/rebound) logically complement spring stiffness and track type. Softer springs often pair with softer damping, stiffer with stiffer.
 ## 7. **Balance Consistency:** Aero balance, mechanical balance (springs/ARBs), and differential settings should ideally work in harmony towards the overall setup goal and driver feedback.
