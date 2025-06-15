@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // 6. Get your API keys from the .env file
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY; // Corrected env variable name
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY; 
 // The HUGGINGFACE_API_KEY is loaded and available for use,
 // but the primary setup generation uses OpenRouter as configured below.
 const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
@@ -62,9 +62,9 @@ CGRightSetting=0//Non-adjustable (Fixed)
 CGRearSetting=0//Non-adjustable (Fixed)
 WedgeSetting=0//N/A (Fixed)
 FuelSetting=85//85L (Initial guess, AI adjusts) (MUST BE OVERWRITTEN)
-FuelCapacitySetting=0//Max Fuel (Fixed)
+FuelCapacitySetting=0//Max Fuel (AI adjusts based on duration) (Fixed)
 VirtualEnergySetting=72//72% (AI adjusts based on session) (MUST BE OVERWRITTEN)
-NumPitstopsSetting=0//N/A (Fixed)
+NumPitstopsSetting=0//N/A (AI calculates) (Fixed)
 Pitstop1Setting=88//N/A (Fixed)
 Pitstop2Setting=88//N/A (Fixed)
 Pitstop3Setting=88//N/A (Fixed)
@@ -341,13 +341,13 @@ TCSlipAngleMapSetting=7//Linked (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 [ENGINE]
 //RevLimitSetting=0//8000 (Non-adjustable) (Fixed)
 //EngineBoostSetting=0//N/A (Fixed)
-//RegenerationMapSetting=0//0% (N/A for Non-Hybrid) (Fixed)
+//RegenerationMapSetting=0//0% (Fixed)
 ElectricMotorMapSetting=0//Not Applicable (N/A for Non-Hybrid) (Fixed)
 EngineMixtureSetting=1//Race (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
 //EngineBrakingMapSetting=0//N/A (Fixed)
 
 [DRIVELINE]
-FinalDriveSetting=3//2.88:1 (AI adjusts for track type: 0=Standard/Short, higher values=Long) (Min: 0, Max: 5. Higher index = longer gear for higher top speed) (MUST BE OVERWRITTEN)
+FinalDriveSetting=3//2.88:1 (AI adjusts for track type: 0=Standard/Short, higher values for Long) (Min: 0, Max: 5. Higher index = longer gear for higher top speed) (MUST BE OVERWRITTEN)
 ReverseSetting=0//2.85 (8.18) (Fixed)
 Gear1Setting=0//2.85 (~56 mph / ~90 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear2Setting=0//2.20 (~71 mph / ~115 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
@@ -443,14 +443,13 @@ Ride=0.400000
 Gearing=0.400000
 Custom=1`,
 
-    'GT3': `VehicleClassSetting="[[CAR_NAME]]"
-UpgradeSetting=(3276,0,0,0)
+    'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
+UpgradeSetting=(12,0,0,0)
 //UpgradeClass=
-//Position lights=0
-//AI Tweaks=6
-//Estimates=6
-//BOP=6
-//Atmos Conditions=0
+//Fuel tank=0
+//Engine cover gurney=0
+//Setup=3
+//Visor Mod=0
 //Note: settings commented out if using the default
 
 [GENERAL]
@@ -460,13 +459,12 @@ Symmetric=1
 //CGRightSetting=0//Non-adjustable (Fixed)
 //CGRearSetting=0//Non-adjustable (Fixed)
 //WedgeSetting=0//N/A (Fixed)
-FuelSetting=92//0.93 (AI adjusts) (MUST BE OVERWRITTEN)
-//FuelCapacitySetting=0//93.0l (22.5 laps) (Fixed)
-//VirtualEnergySetting=100//100% (22.0 laps) (Fixed)
+FuelSetting=65//65L (AI adjusts based on session duration and track) (MUST BE OVERWRITTEN)
+//FuelCapacitySetting=0//N/A (Fixed)
 //NumPitstopsSetting=0//N/A (Fixed)
-//Pitstop1Setting=59//N/A (Fixed)
-//Pitstop2Setting=59//N/A (Fixed)
-//Pitstop3Setting=59//N/A (Fixed)
+//Pitstop1Setting=50//N/A (Fixed)
+//Pitstop2Setting=50//N/A (Fixed)
+//Pitstop3Setting=50//N/A (Fixed)
 
 [LEFTFENDER]
 //FenderFlareSetting=0//N/A (Fixed)
@@ -475,155 +473,158 @@ FuelSetting=92//0.93 (AI adjusts) (MUST BE OVERWRITTEN)
 //FenderFlareSetting=0//N/A (Fixed)
 
 [FRONTWING]
-//FWSetting=0//Standard (Fixed)
+//FWSetting=0//N/A (Fixed)
 
 [REARWING]
-RWSetting=2//8.3 deg (Min: 0, Max: 7) (MUST BE OVERWRITTEN)
+RWSetting=2//P3 (Min: 0, Max: 9) (MUST BE OVERWRITTEN)
+// RWSetting for LMP2: 0-9 (P1=low, P9=high)
 
 [BODYAERO]
-//WaterRadiatorSetting=0//No tape (Fixed)
-//OilRadiatorSetting=0//No tape (Fixed)
-BrakeDuctSetting=3//60mm (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
-BrakeDuctRearSetting=2//40mm (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+WaterRadiatorSetting=2//50% (Min: 0, Max: 4) (MUST BE OVERWRITTEN)
+OilRadiatorSetting=2//50% (Min: 0, Max: 4) (MUST BE OVERWRITTEN)
+//BrakeDuctSetting=0//Open (Fixed)
+BrakeDuctRearSetting=1//25% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
 
 [SUSPENSION]
 //FrontWheelTrackSetting=0//Non-adjustable (Fixed)
 //RearWheelTrackSetting=0//Non-adjustable (Fixed)
-FrontAntiSwaySetting=7//P7 (dur) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-RearAntiSwaySetting=4//P4 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FrontToeInSetting=7//-0.117 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+FrontAntiSwaySetting=9//D25 H-H (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+RearAntiSwaySetting=1//D7.5 S-S (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+FrontToeInSetting=13//-0.18 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
 //FrontToeOffsetSetting=0//N/A (Fixed)
-RearToeInSetting=8//0 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+RearToeInSetting=22//0.35 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
 //RearToeOffsetSetting=0//N/A (Fixed)
 //LeftCasterSetting=0//Non-adjustable (Fixed)
 //RightCasterSetting=0//Non-adjustable (Fixed)
 //LeftTrackBarSetting=0//N/A (Fixed)
 //RightTrackBarSetting=0//N/A (Fixed)
-//Front3rdPackerSetting=0//N/A (Fixed)
-//Front3rdSpringSetting=0//N/A (Fixed)
-//Front3rdTenderSpringSetting=0//Détaché (Fixed)
-//Front3rdTenderTravelSetting=0//Détaché (Fixed)
-//Front3rdSlowBumpSetting=0//N/A (Fixed)
-//Front3rdFastBumpSetting=0//N/A (Fixed)
-//Front3rdSlowReboundSetting=0//N/A (Fixed)
-//Front3rdFastReboundSetting=0//N/A (Fixed)
-//Rear3rdPackerSetting=0//N/A (Fixed)
+Front3rdPackerSetting=6//0.6 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+Front3rdSpringSetting=0//N/A (Fixed)
+//Front3rdTenderSpringSetting=0//Detached (Fixed)
+//Front3rdTenderTravelSetting=0//Detached (Fixed)
+//Front3rdSlowBumpSetting=0//1 (Min: 0, Max: 10)
+//Front3rdFastBumpSetting=0//1 (Min: 0, Max: 10)
+//Front3rdSlowReboundSetting=0//1 (Min: 0, Max: 10)
+//Front3rdFastReboundSetting=0//1 (Min: 0, Max: 10)
+Rear3rdPackerSetting=7//0.7 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 //Rear3rdSpringSetting=0//N/A (Fixed)
-//Rear3rdTenderSpringSetting=0//Détaché (Fixed)
-//Rear3rdTenderTravelSetting=0//Détaché (Fixed)
-//Rear3rdSlowBumpSetting=0//N/A (Fixed)
-//Rear3rdFastBumpSetting=0//N/A (Fixed)
-//Rear3rdSlowReboundSetting=0//N/A (Fixed)
-//Rear3rdFastReboundSetting=0//N/A (Fixed)
+//Rear3rdTenderSpringSetting=0//Detached (Fixed)
+//TenderTravelSetting=0//Detached (Fixed)
+//SlowBumpSetting=0//1 (Min: 0, Max: 10)
+//FastBumpSetting=0//1 (Min: 0, Max: 10)
+//SlowReboundSetting=0//1 (Min: 0, Max: 10)
+//FastReboundSetting=0//1 (Min: 0, Max: 10)
+//ChassisAdj00Setting=0//N/A (Fixed)
 
 [CONTROLS]
-SteerLockSetting=4//380° (11.2°) (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
-RearBrakeSetting=21//51.8:48.2 (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
+//SteerLockSetting=3//336 (13) deg (Fixed)
+RearBrakeSetting=13//54.1:45.9 (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
 //BrakeMigrationSetting=0// 0.0 (Fixed)
-//BrakePressureSetting=80//120 kgf (100%) (Fixed)
-//HandfrontbrakePressSetting=0//N/A (Fixed)
+BrakePressureSetting=60//100 kgf (83%) (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
+//HandfrontbrakePressSetting=0//0% (Fixed)
 //HandbrakePressSetting=0//N/A (Fixed)
-//TCSetting=0//Disponible (Fixed)
-//ABSSetting=0//Disponible (Fixed)
-//TractionControlMapSetting=8//8 (Fixed)
-TCPowerCutMapSetting=3//3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//TCSlipAngleMapSetting=10//10 (Fixed)
-AntilockBrakeSystemMapSetting=11//11 (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
+//TCSetting=0//Available (Fixed)
+//ABSSetting=0//N/A (Fixed)
+TractionControlMapSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+TCPowerCutMapSetting=4//4 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+TCSlipAngleMapSetting=7//Linked (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+//AntilockBrakeSystemMapSetting=0//N/A (Fixed)
 
 [ENGINE]
-//RevLimitSetting=0//9,400 (Fixed)
+//RevLimitSetting=0//8000 (Non-adjustable) (Fixed)
 //EngineBoostSetting=0//N/A (Fixed)
 //RegenerationMapSetting=0//0% (Fixed)
 ElectricMotorMapSetting=0//Not Applicable (N/A for Non-Hybrid) (Fixed)
-//EngineMixtureSetting=1//Race (Fixed)
+EngineMixtureSetting=1//Race (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
 //EngineBrakingMapSetting=0//N/A (Fixed)
 
 [DRIVELINE]
-FinalDriveSetting=0//Fixed (AI adjusts for track type) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//ReverseSetting=0//Fixed
-Gear1Setting=0//Fixed (~95 km/h / ~59 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear2Setting=0//Fixed (~130 km/h / ~81 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear3Setting=0//Fixed (~160 km/h / ~99 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear4Setting=0//Fixed (~190 km/h / ~118 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear5Setting=0//Fixed (~220 km/h / ~137 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear6Setting=0//Fixed (~250 km/h / ~155 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-RatioSetSetting=0//Short (AI adjusts for track type) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
-//DiffPumpSetting=0//Non-adjustable (Fixed)
-//DiffCoastSetting=0//Non-adjustable (Fixed)
-DiffPreloadSetting=28//78 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
-//FrontDiffPumpSetting=0//0% (Fixed)
-//FrontDiffPowerSetting=0//0% (Fixed)
-//FrontDiffCoastSetting=0//0% (Fixed)
-//FrontDiffPreloadSetting=0//1 (Fixed)
-//RearSplitSetting=0//RWD (Fixed)
-//GearAutoUpShiftSetting=0//Non (Fixed)
-//GearAutoDownShiftSetting=0//Non (Fixed)
+FinalDriveSetting=3//2.88:1 (AI adjusts for track type: 0=Standard/Short, higher values for Long) (Min: 0, Max: 5. Higher index = longer gear for higher top speed) (MUST BE OVERWRITTEN)
+ReverseSetting=0//2.85 (8.18) (Fixed)
+Gear1Setting=0//2.85 (~56 mph / ~90 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear2Setting=0//2.20 (~71 mph / ~115 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear3Setting=0//1.88 (~84 mph / ~135 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear4Setting=0//1.62 (~96 mph / ~155 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear5Setting=0//1.42 (~109 mph / ~175 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear6Setting=0//1.27 (~121 mph / ~195 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+RatioSetSetting=1//High Speed (AI adjusts for track type: 0=Standard, 1=High Speed) (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
+DiffPumpSetting=0//N/A (Fixed)
+DiffPowerSetting=0//FF6-60 deg (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
+DiffCoastSetting=2//FF6-45 deg (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+DiffPreloadSetting=17//85 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
+FrontDiffPumpSetting=0//N/A (N/A for RWD) (Fixed)
+FrontDiffPowerSetting=0//0% (N/A for RWD) (Fixed)
+FrontDiffCoastSetting=0//0% (N/A for RWD) (Fixed)
+FrontDiffPreloadSetting=0//1 (N/A for RWD) (Fixed)
+RearSplitSetting=0// 0.0:100.0 (Fixed to RWD)
+GearAutoUpShiftSetting=0//Off (Fixed)
+GearAutoDownShiftSetting=0//Off (Fixed)
 
 [FRONTLEFT]
-CamberSetting=26//-1.80 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
+CamberSetting=11//-1.5 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
 PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-PackerSetting=9//0.9 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-SpringSetting=3//4 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-//TenderSpringSetting=0//Standard (Fixed)
-//TenderTravelSetting=0//Standard (Fixed)
-//SpringRubberSetting=0//N/A (Fixed)
-//RideHeightSetting=0//5.0 cm (Min: 0, Max: 30)
-SlowBumpSetting=11//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastBumpSetting=2//16 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-SlowReboundSetting=6//12 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastReboundSetting=4//14 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//BrakeDiscSetting=0//3.56 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
-
-[FRONTRIGHT]
-CamberSetting=26//-1.80 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
-PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-PackerSetting=9//0.9 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-SpringSetting=3//4 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-//TenderSpringSetting=0//Standard (Fixed)
-//TenderTravelSetting=0//Standard (Fixed)
-//SpringRubberSetting=0//N/A (Fixed)
-//RideHeightSetting=0//5.0 cm (Min: 0, Max: 30)
-SlowBumpSetting=11//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastBumpSetting=2//16 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-SlowReboundSetting=6//12 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastReboundSetting=4//14 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//BrakeDiscSetting=0//3.56 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
-
-[REARLEFT]
-CamberSetting=25//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
-PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-PackerSetting=14//140 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-SpringSetting=1//2 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-//TenderSpringSetting=0//Standard (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=16//6.6 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
-SlowBumpSetting=7//11 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastBumpSetting=4//14 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-SlowReboundSetting=11//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastReboundSetting=2//16 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//BrakeDiscSetting=0//3.20 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
-
-[REARRIGHT]
-CamberSetting=25//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
-PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-PackerSetting=14//1.4 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-SpringSetting=1//2 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+PackerSetting=3//0.3 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+SpringSetting=5//150N/mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 //TenderSpringSetting=0//Detached (Fixed)
 //TenderTravelSetting=0//Detached (Fixed)
 //SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=16//6.6 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
-SlowBumpSetting=7//11 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastBumpSetting=4//14 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-SlowReboundSetting=11//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastReboundSetting=2//16 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+RideHeightSetting=10//4.5 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+SlowBumpSetting=4//5 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastBumpSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+SlowReboundSetting=2//3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastReboundSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//3.20 cm (Fixed)
+//BrakePadSetting=0//1 (Fixed)
+CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+
+[FRONTRIGHT]
+CamberSetting=11//-1.5 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
+PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+PackerSetting=3//0.3 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+SpringSetting=5//150N/mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+//TenderSpringSetting=0//Detached (Fixed)
+//TenderTravelSetting=0//Detached (Fixed)
+//SpringRubberSetting=0//Detached (Fixed)
+RideHeightSetting=10//4.5 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+SlowBumpSetting=4//5 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastBumpSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+SlowReboundSetting=2//3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastReboundSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+//BrakeDiscSetting=0//3.20 cm (Fixed)
+//BrakePadSetting=0//1 (Fixed)
+CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+
+[REARLEFT]
+CamberSetting=20//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
+PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+PackerSetting=12//1.2 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+SpringSetting=0//1100lbf/in (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+TenderSpringSetting=0//Detached (Fixed)
+TenderTravelSetting=0//Detached (Fixed)
+SpringRubberSetting=0//Detached (Fixed)
+RideHeightSetting=24//7.0 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+SlowBumpSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastBumpSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+SlowReboundSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastReboundSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+//BrakeDiscSetting=0//3.20 cm (Fixed)
+//BrakePadSetting=0//1 (Fixed)
+CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+
+[REARRIGHT]
+CamberSetting=20//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
+PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+PackerSetting=12//1.2 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+SpringSetting=0//1100lbf/in (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+TenderSpringSetting=0//Detached (Fixed)
+TenderTravelSetting=0//Detached (Fixed)
+SpringRubberSetting=0//Detached (Fixed)
+RideHeightSetting=24//7.0 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+SlowBumpSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastBumpSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+SlowReboundSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastReboundSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+//BrakeDiscSetting=0//4.00 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
@@ -921,7 +922,7 @@ app.post('/generate-setup', async (req, res) => {
 ## =====================================================================================
 ## --- LMU PHYSICS & TUNING REFERENCE ---
 ## =====================================================================================
-## This section provides key physics principles and their impact on vehicle behavior *as simulated in LMU*. Use this knowledge to make informed decisions for each setting.
+## This section provides key physics principles and their impact on vehicle behavior *as simulated in LMU*. Use this knowledge to make informed beautiful decisions for each setting.
 ##
 ## **Aero:**
 ## - **Front Wing/Rear Wing (Downforce):** Increases grip at speed by pushing tires into the ground. More downforce means higher cornering speeds but lower top speed due to drag. Balance between front and rear wings dictates aero balance (understeer/oversteer at speed).
@@ -980,12 +981,13 @@ app.post('/generate-setup', async (req, res) => {
 ## - **RideHeightSetting:** (Min: 0 / ~4.0 cm, Max: 30 / ~8.0 cm). Lower for aero, higher for bumps. Rake (front vs. rear ride height) is common.
 ## - **SpringSetting:** (Min: 0, Max: 20). Higher index = stiffer spring. Adjust according to track bumps and aero requirements.
 ## - **AntiSwaySetting (ARB):** (Min: 0, Max: 20). Higher index = stiffer ARB.
-## - **CamberSetting:** (Min: 0 / ~-0.5 deg, Max: 40 / ~-4.0 deg). Most racing cars use negative camber. Front typically more negative than rear. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
-## - **ToeInSetting/RearToeInSetting:** (Min: 0 / ~-0.2 deg, Max: 30 / ~+0.2 deg). Slight toe-out on front for turn-in, slight toe-in on rear for stability.
-## - **Damper Settings (Slow/Fast Bump/Rebound):** (Min: 0, Max: 10). Relative adjustments are key.
-##    - Soft = lower index (0-3). Medium = mid-index (4-7). Stiff = higher index (8-10).
-##    - Bumpy tracks need softer Fast Bump/Rebound. High-speed stability needs balanced/stiffer Slow Bump/Rebound.
-##
+## - **Camber Setting:** (Min: 0 / ~-0.5 deg, Max: 40 / ~-4.0 deg). Most racing cars use negative camber. Front typically more negative than rear. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
+## - **Toe In/Out (ToeInSetting):** The horizontal angle of the tires.
+##    - **Toe-in ($>0$):):** Tires point inwards. Increases straight-line stability, reduces turn-in sharpness.
+##    - **Toe-out ($<0$):)::** Tires point outwards. Increases turn-in sharpness, reduces straight-line stability.
+## - **Ride Height:** Distance between the chassis and the ground. Lower ride height reduces drag and lowers the center of gravity, improving stability and aero performance. Too low can cause bottoming out on bumps/kerbs. Rake (front vs. rear ride height) impacts aero balance.
+## - **Packers:** Limit suspension travel. Prevents bottoming out on stiff setups or very bumpy tracks.
+
 ## **Drivetrain:**
 ## - **FinalDriveSetting:** (Min: 0, Max: typically 5-10 depending on car. Higher index = longer gear for higher top speed). **For Le Mans/Monza, aim for the highest available index (e.g., 5-7).**
 ## - **Gear1Setting-Gear7Setting:** (Min: 0, Max: 1). Each represents an index for a preset ratio. **LMU specific: 0=Shortest individual ratio for quicker acceleration, 1=Longest individual ratio for higher top speed.** You MUST choose either 0 or 1.
@@ -1032,7 +1034,7 @@ app.post('/generate-setup', async (req, res) => {
 ## =====================================================================================
 ## --- QUALIFYING VS. RACE PHILOSOPHY ---
 ## =====================================================================================
-## - **If Session Goal is 'qualifying':** The only goal is one-lap pace. Use softest tires, minimal fuel (2-3 laps worth), more aggressive camber, higher brake pressure (near 100%) to ride the limit of lockup, and more aggressive differential settings for maximum rotation. Tire wear is irrelevant. Tire pressures might be slightly higher for peak grip for a short duration.
+## - **If Session Goal is 'qualifying':** The only goal is one-lap pace and optimal lap time execution for good timing. Use softest tires, minimal fuel (2-3 laps worth), more aggressive camber, higher brake pressure (near 100%) to ride the limit of lockup, and more aggressive differential settings for maximum rotation. Tire wear is irrelevant. Tire pressures might be slightly higher for peak grip for a short duration.
 ## - **If Session Goal is 'race':** The goal is consistent pace and lap times over a stint, not just pure tire survival. The car must be efficient, predictable, and maintain its speed through tire degradation, allowing the driver to hit targets lap after lap without excessive effort or risk of major errors. Tire pressures should be optimized for consistency over a stint (often slightly lower than quali).
 
 ## =====================================================================================
