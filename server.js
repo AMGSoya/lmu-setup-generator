@@ -111,17 +111,6 @@ Rear3rdFastBumpSetting=2//3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 Rear3rdSlowReboundSetting=0//1 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 Rear3rdFastReboundSetting=2//3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 ChassisAdj00Setting=0//Alternative (Fixed)
-ChassisAdj01Setting=0//N/A (Fixed)
-ChassisAdj02Setting=0//N/A (Fixed)
-ChassisAdj03Setting=0//N/A (Fixed)
-ChassisAdj04Setting=0//N/A (Fixed)
-ChassisAdj05Setting=0//N/A (Fixed)
-ChassisAdj06Setting=0//N/A (Fixed)
-ChassisAdj07Setting=0//N/A (Fixed)
-ChassisAdj08Setting=0//N/A (Fixed)
-ChassisAdj09Setting=0//N/A (Fixed)
-ChassisAdj10Setting=0//N/A (Fixed)
-ChassisAdj11Setting=0//N/A (Fixed)
 
 [CONTROLS]
 SteerLockSetting=0//400 (16) deg (MUST BE OVERWRITTEN)
@@ -148,41 +137,29 @@ EngineBrakingMapSetting=0//N/A (Fixed)
 [DRIVELINE]
 FinalDriveSetting=3//2.98:1 (Min: 0, Max: 7) (MUST BE OVERWRITTEN)
 ReverseSetting=0//2.07 (6.18) (Fixed)
-Gear1Setting=0//2.85 (~62 mph / ~100 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear2Setting=0//2.20 (~81 mph / ~130 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear3Setting=0//1.82 (~99 mph / ~160 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear4Setting=0//1.56 (~118 mph / ~190 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear5Setting=0//1.35 (~137 mph / ~220 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear6Setting=0//1.19 (~155 mph / ~250 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio.
-Gear7Setting=0//1.05 (~174 mph / ~280 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear1Setting=0//2.85 (~62 mph / ~100 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
+Gear2Setting=0//2.20 (~81 mph / ~130 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
+Gear3Setting=0//1.82 (~99 mph / ~160 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
+Gear4Setting=0//1.56 (~118 mph / ~190 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
+Gear5Setting=0//1.35 (~137 mph / ~220 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
+Gear6Setting=0//1.19 (~155 mph / ~250 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
+Gear7Setting=0//1.05 (~174 mph / ~280 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
 RatioSetSetting=0//Short (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
 DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=3//25% (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
 DiffCoastSetting=10//60% (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 DiffPreloadSetting=24//120 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
-FrontDiffPumpSetting=0//N/A (Fixed)
-FrontDiffPowerSetting=0//10% (N/A for RWD) (Fixed)
-FrontDiffCoastSetting=0//10% (N/A for RWD) (Fixed)
-FrontDiffPreloadSetting=0//0 Nm (N/A for RWD) (Fixed)
-RearSplitSetting=0// 0.0:100.0 (Fixed to RWD)
-GearAutoUpShiftSetting=0//Off (Fixed)
-GearAutoDownShiftSetting=0//Off (Fixed)
 
 [FRONTLEFT]
 CamberSetting=26//-1.4 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
 PressureSetting=5//135 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 PackerSetting=5//0.5 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 SpringSetting=10//15.95mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-TenderSpringSetting=0//Detached (Fixed)
-TenderTravelSetting=0//Detached (Fixed)
-SpringRubberSetting=0//Detached (Fixed)
 RideHeightSetting=9//4.9 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
 SlowBumpSetting=5//6 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastBumpSetting=6//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 SlowReboundSetting=5//6 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=4//5 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-BrakeDiscSetting=0//4.00 cm (Fixed)
-BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
 [FRONTRIGHT]
@@ -190,16 +167,11 @@ CamberSetting=26//-1.4 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
 PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 PackerSetting=5//0.5 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 SpringSetting=10//15.95mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-TenderSpringSetting=0//Detached (Fixed)
-TenderTravelSetting=0//Detached (Fixed)
-SpringRubberSetting=0//Detached (Fixed)
 RideHeightSetting=9//4.9 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
 SlowBumpSetting=5//6 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastBumpSetting=6//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 SlowReboundSetting=5//6 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=4//5 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-BrakeDiscSetting=0//4.00 cm (Fixed)
-BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
 [REARLEFT]
@@ -207,16 +179,11 @@ CamberSetting=20//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
 PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 PackerSetting=12//1.2 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 SpringSetting=0//1100lbf/in (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-TenderSpringSetting=0//Detached (Fixed)
-TenderTravelSetting=0//Detached (Fixed)
-SpringRubberSetting=0//Detached (Fixed)
 RideHeightSetting=15//7.5 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
 SlowBumpSetting=4//5 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastBumpSetting=4//5 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 SlowReboundSetting=6//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=6//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-BrakeDiscSetting=0//4.00 cm (Fixed)
-BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
 [REARRIGHT]
@@ -224,16 +191,11 @@ CamberSetting=20//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
 PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 PackerSetting=12//1.2 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 SpringSetting=0//1100lbf/in (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-TenderSpringSetting=0//Detached (Fixed)
-TenderTravelSetting=0//Detached (Fixed)
-SpringRubberSetting=0//Detached (Fixed)
 RideHeightSetting=15//7.5 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
 SlowBumpSetting=4//14 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastBumpSetting=4//14 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 SlowReboundSetting=6//11 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=6//11 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-BrakeDiscSetting=0//4.00 cm (Fixed)
-BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
 [BASIC]
@@ -241,7 +203,7 @@ Downforce=0.050000
 Balance=0.500000
 Ride=0.400000
 Gearing=0.975000
-Custom=1`,
+Custom=1`
 
     'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(12,0,0,0) // Fixed to car's upgrade package
