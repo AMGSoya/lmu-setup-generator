@@ -99,8 +99,6 @@ Front3rdSpringSetting=8//8 (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
 Front3rdTenderSpringSetting=0//Detached (Fixed)
 Front3rdTenderTravelSetting=0//Detached (Fixed)
 Front3rdSlowBumpSetting=0//1 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-Front3rdFastBumpSetting=2//3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-Front3rdSlowReboundSetting=4//5 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 Front3rdFastReboundSetting=2//3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 Rear3rdPackerSetting=10//1.0 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 Rear3rdSpringSetting=7//7 (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
@@ -856,7 +854,7 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## TRACK DNA DATABASE
-- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. Compromise: stability for Porsche Curves. Bumps need good high-speed damping.
+- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. Compromise: stability for Porsche Curves. Bumps need good high-speed damping.
 - **Sebring International Raceway:** Extremely bumpy. Focus: SOFT suspension (especially fast dampers), higher ride height. The **'Ride'** parameter in [BASIC] **MUST be set to its ABSOLUTE HIGHEST possible value (e.g., 0.900000-0.975000)**. **Dampers (Slow/Fast Bump/Rebound) and Anti-Roll Bars (Front/Rear AntiSwaySetting) MUST be set to their absolute softest (index 0 for dampers, 0-2 for ARBs)**. 'RideHeightSetting' MUST be set to a high value (e.g., 20-30). This ensures maximum bump absorption, overriding general setup goals for stiffness. Compromise: softness can hurt responsiveness. Short Gears Recommended.
 - **Spa-Francorchamps:** High-speed, elevation change. Focus: High-speed stability, good aero balance. Stiff springs for Eau Rouge. Long Gears Recommended.
 - **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. Compromise: stable braking.
@@ -925,7 +923,7 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - Neutral Balance (or predictable understeer).
 
 ## LMU AI GUIDANCE REFINEMENTS (ULTIMATE PRECISION)
-- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting = critical failure.
+- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting is critical failure.
 - **INTERCONNECTEDNESS:** All parameters interdependent.
 - **LMU REALISM CHECK:** Ensure physically realistic/plausible settings.
 - **DYNAMIC RANGE UTILIZATION:** Actively use full Min-Max range.
