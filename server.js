@@ -127,7 +127,7 @@ ChassisAdj11Setting=0//N/A (Fixed)
 SteerLockSetting=0//400 (16) deg (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 RearBrakeSetting=16//52.8:47.2 (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
 BrakeMigrationSetting=0//2.5% F (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-BrakePressureSetting=80//120 kgf (100%) (MUST BE OVERWRITTEN)
+BrakePressureSetting=80//120 kgf (100%) (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
 HandfrontbrakePressSetting=0//0% (Fixed)
 HandbrakePressSetting=0//N/A (Fixed)
 TCSetting=0//Available (Fixed)
@@ -654,19 +654,19 @@ app.post('/generate-setup', async (req, res) => {
         // Programmatically replace RWSetting to its absolute minimum for Le Mans
         finalExampleTemplate = finalExampleTemplate.replace(/^(RWSetting=)\d+/m, `$1${minRwSetting}`);
 
-        // Programmatically replace FinalDriveSetting to its highest for Le Mans
-        let leMansFinalDrive;
-        if (finalCategory === 'Hypercar') {
-            leMansFinalDrive = 7; 
-        } else if (finalCategory === 'LMP2') {
-            leMansFinalDrive = 5; 
-        } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
-            leMansFinalDrive = 10; // Assuming 10 is max for GT3/GTE fixed gears
-        }
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${leMansFinalDrive}`);
-        
-        // Programmatically force ALL individual gears to 1 (Longest Ratio)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`);
+        // Programmatically replace FinalDriveSetting to its highest for Le Mans
+        let leMansFinalDrive;
+        if (finalCategory === 'Hypercar') {
+            leMansFinalDrive = 7; 
+        } else if (finalCategory === 'LMP2') {
+            leMansFinalDrive = 5; 
+        } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
+            leMansFinalDrive = 10; // Assuming 10 is max for GT3/GTE fixed gears
+        }
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${leMansFinalDrive}`);
+        
+        // Programmatically force ALL individual gears to 1 (Longest Ratio)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`);
 
         // Inject a specific note into the template about the Le Mans override, so the AI knows
         // this was pre-set and should still explain it in its notes.
@@ -695,20 +695,20 @@ Generate a complete, physically realistic, and numerically valid .VEH setup. Rep
 World-class LMU race engineer. Goal: predictable, realistic setups, suited to driver/feedback. Explain decisions in 'Notes'.
 
 ## CRITICAL INSTRUCTION
-Populate '[GENERAL] Notes' with engineering debrief. If track-specific override (e.g., Le Mans aero) applied, explicitly state it, explaining how it overrides general setup philosophies.
+Populate '[GENERAL] Notes' with engineering debrief. If track-specific override (e.g., Le Mans aero) applied, explicitly state it, explaining how it overrides general setup philosophies. For key adjustments, explain the engineering reason.
 
 ## THOUGHT PROCESS & HIERARCHY
-1.  **Session Type (Qualifying vs. Race):** Dictates setup philosophy.
-2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX'. Apply Primary/Secondary solutions. All other decisions align.
-3.  **Track DNA & Weather:** Analyze track demands ('TRACK DNA DATABASE') and weather ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions. Mention track compromise in notes.
-4.  **Car Architecture:** Apply adjustments based on car's traits ('CAR ARCHITECTURE PHILOSOPHY').
+1.  **Session Type (Qualifying vs. Race):** Dictates setup philosophy.
+2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX'. Apply Primary/Secondary solutions. All other decisions align.
+3.  **Track DNA & Weather:** Analyze track demands ('TRACK DNA DATABASE') and weather ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions. Mention track compromise in notes.
+4.  **Car Architecture:** Apply adjustments based on car's traits ('CAR ARCHITECTURE PHILOSOPHY').
 5.  **Overall Setup Goal:** Use 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') from 'LMU SETUP PHILOSOPHY DIAL' to fine-tune settings.
-5.5. **Generate [BASIC] Parameters (MANDATORY):** Dynamically calculate and GENERATE the [BASIC] section at .VEH end. This is NOT in template.
+5.5. **Generate [BASIC] Parameters (MANDATORY):** Dynamically calculate and GENERATE the [BASIC] section at .VEH end. This is NOT in template. Fully derived.
     - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
     - Outputting 0.500000 (or any common default) is critical failure, UNLESS your calculation is optimal.
-    - **'Downforce'**: Lower for low-drag (0.075-0.25). Higher for high-downforce/grip (0.75-0.925). Mid for balanced (0.35-0.65).
-    - **'Balance'**: Aggressive oversteer (0.15-0.35). Neutral (0.45-0.55). Stable understeer (0.65-0.85). Adjust per driver/track.
-    - **'Ride'**: Stiff/low (0.075-0.25). Compliant/high (0.75-0.925). Mid for balanced (0.35-0.65). Adjust per track bumps.
+    - **'Downforce'**: Low-drag (0.075-0.25). High-downforce/grip (0.75-0.925). Mid for balanced (0.35-0.65).
+    - **'Balance'**: Aggressive oversteer (0.15-0.35). Neutral (0.45-0.55). Stable understeer (0.65-0.85). Per driver/track.
+    - **'Ride'**: Stiff/low (0.075-0.25). Compliant/high (0.75-0.925). Mid (0.35-0.65). Per track bumps.
     - **'Gearing'**: Long/top speed (0.85-0.975). Short/acceleration (0.075-0.25). Mid (0.25-0.85). MUST correspond to detailed gear selections.
     - **Custom**: 1.
 6.  **Engineer's Debrief:** Write concise summary in 'Notes'.
@@ -718,21 +718,21 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 
 ### LMU Gearing Index Behavior
 - Individual gears ('Gear1Setting' to 'Gear7Setting'): **INVERSE relationship**.
-    - LOWER index (0) = SHORTEST individual ratio (quickest acceleration).
-    - HIGHER index (1) = LONGEST individual ratio (highest speed).
-- **Range Limit**: Individual gears are LIMITED TO ONLY INDICES 0 AND 1.
+    - LOWER index (0) = SHORTEST ratio.
+    - HIGHER index (1) = LONGEST ratio.
+- **Range Limit**: Individual gears LIMITED TO ONLY INDICES 0 AND 1.
 - 'FinalDriveSetting': HIGHER index = longer overall gearing.
 - Apply LMU-specific gearing logic.
 
 ### Other Nuances
-- 'FuelSetting', 'VirtualEnergySetting', 'NumPitstopsSetting' adjust for session.
+- 'FuelSetting', 'VirtualEnergySetting', 'NumPitstopsSetting' adjust.
 - UpgradeSetting values fixed.
 
 ## LMU PHYSICS & TUNING REFERENCE
 - **Aero**: Wings ('FWSetting'/'RWSetting'): Grip vs. drag. Ducts: temp/drag.
-- **Suspension**: Springs ('PackerSetting'/'SpringSetting') control ride height/stiffness. Dampers ('Slow Bump'/'Fast Bump', 'Slow Rebound'/'Fast Rebound') control movement rates. 'AntiSwaySetting' (ARB) controls body roll/load transfer. 'CamberSetting' controls tire angle. 'ToeInSetting' controls tire angle. 'RideHeightSetting' impacts drag/CG. Packers limit travel.
-- **Drivetrain**: 'FinalDriveSetting' overall gear ratio. Individual gears fine-tune. Differential ('DiffPowerSetting', 'DiffCoastSetting', 'DiffPreloadSetting') controls power distribution.
-- **Brakes**: 'RearBrakeSetting' (Bias), 'BrakePressureSetting', 'AntilockBrakeSystemMapSetting' (ABS), 'TractionControlMapSetting' (TC) control braking/traction.
+- **Suspension**: Springs ('PackerSetting'/'SpringSetting') control ride height/stiffness. Dampers ('Slow Bump'/'Fast Bump', 'Slow Rebound'/'Fast Rebound') control movement. 'AntiSwaySetting' (ARB) controls body roll/load. 'CamberSetting' controls tire angle. 'ToeInSetting' controls tire angle. 'RideHeightSetting' impacts drag/CG. Packers limit travel.
+- **Drivetrain**: 'FinalDriveSetting' overall gear ratio. Individual gears fine-tune. Differential ('DiffPowerSetting', 'DiffCoastSetting', 'DiffPreloadSetting') controls power.
+- **Brakes**: 'RearBrakeSetting' (Bias), 'BrakePressureSetting', 'AntilockBrakeSystemMapSetting' (ABS), 'TractionControlMapSetting' (TC).
 
 ## LMU TUNING GUIDELINES & RANGES
 - Prioritize realistic values.
@@ -747,7 +747,7 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 ### Aero
 - 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce). Max: Hypercar FW:2, RW:10; LMP2 RW:9; GT3 RW:7; GTE RW:10.
 - BrakeDucts indices: (0=open/max cooling, higher=more closed/less cooling/more aero). Max: Hypercar:3, GT3:3, GTE:3.
-- **Dynamic Radiator/Brake Duct**: Adjust 'BrakeDuctSetting'/'WaterRadiatorSetting'/'OilRadiatorSetting' based on 'Track Temp'. Higher temp = more open. Lower temp = more closed.
+- **Dynamic Radiator/Brake Duct**: Adjust 'BrakeDuctSetting'/'WaterRadiatorSetting'/'OilRadiatorSetting' based on 'Track Temp'. High temp = more open (higher index). Low temp = more closed (lower index).
 
 ### Suspension
 - 'RideHeightSetting': (Min: 0/~4.0 cm, Max: 30/~8.0 cm).
@@ -756,6 +756,7 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 - 'Camber Setting': (Min: 0/~-0.5 deg, Max: 40/~-4.0 deg).
 - 'Toe In/Out': ('FrontToeInSetting'/'RearToeInSetting') (Min: 0/~-0.2 deg, Max: 30/~+0.2 deg).
 - Damper Settings: ('Slow Bump'/'Fast Bump'/'Slow Rebound'/'Fast Rebound') (Min: 0, Max: 10). Soft=0-3, Medium=4-7, Stiff=8-10. Bumpy tracks need softer Fast.
+- **Suspension Philosophy**: Springs, packers, dampers must ensure effective vertical load management and maximum tire contact.
 
 ### Drivetrain
 - 'FinalDriveSetting': (Min: 0, Max: typically 5-10).
