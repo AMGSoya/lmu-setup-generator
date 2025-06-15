@@ -39,7 +39,7 @@ if (!HUGGINGFACE_API_KEY) {
 }
 
 // 7. Define OpenRouter API endpoint and Model
-const OPENROUTER_API_URL = '[https://openrouter.ai/api/v1/chat/completions](https://openrouter.ai/api/v1/chat/completions)';
+const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const PRIMARY_MODEL = 'NousResearch/Hermes-2-Pro-Llama-3-8B';
 
 // --- Define LMU .VEH Example Templates by Category ---
