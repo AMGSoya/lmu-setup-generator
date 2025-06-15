@@ -127,7 +127,7 @@ ChassisAdj11Setting=0//N/A (Fixed)
 SteerLockSetting=0//400 (16) deg (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 RearBrakeSetting=16//52.8:47.2 (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
 BrakeMigrationSetting=0//2.5% F (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-BrakePressureSetting=80//120 kgf (100%) (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
+BrakePressureSetting=80//120 kgf (100%) (MUST BE OVERWRITTEN)
 HandfrontbrakePressSetting=0//0% (Fixed)
 HandbrakePressSetting=0//N/A (Fixed)
 TCSetting=0//Available (Fixed)
@@ -653,6 +653,8 @@ app.post('/generate-setup', async (req, res) => {
 
         // Programmatically replace RWSetting to its absolute minimum for Le Mans
         finalExampleTemplate = finalExampleTemplate.replace(/^(RWSetting=)\d+/m, `$1${minRwSetting}`);
+        // Programmatically replace FWSetting to its absolute minimum for Le Mans
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FWSetting=)\d+/m, `$10`); // Sets FWSetting=0
 
         // Programmatically replace FinalDriveSetting to its highest for Le Mans
         let leMansFinalDrive;
@@ -670,8 +672,53 @@ app.post('/generate-setup', async (req, res) => {
 
         // Inject a specific note into the template about the Le Mans override, so the AI knows
         // this was pre-set and should still explain it in its notes.
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Le Mans override applied: Absolute minimum drag prioritized. RWSetting set to ${minRwSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${leMansFinalDrive}. This overrides general setup goals for max top speed."`);
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Le Mans override applied: Absolute minimum drag prioritized. RWSetting set to ${minRwSetting}. FWSetting set to 0. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${leMansFinalDrive}. This overrides general setup goals for max top speed."`);
     }
+
+    // --- CRITICAL: MONZA SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
+    // Ensures Monza gets optimal low drag/long gearing regardless of AI interpretation.
+    if (track === "Autodromo Nazionale Monza") {
+        const monzaRwSetting = 0; // Absolute minimum RW
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RWSetting=)\d+/m, `$1${monzaRwSetting}`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FWSetting=)\d+/m, `$10`); // Also force FW to 0 for Monza
+
+        let monzaFinalDrive;
+        if (finalCategory === 'Hypercar') {
+            monzaFinalDrive = 7; 
+        } else if (finalCategory === 'LMP2') {
+            monzaFinalDrive = 5; 
+        } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
+            monzaFinalDrive = 10; 
+        }
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${monzaFinalDrive}`);
+        
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`); // All individual gears to Longest (1)
+
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Monza override applied: Absolute minimum drag prioritized. RWSetting set to ${monzaRwSetting}. FWSetting set to 0. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${monzaFinalDrive}. This overrides general setup goals for max top speed."`);
+    }
+
+    // --- CRITICAL: SEBRING SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
+    // Ensures Sebring prioritizes soft suspension for bumps regardless of AI interpretation.
+    if (track === "Sebring International Raceway") {
+        // Force very soft damper settings (lower indices)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdSlowBumpSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdFastBumpSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdSlowReboundSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdFastReboundSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdSlowBumpSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdFastBumpSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdSlowReboundSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdFastReboundSetting=)\d+/m, `$10`);
+
+        // Force very soft anti-roll bars (lower indices)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FrontAntiSwaySetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RearAntiSwaySetting=)\d+/m, `$10`);
+
+        // Force slightly higher ride height
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+\s*\/\/.*/m, `$120`); // Assuming 20 is a good "high" value
+        
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased. This overrides general setup goals for ride quality on bumpy track."`);
+    }
 
     // UPGRADE: Dynamically insert the user's selected car name into the template
     finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
@@ -695,7 +742,7 @@ Generate a complete, physically realistic, and numerically valid .VEH setup. Rep
 World-class LMU race engineer. Goal: predictable, realistic setups, suited to driver/feedback. Explain decisions in 'Notes'.
 
 ## CRITICAL INSTRUCTION
-Populate '[GENERAL] Notes' with engineering debrief. If track-specific override (e.g., Le Mans aero) applied, explicitly state it, explaining how it overrides general setup philosophies. For key adjustments, explain the engineering reason.
+Populate '[GENERAL] Notes' with engineering debrief. If track-specific override (e.g., Le Mans aero) applied, explicitly state it, explaining how it overrides general setup philosophies. For key adjustments, explain the engineering reason for the specific parameter changes (e.g., 'Increased RearCamberSetting to reduce oversteer on exit', 'Softened front dampers for better bump absorption').
 
 ## THOUGHT PROCESS & HIERARCHY
 1.  **Session Type (Qualifying vs. Race):** Dictates setup philosophy.
@@ -707,8 +754,8 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
     - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
     - Outputting 0.500000 (or any common default) is critical failure, UNLESS your calculation is optimal.
     - **'Downforce'**: Low-drag (0.075-0.25). High-downforce/grip (0.75-0.925). Mid for balanced (0.35-0.65).
-    - **'Balance'**: Aggressive oversteer (0.15-0.35). Neutral (0.45-0.55). Stable understeer (0.65-0.85). Per driver/track.
-    - **'Ride'**: Stiff/low (0.075-0.25). Compliant/high (0.75-0.925). Mid (0.35-0.65). Per track bumps.
+    - **'Balance'**: Aggressive oversteer (0.15-0.35). Neutral (0.45-0.55). Stable understeer (0.65-0.85). Adjust per driver/track.
+    - **'Ride'**: Stiff/low (0.075-0.25). Compliant/high (0.75-0.925). Mid (0.35-0.65). Adjust per track bumps.
     - **'Gearing'**: Long/top speed (0.85-0.975). Short/acceleration (0.075-0.25). Mid (0.25-0.85). MUST correspond to detailed gear selections.
     - **Custom**: 1.
 6.  **Engineer's Debrief:** Write concise summary in 'Notes'.
@@ -730,9 +777,9 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 
 ## LMU PHYSICS & TUNING REFERENCE
 - **Aero**: Wings ('FWSetting'/'RWSetting'): Grip vs. drag. Ducts: temp/drag.
-- **Suspension**: Springs ('PackerSetting'/'SpringSetting') control ride height/stiffness. Dampers ('Slow Bump'/'Fast Bump', 'Slow Rebound'/'Fast Rebound') control movement. 'AntiSwaySetting' (ARB) controls body roll/load. 'CamberSetting' controls tire angle. 'ToeInSetting' controls tire angle. 'RideHeightSetting' impacts drag/CG. Packers limit travel.
+- **Suspension**: Springs ('PackerSetting'/'SpringSetting') control ride height/stiffness. Dampers ('Slow Bump'/'Fast Bump', 'Slow Rebound'/'Fast Rebound') control movement. 'AntiSwaySetting' (ARB) controls body roll/load. 'CamberSetting' controls tire angle. 'ToeInSetting' controls tire angle. 'RideHeightSetting' impacts drag/CG. Packers limit travel. **Effective vertical load management and maximum tire contact are crucial.**
 - **Drivetrain**: 'FinalDriveSetting' overall gear ratio. Individual gears fine-tune. Differential ('DiffPowerSetting', 'DiffCoastSetting', 'DiffPreloadSetting') controls power.
-- **Brakes**: 'RearBrakeSetting' (Bias), 'BrakePressureSetting', 'AntilockBrakeSystemMapSetting' (ABS), 'TractionControlMapSetting' (TC).
+- **Brakes**: 'RearBrakeSetting' (Bias), 'BrakePressureSetting', 'AntilockBrakeSystemMapSetting' (ABS), 'TractionControlMapSetting' (TC) control braking/traction.
 
 ## LMU TUNING GUIDELINES & RANGES
 - Prioritize realistic values.
@@ -756,7 +803,6 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 - 'Camber Setting': (Min: 0/~-0.5 deg, Max: 40/~-4.0 deg).
 - 'Toe In/Out': ('FrontToeInSetting'/'RearToeInSetting') (Min: 0/~-0.2 deg, Max: 30/~+0.2 deg).
 - Damper Settings: ('Slow Bump'/'Fast Bump'/'Slow Rebound'/'Fast Rebound') (Min: 0, Max: 10). Soft=0-3, Medium=4-7, Stiff=8-10. Bumpy tracks need softer Fast.
-- **Suspension Philosophy**: Springs, packers, dampers must ensure effective vertical load management and maximum tire contact.
 
 ### Drivetrain
 - 'FinalDriveSetting': (Min: 0, Max: typically 5-10).
@@ -788,7 +834,7 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. This ensures lowest drag/max top speed, overriding other general setup goals. Compromise: stability for Porsche Curves. Bumps need good high-speed damping.
 - **Sebring International Raceway:** Extremely bumpy. Focus: SOFT suspension (especially fast dampers), higher ride height. Compromise: softness can hurt responsiveness. Short Gears Recommended.
 - **Spa-Francorchamps:** High-speed, elevation change. Focus: High-speed stability, good aero balance. Stiff springs for Eau Rouge. Long Gears Recommended.
-- **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. Compromise: stable braking.
+- **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. Compromise: stable braking.
 - **Fuji Speedway:** Long main straight, technical final sector. Focus: Compromise top speed/low-speed agility. Balanced Gearing Recommended.
 - **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster", elevation, blind crests. Focus: Predictable, stable platform. Medium downforce, compliant suspension. Slightly Shorter Gears Recommended.
 - **Bahrain International Circuit:** High grip, smooth, hot. Focus: Good braking stability, traction. Tire wear high. Balanced Gearing Recommended.
@@ -878,7 +924,7 @@ This is the required LMU .VEH structure. You MUST use this exact structure, repl
 ${finalExampleTemplate}
 
 Now, generate the complete and valid .VEH file. Your response MUST contain ONLY the file content and nothing else.
-`; 
+`;
 
     try {
         const openrouterResponse = await fetch(OPENROUTER_API_URL, {
