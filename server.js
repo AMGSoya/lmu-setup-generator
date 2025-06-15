@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // 6. Get your API keys from the .env file
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY; 
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 // The HUGGINGFACE_API_KEY is loaded and available for use,
 // but the primary setup generation uses OpenRouter as configured below.
 const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
@@ -805,6 +805,24 @@ FastReboundSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //CompoundSetting=0//Soft (Fixed)
 //EquippedTireIDSetting=0// (Fixed)
 
+[REARRIGHT]
+CamberSetting=20//-1.2 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
+PressureSetting=0//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+PackerSetting=25//2.5 cm (Min: 0, Max: 25) (MUST BE OVERWRITTEN)
+SpringSetting=1//140 N/mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+TenderSpringSetting=0//Detached (Fixed)
+TenderTravelSetting=0//Detached (Fixed)
+SpringRubberSetting=0//Detached (Fixed)
+RideHeightSetting=22//7.2 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+SlowBumpSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastBumpSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+SlowReboundSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastReboundSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+BrakeDiscSetting=0//3.20 cm (Fixed)
+BrakePadSetting=0//1 (Fixed)
+CompoundSetting=0//Soft (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+EquippedTireIDSetting=0// (Fixed)
+
 [BASIC]
 Downforce=0.400000
 Balance=0.400000
@@ -815,35 +833,40 @@ Custom=1`
 
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
-    // Safely destructure all possible values from the request body
-    const { car, track, request, selectedCarCategory,
-        selectedCarDisplay, selectedTrackDisplay, setupGoal,
-        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
-    } = req.body;
+    // Safely destructure all possible values from the request body
+    const {
+        car, track, request, selectedCarCategory,
+        selectedCarDisplay, selectedTrackDisplay, setupGoal,
+        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
+    } = req.body;
 
-    // Validate essential parameters
-    if (!car || !track || !setupGoal || !selectedCarCategory) {
-        return res.status(400).json({ error: "Please provide Car, Track, Setup Goal, and Car Category details." });
-    }
-    
-    // Handle potential category key mismatch
-    let finalCategory = selectedCarCategory;
-    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
-        finalCategory = 'GT3';
-    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
-        finalCategory = 'LMGT3';
-    }
+    // Validate essential parameters
+    if (!car || !track || !setupGoal || !selectedCarCategory) {
+        return res.status(400).json({
+            error: "Please provide Car, Track, Setup Goal, and Car Category details."
+        });
+    }
 
-    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
-    if (!exampleTemplate) {
-        return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.` });
-    }
+    // Handle potential category key mismatch
+    let finalCategory = selectedCarCategory;
+    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
+        finalCategory = 'GT3';
+    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
+        finalCategory = 'LMGT3';
+    }
 
-    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
-    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
+    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
+    if (!exampleTemplate) {
+        return res.status(400).json({
+            error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.`
+        });
+    }
+
+    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
+    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
     let finalExampleTemplate = exampleTemplate; // Start with the chosen template
 
-    if (track === "Circuit de la Sarthe (Le Mans)") {
+    if (track === "Circuit de la Sarthe (Le Mans)") {
         // Force RWSetting to absolute minimum (index 0) for Hypercar/LMP2/GT3/GTE
         // This regex ensures it targets the correct RWSetting line regardless of current value
         finalExampleTemplate = finalExampleTemplate.replace(/^(RWSetting=)\d+/m, `$10`); // Sets RWSetting=0
@@ -853,11 +876,11 @@ app.post('/generate-setup', async (req, res) => {
         if (finalCategory === 'Hypercar') {
             finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$17`);
         } else if (finalCategory === 'LMP2') {
-             finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$15`); // Assuming max 5 for LMP2
+            finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$15`); // Assuming max 5 for LMP2
         } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
-             finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$10`); // Assuming fixed/limited max for GT3/GTE, adjust if needed
+            finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$10`); // Assuming fixed/limited max for GT3/GTE, adjust if needed
         }
-        
+
         // Force ALL individual gears to 1 (Longest Ratio)
         finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`);
     }
@@ -866,17 +889,17 @@ app.post('/generate-setup', async (req, res) => {
     finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
 
 
-    const sessionDuration = req.body.sessionDuration || 'N/A';
-    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
-                                `Estimate fuel for a ${sessionDuration} minute race.` : '';
-    const weatherGuidance = `Current weather is ${selectedWeather}.`;
-    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+    const sessionDuration = req.body.sessionDuration || 'N/A';
+    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
+        `Estimate fuel for a ${sessionDuration} minute race.` : '';
+    const weatherGuidance = `Current weather is ${selectedWeather}.`;
+    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
 
 
-    // =====================================================================================
-    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
-    // =====================================================================================
-    const prompt = `
+    // =====================================================================================
+    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
+    // =====================================================================================
+    const prompt = `
 ## PRIME DIRECTIVE
 Generate a complete, physically realistic, and numerically valid .VEH setup. Replace placeholders with calculated, logical numbers. '0' for adjustable settings is a failure.
 
@@ -1066,6 +1089,7 @@ This is the required LMU .VEH structure. You MUST use this exact structure, repl
 ${finalExampleTemplate}
 
 Now, generate the complete and valid .VEH file. Your response MUST contain ONLY the file content and nothing else.
+`; // ***FIX: Added closing backtick and semicolon here***
 
     try {
         const openrouterResponse = await fetch(OPENROUTER_API_URL, {
@@ -1077,7 +1101,10 @@ Now, generate the complete and valid .VEH file. Your response MUST contain ONLY 
             },
             body: JSON.stringify({
                 model: PRIMARY_MODEL,
-                messages: [{ role: "user", content: prompt }],
+                messages: [{
+                    role: "user",
+                    content: prompt
+                }],
                 max_tokens: 8192, // Increased max_tokens to prevent truncation
                 temperature: 0.8, // Slightly increased to encourage more nuance while maintaining structure
             }),
@@ -1097,7 +1124,7 @@ Now, generate the complete and valid .VEH file. Your response MUST contain ONLY 
         // --- NEW ROBUST PARSING LOGIC ---
         // Find the start of the actual .VEH content. The AI sometimes adds introductory text.
         const setupStartIndex = rawText.indexOf('VehicleClassSetting=');
-        
+
         if (setupStartIndex !== -1) {
             // If the start string is found, extract everything from that point on.
             let setupText = rawText.substring(setupStartIndex);
@@ -1110,7 +1137,9 @@ Now, generate the complete and valid .VEH file. Your response MUST contain ONLY 
             // Log the generated setup to the console for debugging
             console.log("\n--- GENERATED SETUP ---\n", setupText);
 
-            res.json({ setup: setupText });
+            res.json({
+                setup: setupText
+            });
 
         } else {
             // If 'VehicleClassSetting=' is not found at all, the response is invalid.
