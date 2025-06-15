@@ -956,7 +956,7 @@ app.post('/generate-setup', async (req, res) => {
 
     // =====================================================================================
     // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
-    // =====================================================================================
+    // =================================e====================================================
     const prompt = `
 You are a world-class LMU race engineer. Your task is to take the user's request and the provided .VEH template, and output a complete, physically realistic, and numerically valid .VEH setup file.
 
@@ -977,8 +977,6 @@ RWSetting=8//P4 (Min: 0, Max: 9) (MUST BE OVERWRITTEN) // Hypercar RW: 0-9 (P1-P
 
 You will do this for the entire file. Any other format is a failure.
 ---
-
-**(The full knowledge base with TRACK DNA, DRIVER FEEDBACK MATRIX, etc., is still here for your reference)**
 
 ## PRIME DIRECTIVE
 Generate a complete, physically realistic, and numerically valid .VEH setup. Replace placeholders with calculated, logical numbers. '0' for adjustable settings is a failure.
@@ -1004,6 +1002,54 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
     - **'Gearing'**: Represents the trade-off between acceleration and top speed. Long gearing for top speed tracks is high (0.85-0.975). Short gearing for acceleration tracks is low (0.075-0.25). Mid-range for balanced tracks (0.25-0.85). This MUST correspond to your detailed gear ratio selections.
     - **'Custom'**: Must always be 1.
 6.  **Engineer's Debrief:** Write your concise summary in the 'Notes' section as per the 'CRITICAL INSTRUCTION'.
+
+// =====================================================================================
+// --- START OF NEW MASTER KNOWLEDGE BASE ---
+// =====================================================================================
+
+## LMU SETUP FUNDAMENTALS (DEEP DIVE)
+- **The Platform Concept:** The car's chassis is a 'platform'. All setup changes aim to keep this platform stable and predictable. A stable platform allows the aerodynamics to work efficiently and gives the driver confidence. Key elements are pitch (braking/acceleration), roll (cornering), and heave (vertical movement over bumps). Your goal is to control these motions.
+- **Pyramid of Grip:** Grip starts at the tires. 1. **Tires:** Must be kept in their optimal temperature and pressure window with the largest possible contact patch on the road. 2. **Suspension:** Manages the tire's contact with the road. It controls weight transfer and absorbs bumps. 3. **Aerodynamics:** Pushes the car onto the track, generating huge amounts of grip at speed. Aero is useless if the suspension can't keep the tires on the asphalt. All setup decisions must respect this hierarchy.
+- **The Law of Trade-Offs:** Every single change you make has a consequence. More rear wing gives more cornering grip but reduces top speed. Softer springs absorb bumps better but make the car less responsive. Your job is to find the best compromise for the specific car, track, and driver.
+
+## ADVANCED AERODYNAMIC PRINCIPLES
+- **Aero Balance & Center of Pressure (CoP):** This is the point where the total aerodynamic force acts on the car. It's like the car's center of gravity, but for air pressure. Moving the CoP forward (e.g., more front wing) increases front-end grip (more oversteer). Moving it rearward (e.g., more rear wing) increases rear-end grip (more understeer).
+- **Rake:** This is the angle of the car's floor relative to the ground, created by running the rear ride height higher than the front. A positive rake (rear higher than front) increases the expansion of air under the car, creating a low-pressure area that sucks the car to the ground (downforce from the floor/diffuser).
+  - **Effect of Rake:** More rake generally increases overall downforce and shifts the aero balance forward. However, too much rake can "stall" the diffuser, causing a sudden loss of rear downforce. It's a powerful but sensitive tool.
+- **Aero Platform Sensitivity:** Downforce is highly sensitive to ride height. As the car gets closer to the ground, the underbody aerodynamics work much more effectively. However, if the car runs too low, it can bottom out, which instantly breaks the airflow and causes a sudden loss of grip. This is why stiff springs are required on high-downforce, high-speed tracks to prevent the car's ride height from changing too much.
+
+## SUSPENSION GEOMETRY & DAMPING DEEP DIVE
+- **Camber Explained:** Negative camber is when the top of the tire is tilted inward. In a corner, the car rolls, and this negative camber helps to keep the outside tire's contact patch flat on the road, maximizing grip.
+  - **Trade-off:** Too much negative camber reduces the tire's contact patch during straight-line braking and acceleration. The goal is to use just enough camber for cornering grip without sacrificing too much straight-line performance.
+- **Toe Explained:**
+  - **Front Toe:** Toe-out (negative values) means the front of the tires point away from each other. This makes the car eager to turn-in but can cause instability on the straights. Toe-in (positive values) improves straight-line stability but can make the car reluctant to initiate a turn.
+  - **Rear Toe:** Rear toe-in is CRITICAL for stability. It means the front of the rear tires point towards the centerline of the car. This provides significant stability under braking and on-throttle at corner exit. Nearly all race setups use some amount of rear toe-in. Rear toe-out is almost never used as it makes the car extremely unstable.
+- **Anti-Roll Bars (ARBs) Explained:** The ARB is a bar that connects the left and right wheels on an axle. Its job is to control how much the car's body rolls during cornering.
+  - **Stiffening the front ARB** resists roll at the front, transferring more load to the outside front tire. This reduces front-end grip and increases understeer.
+  - **Stiffening the rear ARB** resists roll at the rear, transferring more load to the outside rear tire. This reduces rear-end grip and increases oversteer. ARBs are your primary tool for adjusting mid-corner balance.
+- **Dampers Explained:** Dampers (or shock absorbers) control the *speed* of the suspension's movement. They are critical for managing the platform and keeping the tires on the road.
+  - **Bump:** Controls the suspension compressing.
+    - **Slow-Speed Bump:** Manages the slow movements of the car's body, like roll during cornering and pitch during braking/acceleration. A stiffer slow bump setting provides more support and responsiveness.
+    - **Fast-Speed Bump:** Manages the fast movements from hitting bumps and curbs. A softer fast bump setting is needed to absorb these impacts without throwing the car off balance.
+  - **Rebound:** Controls the suspension extending back out.
+    - **Slow-Speed Rebound:** Manages the body's return after a slow movement. It's crucial for controlling how the car "takes a set" in a corner.
+    - **Fast-Speed Rebound:** Controls the wheel returning to the road after hitting a bump. It must be set correctly to keep the tire in contact with the ground.
+  - **Relationship:** Dampers must work in harmony with the springs. A very stiff spring needs strong rebound damping to control it, otherwise the car will oscillate.
+
+## DIFFERENTIAL DEEP DIVE
+- The differential allows the outside wheel to rotate faster than the inside wheel in a corner. Tuning it controls how much it "locks" the two wheels together.
+- **Power (Acceleration) Lock:** Controls the locking action when you are on the throttle.
+  - **More Lock (Higher Value):** Forces the rear wheels to rotate at a more similar speed. This improves traction on corner exit, as it prevents the inside wheel from spinning uselessly. However, too much lock will resist the car's turning and cause power-on understeer.
+  - **Less Lock (Lower Value):** Allows the wheels to rotate at very different speeds. This helps the car rotate on-throttle but can lead to excessive inside wheelspin, wasting power and overheating the tire.
+- **Coast (Deceleration) Lock:** Controls the locking action when you are off the throttle or braking.
+  - **More Lock (Higher Value):** Provides significant stability on corner entry and during braking, as it prevents the rear wheels from locking up at different rates. However, too much lock will make the car resistant to turning in, causing entry understeer.
+  - **Less Lock (Lower Value):** Allows the rear wheels to rotate freely off-throttle, which helps the car point into the corner (reduces entry understeer). However, too little lock can make the car feel unstable and "loose" on entry.
+- **Preload:** This is a static amount of lock that is always present, whether you are on or off the throttle. It affects both entry and exit stability. More preload generally makes the car more stable and predictable, but also more prone to understeer at the limit.
+
+// =====================================================================================
+// --- END OF NEW MASTER KNOWLEDGE BASE ---
+// =====================================================================================
+
 
 ## DRIVER REQUEST INTERPRETATION GUIDE (NEW!)
 - IF the driver asks for "oversteer", "rotation", or a "pointy" car, their goal is NOT an unstable car. You must interpret this as a request for an AGGRESSIVE setup philosophy. The car must turn in sharply but remain PREDICTABLE and CONTROLLABLE on throttle exit. It should feel 'on the edge' but never 'over the edge'.
@@ -1038,9 +1084,6 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 - **Suspension**: Springs ('PackerSetting'/'SpringSetting') control ride height/stiffness. Dampers ('Slow Bump'/'Fast Bump', 'Slow Rebound'/'Fast Rebound') control movement. 'AntiSwaySetting' (ARB) controls body roll/load. 'CamberSetting' controls tire angle. 'ToeInSetting' controls tire angle. 'RideHeightSetting' impacts drag/CG. Packers limit travel. **Effective vertical load management and maximum tire contact are crucial.**
 - **Drivetrain**: 'FinalDriveSetting' overall gear ratio. Individual gears fine-tune. Differential ('DiffPowerSetting', 'DiffCoastSetting', 'DiffPreloadSetting') controls power. **Gearing ratio choice directly impacts acceleration vs. top speed across different speed ranges.**
 - **Brakes**: 'RearBrakeSetting' (Bias), 'BrakePressureSetting', 'AntilockBrakeSystemMapSetting' (ABS), 'TractionControlMapSetting' (TC) control braking/traction.
-
-## LMU TUNING GUIDELINES & RANGES
-- Prioritize realistic values.
 
 ### Tires
 - 'PressureSetting': (Min: 0/~130 kPa, Max: 10/~170 kPa). **Goal: Optimal operating temperature/pressure window.**
@@ -1094,13 +1137,13 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## TRACK DNA DATABASE (EXPANDED!)
-- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. Compromise: stability for Porsche Curves. Bumps need good high-speed damping.
-- **Sebring International Raceway:** Extremely bumpy. Focus: SOFT suspension, higher ride height. **It requires soft fast damping for its harsh bumps but can still use stiffer slow damping for platform control in the smoother corners.** The **'Ride'** parameter in [BASIC] **MUST be set to its ABSOLUTE HIGHEST possible value (e.g., 0.900000-0.975000)**. **Dampers (Slow/Fast Bump/Rebound) and Anti-Roll Bars (Front/Rear AntiSwaySetting) MUST be set to their absolute softest (index 0 for dampers, 0-2 for ARBs)**. 'RideHeightSetting' MUST be set to a high value (e.g., 20-30). This ensures maximum bump absorption, overriding general setup goals for stiffness. Compromise: softness can hurt responsiveness. Short Gears Recommended.
-- **Spa-Francorchamps:** High-speed, elevation change. Focus: High-speed stability, good aero balance. Stiff springs for Eau Rouge. Long Gears Recommended.
-- **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. Compromise: stable braking.
-- **Fuji Speedway:** Long main straight, technical final sector. Focus: Compromise top speed/low-speed agility. Balanced Gearing Recommended.
-- **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster", elevation, blind crests. Focus: Predictable, stable platform. Medium downforce, compliant suspension. Slightly Shorter Gears Recommended.
-- **Bahrain International Circuit:** High grip, smooth, hot. Focus: Good braking stability, traction. Tire wear high. Balanced Gearing Recommended.
+- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. **Deep Dive:** The challenge is surviving the Porsche Curves. You need some high-speed stability there, so you can't just remove all rear stability. Use a slightly higher Diff Preload and Coast lock to keep the rear planted on entry to these fast corners, even with minimal wing. Bumps on the Mulsanne straight require good high-speed damping control (Fast Bump/Rebound) to prevent the car from becoming airborne.
+- **Sebring International Raceway:** Extremely bumpy (old concrete slabs). Focus: SOFT suspension, higher ride height. **It requires soft fast damping for its harsh bumps but can still use stiffer slow damping for platform control in the smoother corners.** The **'Ride'** parameter in [BASIC] **MUST be set to its ABSOLUTE HIGHEST possible value (e.g., 0.900000-0.975000)**. **Dampers (Slow/Fast Bump/Rebound) and Anti-Roll Bars (Front/Rear AntiSwaySetting) MUST be set to their absolute softest (index 0 for dampers, 0-2 for ARBs)**. 'RideHeightSetting' MUST be set to a high value (e.g., 20-30). This ensures maximum bump absorption, overriding general setup goals for stiffness. **Deep Dive:** Turn 17 is notoriously brutal. The car needs to absorb the bumps without losing traction. Short gearing is vital for the hairpins (T3, T7, T10). A higher diff power lock is needed to get traction down on the bumpy corner exits.
+- **Spa-Francorchamps:** High-speed, elevation change. Focus: High-speed stability, good aero balance. Stiff springs for Eau Rouge compression. Long Gears Recommended. **Deep Dive:** Must have a stiff front end (springs, slow bump) to handle the massive compression in Eau Rouge/Raidillon without bottoming out. The trade-off is the slow Bus Stop chicane at the end of the lap, which requires a car that can rotate. A slightly softer rear ARB can help here. The key is aero efficiency: enough wing for Pouhon and the other fast corners, but not so much that you are slow on the Kemmel Straight.
+- **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. **Deep Dive:** The challenge is braking stability and curb-riding for the chicanes (Variante del Rettifilo, Variante della Roggia). You need a compliant car with good traction. Stiffen front slow bump damping for braking support, but keep fast bump soft for the curbs. A high diff coast setting is essential for stability braking into the tight chicanes from high speed.
+- **Fuji Speedway:** Long main straight, technical final sector. Focus: Compromise top speed/low-speed agility. Balanced Gearing Recommended. **Deep Dive:** This is a track of two halves. Sector 1 is all about top speed. Sector 3 is tight and technical, demanding rotation. A common compromise is to run lower wing for the straight, but use mechanical grip (softer front ARB, aggressive diff coast settings) to get the car to turn in the final sector. Good traction out of the final corner onto the long straight is paramount.
+- **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster", elevation, blind crests. Focus: Predictable, stable platform. Medium downforce, compliant suspension. Slightly Shorter Gears Recommended. **Deep Dive:** The blind crests unload the car, making a stable, confidence-inspiring setup essential. You cannot have a snappy or unpredictable car here. Run slightly higher ride heights and softer suspension than on a flat track. A higher diff preload can help maintain stability when the car goes light over a crest. The driver needs to trust that the car will have grip on the other side.
+- **Bahrain International Circuit:** High grip, smooth, hot. Focus: Good braking stability, traction. Tire wear high. Balanced Gearing Recommended. **Deep Dive:** The track surface is abrasive, and the numerous slow corners followed by straights create high-demand traction zones. This leads to high rear tire temperatures and wear. The setup must manage this. Use less negative rear camber to keep temps down and a higher diff power lock to prevent excessive wheelspin. Braking for T1, T8, and T10 is critical, so a forward brake bias and stable coast-side diff settings are important.
 
 ## LMU SETUP PHILOSOPHY DIAL (PACE & DRIVEABILITY)
 - **'Aggressive' Setup Goal:** Maximize driveable peak performance/responsiveness. NEVER compromise to an undrivable/unstable car. Sharp, reactive, consistently fast. Aero lower for speed, mechanical grip for rotation.
@@ -1112,17 +1155,17 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - **'race'**: Consistent pace/lap times over a stint, NOT just tire survival. Efficient, predictable car maintaining speed through degradation. Optimized tire pressures for consistency. Balance pace & tire wear when choosing 'PressureSetting'/'CamberSetting'.
 
 ## CAR ARCHITECTURE PHILOSOPHY (ENHANCED!)
-- **Mid-Engine (Prototypes, Ferrari, Vanwall, Peugeot):** Balanced, flexible chassis. Good starting point for neutral handling.
-- **Rear-Engine (Porsche 911 RSR / GT3 R):** Excellent traction on exit, but prone to entry understeer due to light front end. Benefits from aggressive front-end settings (softer front ARB, more negative front camber) to get the car to turn in.
-- **Front-Engine (Corvette, Aston Martin):** Great braking stability, but can be prone to exit understeer as the front tires struggle to pull the car out of slow corners. Benefits from setup choices that promote rear-end rotation (stiffer rear ARB, aggressive differential settings).
+- **Mid-Engine (Prototypes, Ferrari, Vanwall, Peugeot):** Balanced, flexible chassis. Good starting point for neutral handling. Can be tuned towards either oversteer or understeer relatively easily. Their main strength is their inherent balance.
+- **Rear-Engine (Porsche 911 RSR / GT3 R):** Excellent traction on exit due to weight over the rear wheels, but prone to entry/mid-corner understeer due to a light front end. Benefits from aggressive front-end settings (softer front ARB, more negative front camber, softer front springs) to get the car to turn in. The goal is to make the front bite so you can use the car's natural traction advantage on exit.
+- **Front-Engine (Corvette, Aston Martin):** Great braking stability due to weight over the front wheels, but can be prone to exit understeer and wheelspin as the front tires struggle to pull the car out of slow corners while the rear tires are trying to push. Benefits from setup choices that promote rear-end rotation and manage traction (stiffer rear ARB, aggressive differential settings, careful throttle application).
 - **General Principle:** Lean into the positive characteristics of a car's architecture while actively using setup tools to mitigate its inherent negative traits.
 
 ## DRIVER FEEDBACK TROUBLESHOOTING MATRIX (High Priority)
-- IF "Understeer on corner entry": 1st: Reduce 'DiffCoastSetting'. 2nd: Soften 'FrontAntiSwaySetting'. 3rd: Increase 'FrontToeInSetting'.
-- IF "Understeer mid-corner or on exit": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Reduce 'DiffPowerSetting'. 3rd: Increase 'FrontCamberSetting'.
-- IF "Oversteer on corner entry" or "nervous": 1st: Increase 'DiffCoastSetting'. 2nd: Stiffen 'FrontAntiSwaySetting'. 3rd: Decrease 'RearToeInSetting'.
-- IF "Oversteer on exit" or "Poor traction" / "Loose rear": 1st: INCREASE 'RearCamberSetting' (less negative - HIGHER index) for stability. 2nd: Increase 'RearToeInSetting' (more toe-in) for stability. 3rd: Soften 'RearAntiSwaySetting'. 4th: Increase 'DiffPowerSetting' (on-throttle lock). 5th: Increase 'DiffCoastSetting' (off-throttle lock).
-- IF "Unstable under braking": 1st: Decrease 'RearBrakeSetting'. 2nd: Increase 'EngineBrakingMapSetting'. 3rd: Increase 'DiffCoastSetting'.
+- IF "Understeer on corner entry": 1st: Reduce 'DiffCoastSetting'. 2nd: Soften 'FrontAntiSwaySetting'. 3rd: Increase 'FrontToeInSetting' (more toe out).
+- IF "Understeer mid-corner or on exit": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Reduce 'DiffPowerSetting'. 3rd: Stiffen Rear Springs or increase rear ride height (rake).
+- IF "Oversteer on corner entry" or "nervous": 1st: Increase 'DiffCoastSetting'. 2nd: Stiffen 'FrontAntiSwaySetting'. 3rd: Increase 'RearToeInSetting' (more toe in).
+- IF "Oversteer on exit" or "Poor traction" / "Loose rear": 1st: INCREASE 'RearCamberSetting' (less negative - HIGHER index) for stability. 2nd: Increase 'RearToeInSetting' (more toe-in) for stability. 3rd: Soften 'RearAntiSwaySetting'. 4th: Increase 'DiffPowerSetting' (on-throttle lock). 5th: Soften rear springs or reduce rear ride height (rake).
+- IF "Unstable under braking": 1st: Decrease 'RearBrakeSetting' (move bias forward). 2nd: Increase 'EngineBrakingMapSetting'. 3rd: Increase 'DiffCoastSetting'.
 - IF "Too much Understeer" or "Pushing in corners": 1st: DECREASE 'RearCamberSetting' (more negative - LOWER index) for more rotation. 2nd: Decrease 'RearToeInSetting' (less toe-in). 3rd: Stiffen 'RearAntiSwaySetting'.
 
 ## ADVANCED WEATHER & TIRE STRATEGY
