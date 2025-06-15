@@ -861,7 +861,7 @@ app.post('/generate-setup', async (req, res) => {
 
         const replaceSectionSetting = (section, settingName, newValue, regexFlags = 'm') => {
             const regex = new RegExp(`^(${section}[\\s\\S]*?${settingName}=)\\d+(.*)`, regexFlags);
-             overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
+            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
         };
 
 
@@ -870,7 +870,7 @@ app.post('/generate-setup', async (req, res) => {
             const note = trackName === "Circuit de la Sarthe (Le Mans)" ?
                 'Notes="Le Mans override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."' :
                 'Notes="Monza override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."';
-            
+
             replaceSectionSetting('\\[FRONTWING\\]', 'FWSetting', minAeroSetting);
             replaceSectionSetting('\\[REARWING\\]', 'RWSetting', minAeroSetting);
 
@@ -878,7 +878,7 @@ app.post('/generate-setup', async (req, res) => {
             if (finalCategory === 'Hypercar') maxFinalDrive = 7;
             else if (finalCategory === 'LMP2') maxFinalDrive = 5;
             else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10;
-            
+
             replaceSectionSetting('\\[DRIVELINE\\]', 'FinalDriveSetting', maxFinalDrive);
             overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
             replaceSetting('RatioSetSetting', 1);
@@ -893,7 +893,7 @@ app.post('/generate-setup', async (req, res) => {
 
         } else if (trackName === "Sebring International Raceway") {
             const note = 'Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to absorb bumps."';
-            
+
             // Set dampers and ARBs to very soft values (e.g., 0 or 1)
             replaceSetting('Front3rdSlowBumpSetting', 0);
             replaceSetting('Front3rdFastBumpSetting', 0);
@@ -903,7 +903,7 @@ app.post('/generate-setup', async (req, res) => {
             replaceSetting('Rear3rdFastBumpSetting', 0);
             replaceSetting('Rear3rdSlowReboundSetting', 0);
             replaceSetting('Rear3rdFastReboundSetting', 0);
-            
+
             replaceSetting('FrontAntiSwaySetting', 1);
             replaceSetting('RearAntiSwaySetting', 1);
 
@@ -969,10 +969,10 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 5.5. **Generate [BASIC] Parameters (MANDATORY):** You MUST dynamically calculate and GENERATE the [BASIC] section at the end of the .VEH file. This section is NOT in the template you are given; it must be fully derived from your setup choices.
     - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
     - Outputting a generic default like 0.500000 is a critical failure, UNLESS your calculation genuinely results in that optimal value.
-    - **'Downforce'**: Represents overall aero grip as a value from 0.0 (min) to 1.0 (max). Calculate this based on the `RWSetting` and `FWSetting` as a proportion of their max values. Low-drag setups (Le Mans, Monza) should be low (0.05-0.15). High-downforce tracks (Portimão) should be high (0.65-0.95). Balanced tracks get the middle range (0.25-0.45).
-    - **'Balance'**: Represents aero balance from 0.0 (oversteer) to 1.0 (understeer). Calculate this from the ratio of front to rear wing settings. `Balance = (FWSetting / FW_Max) / ((FWSetting / FW_Max) + (RWSetting / RW_Max))`. Adjust this baseline for mechanical balance (springs, ARBs). Aggressive setups are low (0.15-0.35). Neutral is mid-range (0.45-0.55). Stable setups are high (0.65-0.85).
+    - **'Downforce'**: Represents overall aero grip as a value from 0.0 (min) to 1.0 (max). Calculate this based on the \`RWSetting\` and \`FWSetting\` as a proportion of their max values. Low-drag setups (Le Mans, Monza) should be low (0.05-0.15). High-downforce tracks (Portimão) should be high (0.65-0.95). Balanced tracks get the middle range (0.25-0.45).
+    - **'Balance'**: Represents aero balance from 0.0 (oversteer) to 1.0 (understeer). Calculate this from the ratio of front to rear wing settings. \`Balance = (FWSetting / FW_Max) / ((FWSetting / FW_Max) + (RWSetting / RW_Max))\`. Adjust this baseline for mechanical balance (springs, ARBs). Aggressive setups are low (0.15-0.35). Neutral is mid-range (0.45-0.55). Stable setups are high (0.65-0.85).
     - **'Ride'**: Represents suspension compliance from 0.0 (stiff) to 1.0 (soft). Stiff and low for smooth tracks (0.075-0.25). Compliant and high for bumpy tracks like Sebring (0.75-0.925). Calculate based on a combination of spring, damper, and ride height settings.
-    - **'Gearing'**: Represents the trade-off between acceleration (0.0) and top speed (1.0). Long gearing for top speed tracks is high (0.85-0.975). Short gearing for acceleration tracks is low (0.075-0.25). This MUST correspond to your detailed `FinalDriveSetting` and individual gear selections.
+    - **'Gearing'**: Represents the trade-off between acceleration (0.0) and top speed (1.0). Long gearing for top speed tracks is high (0.85-0.975). Short gearing for acceleration tracks is low (0.075-0.25). This MUST correspond to your detailed \`FinalDriveSetting\` and individual gear selections.
     - **'Custom'**: Must always be 1.
 6.  **Engineer's Debrief:** Write your concise summary in the 'Notes' section as per the 'CRITICAL INSTRUCTION'.
 
@@ -1011,7 +1011,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 
 ## DIFFERENTIAL DEEP DIVE (ADVANCED)
 - The differential allows the outside wheel to rotate faster than the inside wheel in a corner. Tuning it controls how much it "locks" the two wheels together. This is a primary tool for managing stability and rotation. Your settings here MUST be based on the car and track.
-- **Power (Acceleration) Lock - `DiffPowerSetting`:** Controls locking on-throttle.
+- **Power (Acceleration) Lock - \`DiffPowerSetting\`:** Controls locking on-throttle.
   - **More Lock (Higher Value):** Forces rear wheels to rotate at a similar speed. Improves traction on corner exit, preventing inside wheelspin. **CRITICAL FOR:**
     - **Traction-Limited Tracks:** Use higher values for tracks with slow, hard acceleration zones (e.g., **Sebring, Portimão**).
     - **Front-Engine Cars (Corvette, Aston):** These cars are traction-limited on exit. MUST use higher power lock to prevent wheelspin.
@@ -1021,7 +1021,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
     - **Rear-Engine Cars (Porsche):** These have natural traction. They can use less power lock, which helps mitigate their inherent understeer.
     - **'Aggressive' Setups:** Lower lock allows a skilled driver to use the throttle to help steer the car.
 
-- **Coast (Deceleration) Lock - `DiffCoastSetting`:** Controls locking off-throttle (braking/turn-in).
+- **Coast (Deceleration) Lock - \`DiffCoastSetting\`:** Controls locking off-throttle (braking/turn-in).
   - **More Lock (Higher Value):** Provides significant stability on corner entry by locking the rear axle. **CRITICAL FOR:**
     - **High-Speed Stability:** Essential for tracks with fast, challenging entries (e.g., **Le Mans Porsche Curves, Monza chicanes, Spa Pouhon**). Prevents the rear from becoming light and loose.
     - **'Safe'/'Stable' Setups:** This is a primary tool for confidence on corner entry.
@@ -1029,7 +1029,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
     - **Technical Tracks:** Helpful for tight, low-speed corners where rotation is key (e.g., **Fuji Sector 3, Sebring T7/T10**).
     - **'Aggressive' Setups:** The main tool for achieving a "pointy" car that turns in sharply. If too low, the car will be very nervous on entry ('lift-off oversteer').
 
-- **Preload (`DiffPreloadSetting`):** A static amount of lock always present. It determines the breakaway force required before the power/coast settings engage and smooths the transition between them.
+- **Preload (\`DiffPreloadSetting\`):** A static amount of lock always present. It determines the breakaway force required before the power/coast settings engage and smooths the transition between them.
   - **Higher Preload:** Increases overall stability and predictability. The differential feels less "active". **CRITICAL FOR:**
     - **Bumpy Tracks (Sebring):** Prevents the differential from locking/unlocking erratically as tires momentarily lose contact with the ground. This is a key to compliance and driver confidence.
     - **'Safe'/'Stable' Setups:** Makes the car's reactions to throttle/brake inputs smoother and more benign.
