@@ -237,10 +237,10 @@ BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
 [BASIC]
-Downforce=0.400000
-Balance=0.400000
+Downforce=0.050000
+Balance=0.500000
 Ride=0.400000
-Gearing=0.400000
+Gearing=0.975000
 Custom=1`,
 
     'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
@@ -248,10 +248,10 @@ UpgradeSetting=(12,0,0,0)
 [GENERAL]
 Notes=""
 Symmetric=1
-//CGHeightSetting=0//Non-adjustable (Fixed)
-//CGRightSetting=0//Non-adjustable (Fixed)
-//CGRearSetting=0//Non-adjustable (Fixed)
-//WedgeSetting=0//N/A (Fixed)
+CGHeightSetting=0//Non-adjustable (Fixed)
+CGRightSetting=0//Non-adjustable (Fixed)
+CGRearSetting=0//Non-adjustable (Fixed)
+WedgeSetting=0//N/A (Fixed)
 FuelSetting=65//65L (MUST BE OVERWRITTEN)
 FuelCapacitySetting=0//N/A (Fixed)
 VirtualEnergySetting=72//72% (MUST BE OVERWRITTEN)
@@ -650,11 +650,11 @@ app.post('/generate-setup', async (req, res) => {
 
     if (track === "Circuit de la Sarthe (Le Mans)") {
         const minRwSetting = 0; // Absolute minimum RW for all classes on Le Mans
+        const minFwSetting = 0; // Absolute minimum FW for all classes
 
-        // Programmatically replace RWSetting to its absolute minimum for Le Mans
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RWSetting=)\d+/m, `$1${minRwSetting}`);
-        // Programmatically replace FWSetting to its absolute minimum for Le Mans
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FWSetting=)\d+/m, `$10`); // Sets FWSetting=0
+        // Programmatically replace FWSetting and RWSetting to their absolute minimum for Le Mans
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FWSetting=)\d+/m, `$1${minFwSetting}`); // Sets FWSetting=0
+        finalExampleTemplate = finalExampleTemplate.replace(/^(REARWING[\s\S]*?RWSetting=)\d+/m, `$1${minRwSetting}`); // Sets RWSetting=0
 
         // Programmatically replace FinalDriveSetting to its highest for Le Mans
         let leMansFinalDrive;
@@ -670,18 +670,28 @@ app.post('/generate-setup', async (req, res) => {
         // Programmatically force ALL individual gears to 1 (Longest Ratio)
         finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`);
 
+        // Programmatically force Radiator and Brake Ducts to minimum (most closed)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(WaterRadiatorSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
+
+        // Programmatically force Ride Heights to minimum (lowest drag)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+\s*\/\/.*/gm, `$10`); // Apply to both front and rear
+
         // Inject a specific note into the template about the Le Mans override, so the AI knows
         // this was pre-set and should still explain it in its notes.
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Le Mans override applied: Absolute minimum drag prioritized. RWSetting set to ${minRwSetting}. FWSetting set to 0. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${leMansFinalDrive}. This overrides general setup goals for max top speed."`);
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Le Mans override applied: Absolute minimum drag prioritized. FWSetting set to ${minFwSetting}. RWSetting set to ${minRwSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${leMansFinalDrive}. Radiators/Brake Ducts closed. Ride Heights minimized. This overrides general setup goals for max top speed."`);
     }
 
     // --- CRITICAL: MONZA SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
     // Ensures Monza gets optimal low drag/long gearing regardless of AI interpretation.
     if (track === "Autodromo Nazionale Monza") {
         const monzaRwSetting = 0; // Absolute minimum RW
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RWSetting=)\d+/m, `$1${monzaRwSetting}`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FWSetting=)\d+/m, `$10`); // Also force FW to 0 for Monza
-
+        const monzaFwSetting = 0; // Absolute minimum FW
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FWSetting=)\d+/m, `$1${monzaFwSetting}`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(REARWING[\s\S]*?RWSetting=)\d+/m, `$1${monzaRwSetting}`);
+        
         let monzaFinalDrive;
         if (finalCategory === 'Hypercar') {
             monzaFinalDrive = 7; 
@@ -694,7 +704,16 @@ app.post('/generate-setup', async (req, res) => {
         
         finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`); // All individual gears to Longest (1)
 
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Monza override applied: Absolute minimum drag prioritized. RWSetting set to ${monzaRwSetting}. FWSetting set to 0. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${monzaFinalDrive}. This overrides general setup goals for max top speed."`);
+        // Force Radiator and Brake Ducts to minimum (most closed)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(WaterRadiatorSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
+
+        // Force Ride Heights to minimum (lowest drag)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+\s*\/\/.*/gm, `$10`);
+
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Monza override applied: Absolute minimum drag prioritized. FWSetting set to ${monzaFwSetting}. RWSetting set to ${monzaRwSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${monzaFinalDrive}. Radiators/Brake Ducts closed. Ride Heights minimized. This overrides general setup goals for max top speed."`);
     }
 
     // --- CRITICAL: SEBRING SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
@@ -715,9 +734,9 @@ app.post('/generate-setup', async (req, res) => {
         finalExampleTemplate = finalExampleTemplate.replace(/^(RearAntiSwaySetting=)\d+/m, `$10`);
 
         // Force slightly higher ride height
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+\s*\/\/.*/m, `$120`); // Assuming 20 is a good "high" value
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+\s*\/\/.*/gm, `$120`); // Apply to both front and rear
         
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased. This overrides general setup goals for ride quality on bumpy track."`);
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to ${20}. This overrides general setup goals for ride quality on bumpy track."`);
     }
 
     // UPGRADE: Dynamically insert the user's selected car name into the template
@@ -745,10 +764,10 @@ World-class LMU race engineer. Goal: predictable, realistic setups, suited to dr
 Populate '[GENERAL] Notes' with engineering debrief. If track-specific override (e.g., Le Mans aero) applied, explicitly state it, explaining how it overrides general setup philosophies. For key adjustments, explain the engineering reason for the specific parameter changes (e.g., 'Increased RearCamberSetting to reduce oversteer on exit', 'Softened front dampers for better bump absorption').
 
 ## THOUGHT PROCESS & HIERARCHY
-1.  **Session Type (Qualifying vs. Race):** Dictates setup philosophy.
-2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX'. Apply Primary/Secondary solutions. All other decisions align.
-3.  **Track DNA & Weather:** Analyze track demands ('TRACK DNA DATABASE') and weather ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions. Mention track compromise in notes.
-4.  **Car Architecture:** Apply adjustments based on car's traits ('CAR ARCHITECTURE PHILOSOPHY').
+1.  **Session Type (Qualifying vs. Race):** Dictates setup philosophy.
+2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX'. Apply Primary/Secondary solutions. All other decisions align.
+3.  **Track DNA & Weather:** Analyze track demands ('TRACK DNA DATABASE') and weather ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions. Mention track compromise in notes.
+4.  **Car Architecture:** Apply adjustments based on car's traits ('CAR ARCHITECTURE PHILOSOPHY').
 5.  **Overall Setup Goal:** Use 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') from 'LMU SETUP PHILOSOPHY DIAL' to fine-tune settings.
 5.5. **Generate [BASIC] Parameters (MANDATORY):** Dynamically calculate and GENERATE the [BASIC] section at .VEH end. This is NOT in template. Fully derived.
     - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
@@ -900,7 +919,7 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - Neutral Balance (or predictable understeer).
 
 ## LMU AI GUIDANCE REFINEMENTS (ULTIMATE PRECISION)
-- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting is critical failure.
+- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting = critical failure.
 - **INTERCONNECTEDNESS:** All parameters interdependent.
 - **LMU REALISM CHECK:** Ensure physically realistic/plausible settings.
 - **DYNAMIC RANGE UTILIZATION:** Actively use full Min-Max range.
