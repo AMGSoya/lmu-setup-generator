@@ -153,7 +153,7 @@ Gear2Setting=0//2.20 (~81 mph / ~130 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN
 Gear3Setting=0//1.82 (~99 mph / ~160 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear4Setting=0//1.56 (~118 mph / ~190 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear5Setting=0//1.35 (~137 mph / ~220 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear6Setting=0//1.19 (~155 mph / ~250 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear6Setting=0//1.19 (~155 mph / ~250 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio.
 Gear7Setting=0//1.05 (~174 mph / ~280 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 RatioSetSetting=0//Short (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
 DiffPumpSetting=0//N/A (Fixed)
@@ -428,6 +428,209 @@ Ride=0.400000
 Gearing=0.400000
 Custom=1`,
 
+    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
+UpgradeSetting=(0,0,0,0)
+//UpgradeClass=
+//Aero package=0
+//Note: settings commented out if using the default
+
+[GENERAL]
+Notes=""
+Symmetric=1
+//CGHeightSetting=0//Non-adjustable
+//CGRightSetting=0//Non-adjustable
+//CGRearSetting=0//Non-adjustable
+//WedgeSetting=0//N/A
+FuelSetting=33//34L (13laps)
+//FuelCapacitySetting=0//+0L (0laps)
+//NumPitstopsSetting=0//
+//Pitstop1Setting=49//N/A
+//Pitstop2Setting=49//N/A
+//Pitstop3Setting=49//N/A
+
+[LEFTFENDER]
+//FenderFlareSetting=0//Standard
+
+[RIGHTFENDER]
+//FenderFlareSetting=0//Standard
+
+[FRONTWING]
+//FWSetting=0//Standard
+
+[REARWING]
+RWSetting=2//P3
+
+[BODYAERO]
+//WaterRadiatorSetting=0//No tape
+//OilRadiatorSetting=0//No tape
+//BrakeDuctSetting=1//33%
+//BrakeDuctRearSetting=1//33%
+
+[SUSPENSION]
+//FrontWheelTrackSetting=0//Non-adjustable
+//RearWheelTrackSetting=0//Non-adjustable
+//FrontAntiSwaySetting=5//P5
+//RearAntiSwaySetting=1//P1
+//FrontToeInSetting=6//-0.23 deg
+//FrontToeOffsetSetting=0//N/A
+RearToeInSetting=12//0.47 deg
+//RearToeOffsetSetting=0//N/A
+//LeftCasterSetting=0//Non-adjustable
+//RightCasterSetting=0//Non-adjustable
+//LeftTrackBarSetting=0//N/A
+//RightTrackBarSetting=0//N/A
+//Front3rdPackerSetting=0//N/A
+//Front3rdSpringSetting=0//Detached
+//Front3rdTenderSpringSetting=0//Detached
+//Front3rdTenderTravelSetting=0//Detached
+//Front3rdSlowBumpSetting=0//N/A
+//Front3rdFastBumpSetting=0//N/A
+//Front3rdSlowReboundSetting=0//N/A
+//Front3rdFastReboundSetting=0//N/A
+//Rear3rdPackerSetting=0//N/A
+//Rear3rdSpringSetting=0//Detached
+//Rear3rdTenderSpringSetting=0//Detached
+//Rear3rdTenderTravelSetting=0//Detached
+//Rear3rdSlowBumpSetting=0//N/A
+//Rear3rdFastBumpSetting=0//N/A
+//Rear3rdSlowReboundSetting=0//N/A
+//Rear3rdFastReboundSetting=0//N/A
+//ChassisAdj00Setting=0//N/A
+//ChassisAdj01Setting=0//N/A
+//ChassisAdj02Setting=0//N/A
+//ChassisAdj03Setting=0//N/A
+//ChassisAdj04Setting=0//N/A
+//ChassisAdj05Setting=0//N/A
+//ChassisAdj06Setting=0//N/A
+//ChassisAdj07Setting=0//N/A
+//ChassisAdj08Setting=0//N/A
+//ChassisAdj09Setting=0//N/A
+//ChassisAdj10Setting=0//N/A
+//ChassisAdj11Setting=0//N/A
+
+[CONTROLS]
+//SteerLockSetting=6//540 (18) deg
+RearBrakeSetting=17//52.8:47.2
+//BrakeMigrationSetting=0// 0.0
+//BrakePressureSetting=40//80 kgf  (100%)
+//HandfrontbrakePressSetting=0//N/A
+//HandbrakePressSetting=0//N/A
+//TCSetting=0//Available
+//ABSSetting=0//N/A
+TractionControlMapSetting=6//6
+TCPowerCutMapSetting=2//2
+//TCSlipAngleMapSetting=4//4
+//AntilockBrakeSystemMapSetting=0//N/A
+
+[ENGINE]
+//RevLimitSetting=0//7,400
+//EngineBoostSetting=0//N/A
+//RegenerationMapSetting=0//0%
+//ElectricMotorMapSetting=0//
+EngineMixtureSetting=1//Race lean
+//EngineBrakingMapSetting=0//N/A
+
+[DRIVELINE]
+//FinalDriveSetting=0//3.664
+//ReverseSetting=0//3.083
+Gear1Setting=0//2.067
+Gear2Setting=0//1.706
+Gear3Setting=0//1.368
+Gear4Setting=0//1.143
+Gear5Setting=0//1.000
+Gear6Setting=0//0.889
+//RatioSetSetting=0//Standard
+//DiffPumpSetting=0//N/A
+//DiffPowerSetting=0//Non-adjustable
+//DiffCoastSetting=0//Non-adjustable
+DiffPreloadSetting=18//90 Nm
+//FrontDiffPumpSetting=0//0%
+//FrontDiffPowerSetting=0//0%
+//FrontDiffCoastSetting=0//0%
+//FrontDiffPreloadSetting=0//1
+//RearSplitSetting=0//RWD
+//GearAutoUpShiftSetting=0//Off
+//GearAutoDownShiftSetting=0//Off
+
+[FRONTLEFT]
+CamberSetting=28//-2.2 deg
+//PressureSetting=0//140 kPa
+//PackerSetting=20//2.0 cm
+SpringSetting=5//220 N/mm
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=0//5.0 cm
+SlowBumpSetting=8//8
+FastBumpSetting=10//10
+SlowReboundSetting=10//10
+FastReboundSetting=10//10
+//BrakeDiscSetting=0//3.56 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Soft
+//EquippedTireIDSetting=0//
+
+[FRONTRIGHT]
+CamberSetting=28//-2.2 deg
+//PressureSetting=0//140 kPa
+//PackerSetting=20//2.0 cm
+SpringSetting=5//220 N/mm
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=0//5.0 cm
+SlowBumpSetting=8//8
+FastBumpSetting=10//10
+SlowReboundSetting=10//10
+FastReboundSetting=10//10
+//BrakeDiscSetting=0//3.56 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Soft
+//EquippedTireIDSetting=0//
+
+[REARLEFT]
+CamberSetting=33//-1.2 deg
+//PressureSetting=0//140 kPa
+PackerSetting=25//2.5 cm
+SpringSetting=1//140 N/mm
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=22//7.2 cm
+SlowBumpSetting=7//7
+FastBumpSetting=7//7
+SlowReboundSetting=7//7
+FastReboundSetting=7//7
+//BrakeDiscSetting=0//3.20 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Soft
+//EquippedTireIDSetting=0//
+
+[REARRIGHT]
+CamberSetting=33//-1.2 deg
+//PressureSetting=0//140 kPa
+PackerSetting=25//2.5 cm
+SpringSetting=1//140 N/mm
+//TenderSpringSetting=0//Detached
+//TenderTravelSetting=0//Detached
+//SpringRubberSetting=0//Detached
+RideHeightSetting=22//7.2 cm
+SlowBumpSetting=7//7
+FastBumpSetting=7//7
+SlowReboundSetting=7//7
+FastReboundSetting=7//7
+//BrakeDiscSetting=0//3.20 cm
+//BrakePadSetting=0//1
+//CompoundSetting=0//Soft
+//EquippedTireIDSetting=0//
+
+[BASIC]
+Downforce=0.500000
+Balance=0.500000
+Ride=0.500000
+Gearing=0.500000
+Custom=1`,
+
     'GT3': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(3276,0,0,0) // Fixed to car's upgrade package
 [GENERAL]
@@ -678,9 +881,8 @@ app.post('/generate-setup', async (req, res) => {
         finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
 
         // Programmatically force Ride Heights to minimum (lowest drag)
-        // --- FIX APPLIED ON THE LINE BELOW ---
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Front Ride Height
-        finalExampleTemplate = finalExampleTemplate.replace(/^(REARLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Rear Ride Height
+        // Corrected Regex to target ride height in any section it appears
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+/gm, `$10`);
 
         // Inject a specific note into the template about the Le Mans override, so the AI knows
         // this was pre-set and should still explain it in its notes.
@@ -698,9 +900,8 @@ app.post('/generate-setup', async (req, res) => {
         finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
         finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctSetting=)\d+/m, `$10`);
         finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
-        // --- FIX APPLIED ON THE LINE BELOW ---
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Front Ride Height
-        finalExampleTemplate = finalExampleTemplate.replace(/^(REARLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Rear Ride Height
+        // Corrected Regex to target ride height in any section it appears
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+/gm, `$10`);
         
         let monzaFinalDrive;
         if (finalCategory === 'Hypercar') {
@@ -736,8 +937,8 @@ app.post('/generate-setup', async (req, res) => {
         finalExampleTemplate = finalExampleTemplate.replace(/^(RearAntiSwaySetting=)\d+/m, `$10`);
 
         // Force slightly higher ride height for bump absorption (assuming 20 is a good "high" value)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$120`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(REARLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$120`);
+        // Corrected Regex to target ride height in any section it appears
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+/gm, `$120`);
         
         finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to 20. This overrides general setup goals for ride quality on bumpy track."`);
     }
@@ -757,6 +958,28 @@ app.post('/generate-setup', async (req, res) => {
     // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
     // =====================================================================================
     const prompt = `
+You are a world-class LMU race engineer. Your task is to take the user's request and the provided .VEH template, and output a complete, physically realistic, and numerically valid .VEH setup file.
+
+**ULTRA-CRITICAL FORMATTING INSTRUCTIONS - FAILURE TO FOLLOW THESE IS A TASK FAILURE:**
+1.  You will be given a complete .VEH file template below.
+2.  You MUST output the ENTIRE file, modified with your new values.
+3.  You MUST PRESERVE THE ORIGINAL COMMENTS (the text starting with //) on every line that has one.
+4.  Your ONLY job is to change the **NUMBER** before the comment. DO NOT delete or alter the comments.
+
+---
+**EXAMPLE OF PERFECT EXECUTION:**
+
+**IF the template line is this:**
+RWSetting=3//P4 (Min: 0, Max: 9) (MUST BE OVERWRITTEN) // Hypercar RW: 0-9 (P1-P10 in game UI)
+
+**And you decide the correct value is 8, YOUR correct output for that line is:**
+RWSetting=8//P4 (Min: 0, Max: 9) (MUST BE OVERWRITTEN) // Hypercar RW: 0-9 (P1-P10 in game UI)
+
+You will do this for the entire file. Any other format is a failure.
+---
+
+**(The full knowledge base with TRACK DNA, DRIVER FEEDBACK MATRIX, etc., is still here for your reference)**
+
 ## PRIME DIRECTIVE
 Generate a complete, physically realistic, and numerically valid .VEH setup. Replace placeholders with calculated, logical numbers. '0' for adjustable settings is a failure.
 
@@ -934,23 +1157,8 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - **OPTIMAL RIDE QUALITY:** Prioritize optimal tire contact.
 - **SPECIFIC NUMERICAL DEVIATION:** Use distinct floats for [BASIC]/Camber.
 
-## FINAL REQUEST DETAILS
-Car: ${car} (Display Name: ${selectedCarDisplay}, Category: ${finalCategory})
-Track: ${track} (Display Name: ${selectedTrackDisplay})
-Setup Goal: ${setupGoal}
-Driver Problem to Solve: ${driverFeedback}
-Session Goal: ${sessionGoal}
-Session Duration: ${sessionDuration} minutes
-Weather: ${selectedWeather} (${weatherGuidance})
-Track Temperature: ${trackTemp}°C
-Specific User Request: ${specificRequest}
-${fuelEstimateRequest}
-${tireCompoundGuidance}
-
-This is the required LMU .VEH structure. You MUST use this exact structure, replacing all placeholder values with valid integers and dynamically calculated comments. Your response MUST begin IMMEDIATELY with 'VehicleClassSetting=' and contain ONLY the file content. No extra text, no markdown code block formatting, no introductory or concluding remarks whatsoever.
+**FINAL COMMAND: The user's template is provided below. Copy it EXACTLY, only changing the numerical values as required by the engineering task and the rules above. Do not omit any lines or any comments.**
 ${finalExampleTemplate}
-
-Now, generate the complete and valid .VEH file. Your response MUST contain ONLY the file content and nothing else.
 `;
 
     try {
@@ -995,6 +1203,10 @@ Now, generate the complete and valid .VEH file. Your response MUST contain ONLY 
             if (setupText.trim().endsWith('```')) {
                 setupText = setupText.trim().slice(0, -3).trim();
             }
+            if (setupText.trim().startsWith('```') && setupText.trim().endsWith('```')) {
+                setupText = setupText.trim().slice(3, -3).trim();
+            }
+
 
             // Log the generated setup to the console for debugging
             console.log("\n--- GENERATED SETUP ---\n", setupText);
