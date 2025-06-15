@@ -692,9 +692,9 @@ RightTrackBarSetting=0//N/A (Fixed)
 //Rear3rdTenderSpringSetting=0//Détaché (Fixed)
 //Rear3rdTenderTravelSetting=0//Détaché (Fixed)
 //Rear3rdSlowBumpSetting=0//N/A (Fixed)
-//Rear3rdFastBumpSetting=0//N/A (Fixed)
-//Rear3rdSlowReboundSetting=0//N/A (Fixed)
-//Rear3rdFastReboundSetting=0//N/A (Fixed)
+//FastBumpSetting=0//N/A (Fixed)
+//SlowReboundSetting=0//N/A (Fixed)
+//FastReboundSetting=0//N/A (Fixed)
 
 [CONTROLS]
 SteerLockSetting=4//380° (11.2°) (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
@@ -836,8 +836,8 @@ app.post('/generate-setup', async (req, res) => {
     let finalCategory = selectedCarCategory;
     if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
         finalCategory = 'GT3';
-    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
-        finalCategory = 'LMGT3';
+    } else if (selectedCarCategory === 'GT3' && !LMU_VEH_TEMPLATES['GT3']) { // Check if 'GT3' is missing
+        finalCategory = 'GTE'; // Fallback if needed, or handle error
     }
 
     let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
@@ -851,97 +851,70 @@ app.post('/generate-setup', async (req, res) => {
     // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
     let finalExampleTemplate = exampleTemplate; // Start with the chosen template
 
-    if (track === "Circuit de la Sarthe (Le Mans)") {
-        const minAeroSetting = 0; // Absolute minimum for wings, ducts, ride height
+    const trackOverrides = (trackName, template) => {
+        let overriddenTemplate = template;
+        // Generic regex to replace a setting's number while preserving its trailing comment
+        const replaceSetting = (settingName, newValue, regexFlags = 'm') => {
+            const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, regexFlags);
+            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
+        };
 
-        // Programmatically replace FWSetting and RWSetting to their absolute minimum for Le Mans
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTWING[\s\S]*?FWSetting=)\d+/m, `$1${minAeroSetting}`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(REARWING[\s\S]*?RWSetting=)\d+/m, `$1${minAeroSetting}`);
+        const replaceSectionSetting = (section, settingName, newValue, regexFlags = 'm') => {
+            const regex = new RegExp(`^(${section}[\\s\\S]*?${settingName}=)\\d+(.*)`, regexFlags);
+             overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
+        };
 
-        // Programmatically replace FinalDriveSetting to its highest for Le Mans
-        let leMansFinalDrive;
-        if (finalCategory === 'Hypercar') {
-            leMansFinalDrive = 7;
-        } else if (finalCategory === 'LMP2') {
-            leMansFinalDrive = 5;
-        } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
-            leMansFinalDrive = 10; // Assuming 10 is max for GT3/GTE fixed gears
+
+        if (trackName === "Circuit de la Sarthe (Le Mans)" || trackName === "Autodromo Nazionale Monza") {
+            const minAeroSetting = 0;
+            const note = trackName === "Circuit de la Sarthe (Le Mans)" ?
+                'Notes="Le Mans override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."' :
+                'Notes="Monza override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."';
+            
+            replaceSectionSetting('\\[FRONTWING\\]', 'FWSetting', minAeroSetting);
+            replaceSectionSetting('\\[REARWING\\]', 'RWSetting', minAeroSetting);
+
+            let maxFinalDrive;
+            if (finalCategory === 'Hypercar') maxFinalDrive = 7;
+            else if (finalCategory === 'LMP2') maxFinalDrive = 5;
+            else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10;
+            
+            replaceSectionSetting('\\[DRIVELINE\\]', 'FinalDriveSetting', maxFinalDrive);
+            overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
+            replaceSetting('RatioSetSetting', 1);
+
+            replaceSetting('WaterRadiatorSetting', 0);
+            replaceSetting('OilRadiatorSetting', 0);
+            replaceSetting('BrakeDuctSetting', 0);
+            replaceSetting('BrakeDuctRearSetting', 0);
+
+            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
+            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
+
+        } else if (trackName === "Sebring International Raceway") {
+            const note = 'Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to absorb bumps."';
+            
+            // Set dampers and ARBs to very soft values (e.g., 0 or 1)
+            replaceSetting('Front3rdSlowBumpSetting', 0);
+            replaceSetting('Front3rdFastBumpSetting', 0);
+            replaceSetting('Front3rdSlowReboundSetting', 0);
+            replaceSetting('Front3rdFastReboundSetting', 0);
+            replaceSetting('Rear3rdSlowBumpSetting', 0);
+            replaceSetting('Rear3rdFastBumpSetting', 0);
+            replaceSetting('Rear3rdSlowReboundSetting', 0);
+            replaceSetting('Rear3rdFastReboundSetting', 0);
+            
+            replaceSetting('FrontAntiSwaySetting', 1);
+            replaceSetting('RearAntiSwaySetting', 1);
+
+            // Set ride heights high
+            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$120$2`);
+            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
         }
-        finalExampleTemplate = finalExampleTemplate.replace(/^(DRIVELINE[\s\S]*?FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${leMansFinalDrive}`);
+        return overriddenTemplate;
+    };
 
-        // Programmatically force ALL individual gears to 1 (Longest Ratio)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RatioSetSetting=)\d+\s*\/\/.*/m, `$11`); // Force RatioSetSetting to 1 (Long)
-
-
-        // Programmatically force Radiator and Brake Ducts to minimum (most closed)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(BODYAERO[\s\S]*?WaterRadiatorSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
-
-        // Programmatically force Ride Heights to minimum (lowest drag)
-        // Corrected Regex to target ride height in any section it appears
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+/gm, `$10`);
-
-        // Inject a specific note into the template about the Le Mans override, so the AI knows
-        // this was pre-set and should still explain it in its notes.
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Le Mans override applied: Absolute minimum drag prioritized. FW/RW set to ${minAeroSetting}/${minAeroSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${leMansFinalDrive}. Radiators/Brake Ducts closed. Ride Heights minimized. This overrides general setup goals for max top speed."`);
-    }
-
-    // --- CRITICAL: MONZA SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
-    // Ensures Monza gets optimal low drag/long gearing regardless of AI interpretation.
-    if (track === "Autodromo Nazionale Monza") {
-        const monzaMinAeroSetting = 0; // Absolute minimum for wings, ducts, ride height
-
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTWING[\s\S]*?FWSetting=)\d+/m, `$1${monzaMinAeroSetting}`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(REARWING[\s\S]*?RWSetting=)\d+/m, `$1${monzaMinAeroSetting}`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(WaterRadiatorSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
-        // Corrected Regex to target ride height in any section it appears
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+/gm, `$10`);
-
-        let monzaFinalDrive;
-        if (finalCategory === 'Hypercar') {
-            monzaFinalDrive = 7;
-        } else if (finalCategory === 'LMP2') {
-            monzaFinalDrive = 5;
-        } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
-            monzaFinalDrive = 10;
-        }
-        finalExampleTemplate = finalExampleTemplate.replace(/^(DRIVELINE[\s\S]*?FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${monzaFinalDrive}`);
-
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`); // All individual gears to Longest (1)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RatioSetSetting=)\d+\s*\/\/.*/m, `$11`); // Force RatioSetSetting to 1 (Long)
-
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Monza override applied: Absolute minimum drag prioritized. FW/RW/Radiators/Ducts/RideHeights set to ${monzaMinAeroSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${monzaFinalDrive}. This overrides general setup goals for max top speed."`);
-    }
-
-    // --- CRITICAL: SEBRING SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
-    // Ensures Sebring prioritizes soft suspension for bumps regardless of AI interpretation.
-    if (track === "Sebring International Raceway") {
-        // Force very soft damper settings (lower indices - assuming 0 is softest)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdSlowBumpSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdFastBumpSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdSlowReboundSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdFastReboundSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdSlowBumpSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdFastBumpSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdSlowReboundSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdFastReboundSetting=)\d+/m, `$10`);
-
-        // Force very soft anti-roll bars (lower indices - assuming 0 is softest)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FrontAntiSwaySetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RearAntiSwaySetting=)\d+/m, `$10`);
-
-        // Force slightly higher ride height for bump absorption (assuming 20 is a good "high" value)
-        // Corrected Regex to target ride height in any section it appears
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+/gm, `$120`);
-
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to 20. This overrides general setup goals for ride quality on bumpy track."`);
-    }
+    finalExampleTemplate = trackOverrides(track, finalExampleTemplate);
 
     // UPGRADE: Dynamically insert the user's selected car name into the template
     finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
@@ -956,7 +929,7 @@ app.post('/generate-setup', async (req, res) => {
 
     // =====================================================================================
     // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
-    // =================================e====================================================
+    // =====================================================================================
     const prompt = `
 You are a world-class LMU race engineer. Your task is to take the user's request and the provided .VEH template, and output a complete, physically realistic, and numerically valid .VEH setup file.
 
@@ -1038,7 +1011,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 
 ## DIFFERENTIAL DEEP DIVE (ADVANCED)
 - The differential allows the outside wheel to rotate faster than the inside wheel in a corner. Tuning it controls how much it "locks" the two wheels together. This is a primary tool for managing stability and rotation. Your settings here MUST be based on the car and track.
-- **Power (Acceleration) Lock - `DiffPowerSetting`:** Controls locking on-throttle.
+- **Power (Acceleration) Lock - \`DiffPowerSetting\`:** Controls locking on-throttle.
   - **More Lock (Higher Value):** Forces rear wheels to rotate at a similar speed. Improves traction on corner exit, preventing inside wheelspin. **CRITICAL FOR:**
     - **Traction-Limited Tracks:** Use higher values for tracks with slow, hard acceleration zones (e.g., **Sebring, Portimão**).
     - **Front-Engine Cars (Corvette, Aston):** These cars are traction-limited on exit. MUST use higher power lock to prevent wheelspin.
@@ -1048,7 +1021,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
     - **Rear-Engine Cars (Porsche):** These have natural traction. They can use less power lock, which helps mitigate their inherent understeer.
     - **'Aggressive' Setups:** Lower lock allows a skilled driver to use the throttle to help steer the car.
 
-- **Coast (Deceleration) Lock - `DiffCoastSetting`:** Controls locking off-throttle (braking/turn-in).
+- **Coast (Deceleration) Lock - \`DiffCoastSetting\`:** Controls locking off-throttle (braking/turn-in).
   - **More Lock (Higher Value):** Provides significant stability on corner entry by locking the rear axle. **CRITICAL FOR:**
     - **High-Speed Stability:** Essential for tracks with fast, challenging entries (e.g., **Le Mans Porsche Curves, Monza chicanes, Spa Pouhon**). Prevents the rear from becoming light and loose.
     - **'Safe'/'Stable' Setups:** This is a primary tool for confidence on corner entry.
@@ -1056,7 +1029,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
     - **Technical Tracks:** Helpful for tight, low-speed corners where rotation is key (e.g., **Fuji Sector 3, Sebring T7/T10**).
     - **'Aggressive' Setups:** The main tool for achieving a "pointy" car that turns in sharply. If too low, the car will be very nervous on entry ('lift-off oversteer').
 
-- **Preload (`DiffPreloadSetting`):** A static amount of lock always present. It determines the breakaway force required before the power/coast settings engage and smooths the transition between them.
+- **Preload (\`DiffPreloadSetting\`):** A static amount of lock always present. It determines the breakaway force required before the power/coast settings engage and smooths the transition between them.
   - **Higher Preload:** Increases overall stability and predictability. The differential feels less "active". **CRITICAL FOR:**
     - **Bumpy Tracks (Sebring):** Prevents the differential from locking/unlocking erratically as tires momentarily lose contact with the ground. This is a key to compliance and driver confidence.
     - **'Safe'/'Stable' Setups:** Makes the car's reactions to throttle/brake inputs smoother and more benign.
@@ -1154,18 +1127,18 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## TRACK DNA DATABASE (EXPANDED!)
-- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. **Deep Dive:** The challenge is surviving the Porsche Curves. You need high-speed stability. Use a higher `DiffCoastSetting` to keep the rear planted on entry to these fast corners, even with minimal wing. A slightly higher `DiffPreloadSetting` adds predictability. Bumps on the Mulsanne require good fast-speed damping.
-- **Sebring International Raceway:** Extremely bumpy (old concrete slabs). Focus: SOFT suspension, higher ride height. **It requires soft fast damping for its harsh bumps but can still use stiffer slow damping for platform control in the smoother corners.** The **'Ride'** parameter in [BASIC] **MUST be set to its ABSOLUTE HIGHEST possible value (e.g., 0.900000-0.975000)**. **Dampers (Slow/Fast Bump/Rebound) and Anti-Roll Bars (Front/Rear AntiSwaySetting) MUST be set to their absolute softest (index 0 for dampers, 0-2 for ARBs)**. 'RideHeightSetting' MUST be set to a high value (e.g., 20-30). This ensures maximum bump absorption, overriding general setup goals for stiffness. **Deep Dive:** Turn 17 is notoriously brutal. Short gearing is vital for hairpins. You MUST use a high `DiffPowerSetting` for traction on bumpy exits and a high `DiffPreloadSetting` to stabilize the differential over the slabs.
-- **Spa-Francorchamps:** High-speed, elevation change. Focus: High-speed stability, good aero balance. Stiff springs for Eau Rouge compression. Long Gears Recommended. **Deep Dive:** Must have a stiff front end (springs, slow bump) for compression in Eau Rouge/Raidillon. The trade-off is the slow Bus Stop chicane. A slightly softer rear ARB can help. The key is aero efficiency. Use a relatively high `DiffCoastSetting` for stability through Pouhon and other fast entries.
-- **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed. **Deep Dive:** The challenge is braking stability and curb-riding for the chicanes. You need a compliant car with good traction. A high `DiffCoastSetting` is essential for stability when braking from top speed. Use a lower `DiffPowerSetting` to help the car rotate out of the slow chicanes without understeer.
-- **Fuji Speedway:** Long main straight, technical final sector. Focus: Compromise top speed/low-speed agility. Balanced Gearing Recommended. **Deep Dive:** This is a track of two halves. A common compromise is lower wing for the straight, but use mechanical grip (softer front ARB, lower `DiffCoastSetting`) to get the car to turn in the final sector. Good traction out of the final corner is paramount, so `DiffPowerSetting` must be high enough to prevent wheelspin.
-- **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster", elevation, blind crests. Focus: Predictable, stable platform. Medium downforce, compliant suspension. Slightly Shorter Gears Recommended. **Deep Dive:** Blind crests unload the car, making a stable setup essential. You cannot have a snappy car. Use higher `DiffPreloadSetting` and `DiffCoastSetting` to maintain stability when the car goes light. The driver needs to trust the car will have grip.
-- **Bahrain International Circuit:** High grip, smooth, hot. Focus: Good braking stability, traction. Tire wear high. Balanced Gearing Recommended. **Deep Dive:** Numerous slow corners and high-traction zones mean high rear tire wear. Manage this with less negative rear camber and a high `DiffPowerSetting` to prevent excessive wheelspin. Braking for T1, T8, and T10 is critical, so a forward brake bias and stable coast-side diff settings (`DiffCoastSetting`) are important.
+- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. **Deep Dive:** The challenge is surviving the Porsche Curves. You need high-speed stability. Use a higher \`DiffCoastSetting\` to keep the rear planted on entry to these fast corners, even with minimal wing. A slightly higher \`DiffPreloadSetting\` adds predictability. Bumps on the Mulsanne require good fast-speed damping.
+- **Sebring International Raceway:** Extremely bumpy (old concrete slabs). Focus: SOFT suspension, higher ride height. **It requires soft fast damping for its harsh bumps but can still use stiffer slow damping for platform control in the smoother corners.** The **'Ride'** parameter in [BASIC] **MUST be set to its ABSOLUTE HIGHEST possible value (e.g., 0.900000-0.975000)**. **Dampers (Slow/Fast Bump/Rebound) and Anti-Roll Bars (Front/Rear AntiSwaySetting) MUST be set to their absolute softest (index 0 for dampers, 0-2 for ARBs)**. 'RideHeightSetting' MUST be set to a high value (e.g., 20-30). This ensures maximum bump absorption, overriding general setup goals for stiffness. **Deep Dive:** Turn 17 is notoriously brutal. Short gearing is vital for hairpins. You MUST use a high \`DiffPowerSetting\` for traction on bumpy exits and a high \`DiffPreloadSetting\` to stabilize the differential over the slabs.
+- **Spa-Francorchamps:** High-speed, elevation change. Focus: High-speed stability, good aero balance. Stiff springs for Eau Rouge compression. Long Gears Recommended. **Deep Dive:** Must have a stiff front end (springs, slow bump) for compression in Eau Rouge/Raidillon. The trade-off is the slow Bus Stop chicane. A slightly softer rear ARB can help. The key is aero efficiency. Use a relatively high \`DiffCoastSetting\` for stability through Pouhon and other fast entries.
+- **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed. **Deep Dive:** The challenge is braking stability and curb-riding for the chicanes. You need a compliant car with good traction. A high \`DiffCoastSetting\` is essential for stability when braking from top speed. Use a lower \`DiffPowerSetting\` to help the car rotate out of the slow chicanes without understeer.
+- **Fuji Speedway:** Long main straight, technical final sector. Focus: Compromise top speed/low-speed agility. Balanced Gearing Recommended. **Deep Dive:** This is a track of two halves. A common compromise is lower wing for the straight, but use mechanical grip (softer front ARB, lower \`DiffCoastSetting\`) to get the car to turn in the final sector. Good traction out of the final corner is paramount, so \`DiffPowerSetting\` must be high enough to prevent wheelspin.
+- **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster", elevation, blind crests. Focus: Predictable, stable platform. Medium downforce, compliant suspension. Slightly Shorter Gears Recommended. **Deep Dive:** Blind crests unload the car, making a stable setup essential. You cannot have a snappy car. Use higher \`DiffPreloadSetting\` and \`DiffCoastSetting\` to maintain stability when the car goes light. The driver needs to trust the car will have grip.
+- **Bahrain International Circuit:** High grip, smooth, hot. Focus: Good braking stability, traction. Tire wear high. Balanced Gearing Recommended. **Deep Dive:** Numerous slow corners and high-traction zones mean high rear tire wear. Manage this with less negative rear camber and a high \`DiffPowerSetting\` to prevent excessive wheelspin. Braking for T1, T8, and T10 is critical, so a forward brake bias and stable coast-side diff settings (\`DiffCoastSetting\`) are important.
 
 ## LMU SETUP PHILOSOPHY DIAL (PACE & DRIVEABILITY)
-- **'Aggressive' Setup Goal:** Maximize driveable peak performance/responsiveness. NEVER compromise to an undrivable/unstable car. Sharp, reactive, consistently fast. Aero lower for speed, mechanical grip for rotation. Lower `DiffCoastSetting` for rotation.
+- **'Aggressive' Setup Goal:** Maximize driveable peak performance/responsiveness. NEVER compromise to an undrivable/unstable car. Sharp, reactive, consistently fast. Aero lower for speed, mechanical grip for rotation. Lower \`DiffCoastSetting\` for rotation.
 - **'Balanced' Setup Goal:** Optimize versatile, all-around performance. Strong compromise stability/responsiveness. Predictable, efficient. Aero/mechanical harmonized for neutral feel. Medium differential settings.
-- **'Safe' Setup Goal:** Maximize driver confidence/stability (error reduction) while maintaining strong, consistent pace. Forgiving, not sluggish/losing significant time. Aero higher for stability, suspension softer. Higher `DiffCoastSetting` and `DiffPreloadSetting` for predictability.
+- **'Safe' Setup Goal:** Maximize driver confidence/stability (error reduction) while maintaining strong, consistent pace. Forgiving, not sluggish/losing significant time. Aero higher for stability, suspension softer. Higher \`DiffCoastSetting\` and \`DiffPreloadSetting\` for predictability.
 
 ## QUALIFYING VS. RACE PHILOSOPHY
 - **'qualifying'**: One-lap pace, optimal timing. Softest tires, minimal fuel (2-3 laps), aggressive camber, high brake pressure, aggressive diff (lower coast, higher power). Tire wear irrelevant.
@@ -1173,8 +1146,8 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## CAR ARCHITECTURE PHILOSOPHY (ENHANCED!)
 - **Mid-Engine (Prototypes, Ferrari, Vanwall, Peugeot):** Balanced, flexible chassis. Good starting point for neutral handling. Differential settings are highly track-dependent, serving as the baseline from which other architectures deviate.
-- **Rear-Engine (Porsche 911 RSR / GT3 R):** Excellent traction on exit, but prone to entry/mid-corner understeer. **MUST use aggressive front-end settings (softer front ARB, more front camber) and a lower `DiffCoastSetting` to get the car to turn in.** Can get away with a lower `DiffPowerSetting` due to natural traction, which further helps rotation.
-- **Front-Engine (Corvette, Aston Martin):** Great braking stability, but can be prone to exit understeer and wheelspin. **MUST use a higher `DiffPowerSetting` to manage traction.** Benefits from setup choices that promote rear-end rotation (stiffer rear ARB, lower `DiffCoastSetting`) to get the car pointed correctly before applying power.
+- **Rear-Engine (Porsche 911 RSR / GT3 R):** Excellent traction on exit, but prone to entry/mid-corner understeer. **MUST use aggressive front-end settings (softer front ARB, more front camber) and a lower \`DiffCoastSetting\` to get the car to turn in.** Can get away with a lower \`DiffPowerSetting\` due to natural traction, which further helps rotation.
+- **Front-Engine (Corvette, Aston Martin):** Great braking stability, but can be prone to exit understeer and wheelspin. **MUST use a higher \`DiffPowerSetting\` to manage traction.** Benefits from setup choices that promote rear-end rotation (stiffer rear ARB, lower \`DiffCoastSetting\`) to get the car pointed correctly before applying power.
 - **General Principle:** Lean into the positive characteristics of a car's architecture while actively using setup tools to mitigate its inherent negative traits.
 
 ## DRIVER FEEDBACK TROUBLESHOOTING MATRIX (High Priority)
