@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // 6. Get your API keys from the .env file
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENROUTER_API_KEY = process.env.ENV_OPENROUTER_API_KEY; // Corrected env variable name
 // The HUGGINGFACE_API_KEY is loaded and available for use,
 // but the primary setup generation uses OpenRouter as configured below.
 const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
@@ -156,13 +156,13 @@ EngineBrakingMapSetting=0//N/A (Fixed)
 [DRIVELINE]
 FinalDriveSetting=3//2.98:1 (AI adjusts for track type: 0=Standard/Short, higher values for Long) (Min: 0, Max: 7. Higher index = longer gear for higher top speed) (MUST BE OVERWRITTEN)
 ReverseSetting=0//2.07 (6.18) (Fixed)
-Gear1Setting=0//2.85 (~100 km/h / ~62 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear2Setting=0//2.20 (~130 km/h / ~81 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear3Setting=0//1.82 (~160 km/h / ~99 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear4Setting=0//1.56 (~190 km/h / ~118 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear5Setting=0//1.35 (~220 km/h / ~137 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear6Setting=0//1.19 (~250 km/h / ~155 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear7Setting=0//1.05 (~280 km/h / ~174 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear1Setting=0//2.85 (~62 mph / ~100 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear2Setting=0//2.20 (~81 mph / ~130 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear3Setting=0//1.82 (~99 mph / ~160 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear4Setting=0//1.56 (~118 mph / ~190 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear5Setting=0//1.35 (~137 mph / ~220 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear6Setting=0//1.19 (~155 mph / ~250 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear7Setting=0//1.05 (~174 mph / ~280 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 RatioSetSetting=0//Short (AI adjusts for track type: 0=Standard, 1=Long/High Speed) (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
 DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=3//25% (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
@@ -349,12 +349,12 @@ EngineMixtureSetting=1//Race (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
 [DRIVELINE]
 FinalDriveSetting=3//2.88:1 (AI adjusts for track type: 0=Standard/Short, higher values=Long) (Min: 0, Max: 5. Higher index = longer gear for higher top speed) (MUST BE OVERWRITTEN)
 ReverseSetting=0//2.85 (8.18) (Fixed)
-Gear1Setting=0//2.85 (~90 km/h / ~56 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear2Setting=0//2.20 (~115 km/h / ~71 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear3Setting=0//1.88 (~135 km/h / ~84 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear4Setting=0//1.62 (~155 km/h / ~96 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear5Setting=0//1.42 (~175 km/h / ~109 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear6Setting=0//1.27 (~195 km/h / ~121 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear1Setting=0//2.85 (~56 mph / ~90 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear2Setting=0//2.20 (~71 mph / ~115 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear3Setting=0//1.88 (~84 mph / ~135 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear4Setting=0//1.62 (~96 mph / ~155 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear5Setting=0//1.42 (~109 mph / ~175 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear6Setting=0//1.27 (~121 mph / ~195 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 RatioSetSetting=1//High Speed (AI adjusts for track type: 0=Standard, 1=High Speed) (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
 DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=0//FF6-60 deg (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
@@ -533,7 +533,7 @@ AntilockBrakeSystemMapSetting=11//11 (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
 [ENGINE]
 //RevLimitSetting=0//9,400 (Fixed)
 //EngineBoostSetting=0//N/A (Fixed)
-//RegenerationMapSetting=0//0% (N/A for Non-Hybrid) (Fixed)
+//RegenerationMapSetting=0//0% (Fixed)
 ElectricMotorMapSetting=0//Not Applicable (N/A for Non-Hybrid) (Fixed)
 //EngineMixtureSetting=1//Race (Fixed)
 //EngineBrakingMapSetting=0//N/A (Fixed)
@@ -541,12 +541,12 @@ ElectricMotorMapSetting=0//Not Applicable (N/A for Non-Hybrid) (Fixed)
 [DRIVELINE]
 FinalDriveSetting=0//Fixed (AI adjusts for track type) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //ReverseSetting=0//Fixed
-Gear1Setting=0//Fixed (~95 km/h / ~59 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear2Setting=1//Fixed (~130 km/h / ~81 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear3Setting=1//Fixed (~160 km/h / ~99 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear4Setting=1//Fixed (~190 km/h / ~118 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear5Setting=1//Fixed (~220 km/h / ~137 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear6Setting=1//Fixed (~250 km/h / ~155 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear1Setting=0//Fixed (~95 km/h / ~59 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear2Setting=0//Fixed (~130 km/h / ~81 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear3Setting=0//Fixed (~160 km/h / ~99 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear4Setting=0//Fixed (~190 km/h / ~118 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear5Setting=0//Fixed (~220 km/h / ~137 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear6Setting=0//Fixed (~250 km/h / ~155 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 RatioSetSetting=0//Short (AI adjusts for track type) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
 //DiffPumpSetting=0//Non-adjustable (Fixed)
 //DiffCoastSetting=0//Non-adjustable (Fixed)
@@ -596,7 +596,7 @@ FastReboundSetting=4//14 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 [REARLEFT]
 CamberSetting=25//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
 PressureSetting=5//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-PackerSetting=14//1.4 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+PackerSetting=14//140 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 SpringSetting=1//2 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 //TenderSpringSetting=0//Standard (Fixed)
 //TenderTravelSetting=0//Detached (Fixed)
@@ -634,7 +634,7 @@ Ride=0.400000
 Gearing=0.400000
 Custom=1`,
 
-    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
+    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(0,0,0,0)
 //Aero package=0
 //Note: settings commented out if using the default
@@ -738,12 +738,12 @@ EngineMixtureSetting=1//Race lean (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 [DRIVELINE]
 FinalDriveSetting=0//3.664 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //ReverseSetting=0//3.083 (Fixed)
-Gear1Setting=0//2.067 (~128 mph / ~206 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear2Setting=0//1.706 (~155 mph / ~249 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear3Setting=0//1.368 (~193 mph / ~310 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear4Setting=0//1.143 (~230 mph / ~370 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear5Setting=0//1.000 (~263 mph / ~423 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
-Gear6Setting=0//0.889 (~296 mph / ~476 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear1Setting=0//2.067 (~128 mph / ~206 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear2Setting=0//1.706 (~155 mph / ~249 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear3Setting=0//1.368 (~193 mph / ~310 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear4Setting=0//1.143 (~230 mph / ~370 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear5Setting=0//1.000 (~263 mph / ~423 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear6Setting=0//0.889 (~296 mph / ~476 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 RatioSetSetting=0//Standard (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
 //DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=0//Non-adjustable (Fixed)
@@ -1033,7 +1033,7 @@ app.post('/generate-setup', async (req, res) => {
 ## --- QUALIFYING VS. RACE PHILOSOPHY ---
 ## =====================================================================================
 ## - **If Session Goal is 'qualifying':** The only goal is one-lap pace. Use softest tires, minimal fuel (2-3 laps worth), more aggressive camber, higher brake pressure (near 100%) to ride the limit of lockup, and more aggressive differential settings for maximum rotation. Tire wear is irrelevant. Tire pressures might be slightly higher for peak grip for a short duration.
-## - **If Session Goal is 'race':** The goal is consistency and stability over a stint. Use more durable tires, a full fuel tank (calculated fuel), less aggressive camber to protect tire life, and more stable suspension and differential settings. The car must be easy to drive for a long time. Tire pressures should be optimized for consistency over a stint (often slightly lower than quali).
+## - **If Session Goal is 'race':** The goal is consistent pace and lap times over a stint, not just pure tire survival. The car must be efficient, predictable, and maintain its speed through tire degradation, allowing the driver to hit targets lap after lap without excessive effort or risk of major errors. Tire pressures should be optimized for consistency over a stint (often slightly lower than quali).
 
 ## =====================================================================================
 ## --- CAR ARCHITECTURE PHILOSOPHY ---
