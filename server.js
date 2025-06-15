@@ -1106,7 +1106,7 @@ Now, generate the complete and valid .VEH file. Your response MUST contain ONLY 
                     content: prompt
                 }],
                 max_tokens: 8192, // Increased max_tokens to prevent truncation
-                temperature: 0.8, // Slightly increased to encourage more nuance while maintaining structure
+                temperature: 0.5, // Slightly increased to encourage more nuance while maintaining structure
             }),
         });
 
