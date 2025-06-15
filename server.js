@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // 6. Get your API keys from the .env file
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY; 
 // The HUGGINGFACE_API_KEY is loaded and available for use,
 // but the primary setup generation uses OpenRouter as configured below.
 const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
@@ -142,7 +142,7 @@ RevLimitSetting=0//8,500 (Non-adjustable) (Fixed)
 EngineBoostSetting=0//N/A (Fixed)
 RegenerationMapSetting=10//200kW (AI adjusts for session type: Quali=8-9, Race=10) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 ElectricMotorMapSetting=3//60kW (AI adjusts for hybrid usage: 0=N/A, 1-4 for power modes) (Min: 0, Max: 4) (MUST BE OVERWRITTEN)
-EngineMixtureSetting=1//Race (AI adjusts for session type: 0=Full, 1=Race, 2=Lean) (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+EngineMixtureSetting=1//Race (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 EngineBrakingMapSetting=0//N/A (Fixed)
 
 [DRIVELINE]
@@ -243,15 +243,8 @@ Ride=0.400000
 Gearing=0.400000
 Custom=1`,
 
-    'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
+    'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(12,0,0,0)
-//UpgradeClass=
-//Fuel tank=0
-//Engine cover gurney=0
-//Setup=3
-//Visor Mod=0
-//Note: settings commented out if using the default
-
 [GENERAL]
 Notes=""
 Symmetric=1
@@ -278,7 +271,6 @@ Pitstop3Setting=50//N/A (Fixed)
 
 [REARWING]
 RWSetting=2//P3 (Min: 0, Max: 9) (MUST BE OVERWRITTEN)
-// RWSetting for LMP2: 0-9 (P1=low, P9=high)
 
 [BODYAERO]
 WaterRadiatorSetting=2//50% (Min: 0, Max: 4) (MUST BE OVERWRITTEN)
@@ -354,8 +346,8 @@ DiffPowerSetting=0//FF6-60 deg (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
 DiffCoastSetting=2//FF6-45 deg (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 DiffPreloadSetting=17//85 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
 FrontDiffPumpSetting=0//N/A (Fixed)
-FrontDiffPowerSetting=0//0% (N/A for RWD) (Fixed)
-FrontDiffCoastSetting=0//0% (N/A for RWD) (Fixed)
+FrontDiffPowerSetting=0//0% (Fixed)
+FrontDiffCoastSetting=0//0% (Fixed)
 FrontDiffPreloadSetting=0//1 (Fixed)
 RearSplitSetting=0// 0.0:100.0 (Fixed to RWD)
 GearAutoUpShiftSetting=0//Off (Fixed)
@@ -425,7 +417,7 @@ SlowBumpSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastBumpSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 SlowReboundSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//BrakeDiscSetting=0//4.00 cm (Fixed)
+//BrakeDiscSetting=0//3.20 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
@@ -436,16 +428,8 @@ Ride=0.400000
 Gearing=0.400000
 Custom=1`,
 
-    'GT3': `VehicleClassSetting="[[CAR_NAME]]"
+    'GT3': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(3276,0,0,0)
-//UpgradeClass=
-//Position lights=0
-//AI Tweaks=6
-//Estimates=6
-//BOP=6
-//Atmos Conditions=0
-//Note: settings commented out if using the default
-
 [GENERAL]
 Notes=""
 Symmetric=1
@@ -454,12 +438,12 @@ Symmetric=1
 //CGRearSetting=0//Non-adjustable (Fixed)
 //WedgeSetting=0//N/A (Fixed)
 FuelSetting=92//0.93 (MUST BE OVERWRITTEN)
-//FuelCapacitySetting=0//93.0l (22.5 laps) (Fixed)
-//VirtualEnergySetting=100//100% (22.0 laps) (Fixed)
-//NumPitstopsSetting=0//N/A (Fixed)
-//Pitstop1Setting=59//N/A (Fixed)
-//Pitstop2Setting=59//N/A (Fixed)
-//Pitstop3Setting=59//N/A (Fixed)
+FuelCapacitySetting=0//93.0l (22.5 laps) (Fixed)
+VirtualEnergySetting=100//100% (22.0 laps) (Fixed)
+NumPitstopsSetting=0//N/A (Fixed)
+Pitstop1Setting=59//N/A (Fixed)
+Pitstop2Setting=59//N/A (Fixed)
+Pitstop3Setting=59//N/A (Fixed)
 
 [LEFTFENDER]
 //FenderFlareSetting=0//N/A (Fixed)
@@ -626,280 +610,84 @@ Downforce=0.400000
 Balance=0.400000
 Ride=0.400000
 Gearing=0.400000
-Custom=1`,
-
-    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
-UpgradeSetting=(0,0,0,0)
-//Aero package=0
-//Note: settings commented out if using the default
-
-[GENERAL]
-Notes=""
-Symmetric=1
-//CGHeightSetting=0//Non-adjustable (Fixed)
-//CGRightSetting=0//Non-adjustable (Fixed)
-//CGRearSetting=0//Non-adjustable (Fixed)
-//WedgeSetting=0//N/A (Fixed)
-FuelSetting=33//34L (13laps) (MUST BE OVERWRITTEN)
-//FuelCapacitySetting=0//+0L (0laps) (Fixed)
-//NumPitstopsSetting=0// (Fixed)
-//Pitstop1Setting=49//N/A (Fixed)
-//Pitstop2Setting=49//N/A (Fixed)
-//Pitstop3Setting=49//N/A (Fixed)
-
-[LEFTFENDER]
-//FenderFlareSetting=0//Standard
-
-[RIGHTFENDER]
-//FenderFlareSetting=0//Standard
-
-[FRONTWING]
-//FWSetting=0//Standard
-
-[REARWING]
-RWSetting=2//P3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-
-[BODYAERO]
-WaterRadiatorSetting=1//33% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
-OilRadiatorSetting=1//33% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
-BrakeDuctSetting=1//33% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
-BrakeDuctRearSetting=1//33% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
-
-[SUSPENSION]
-//FrontWheelTrackSetting=0//Non-adjustable (Fixed)
-//RearWheelTrackSetting=0//Non-adjustable (Fixed)
-FrontAntiSwaySetting=5//P5 (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
-RearAntiSwaySetting=1//P1 (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
-FrontToeInSetting=6//-0.23 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
-//FrontToeOffsetSetting=0//N/A (Fixed)
-RearToeInSetting=12//0.47 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
-//RearToeOffsetSetting=0//N/A (Fixed)
-//LeftCasterSetting=0//Non-adjustable (Fixed)
-//RightCasterSetting=0//Non-adjustable (Fixed)
-//LeftTrackBarSetting=0//N/A (Fixed)
-//RightTrackBarSetting=0//N/A (Fixed)
-//Front3rdPackerSetting=0//N/A (Fixed)
-//Front3rdSpringSetting=0//Detached (Fixed)
-//Front3rdTenderSpringSetting=0//Detached (Fixed)
-//Front3rdTenderTravelSetting=0//Detached (Fixed)
-//Front3rdSlowBumpSetting=0//N/A (Fixed)
-//Front3rdFastBumpSetting=0//N/A (Fixed)
-//Front3rdSlowReboundSetting=0//N/A (Fixed)
-//Front3rdFastReboundSetting=0//N/A (Fixed)
-//Rear3rdPackerSetting=0//N/A (Fixed)
-//Rear3rdSpringSetting=0//Detached (Fixed)
-//Rear3rdTenderSpringSetting=0//Detached (Fixed)
-//Rear3rdTenderTravelSetting=0//Detached (Fixed)
-//Rear3rdSlowBumpSetting=0//N/A (Fixed)
-//Rear3rdFastBumpSetting=0//N/A (Fixed)
-//Rear3rdSlowReboundSetting=0//N/A (Fixed)
-//Rear3rdFastReboundSetting=0//N/A (Fixed)
-//ChassisAdj00Setting=0//N/A (Fixed)
-//ChassisAdj01Setting=0//N/A (Fixed)
-//ChassisAdj02Setting=0//N/A (Fixed)
-//ChassisAdj03Setting=0//N/A (Fixed)
-//ChassisAdj04Setting=0//N/A (Fixed)
-//ChassisAdj05Setting=0//N/A (Fixed)
-//ChassisAdj06Setting=0//N/A (Fixed)
-//ChassisAdj07Setting=0//N/A (Fixed)
-//ChassisAdj08Setting=0//N/A (Fixed)
-//ChassisAdj09Setting=0//N/A (Fixed)
-//ChassisAdj10Setting=0//N/A (Fixed)
-//ChassisAdj11Setting=0//N/A (Fixed)
-
-[CONTROLS]
-SteerLockSetting=6//540 (18) deg (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
-RearBrakeSetting=17//52.8:47.2 (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
-//BrakeMigrationSetting=0// 0.0 (Fixed)
-BrakePressureSetting=40//80 kgf (100%) (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
-//HandfrontbrakePressSetting=0//N/A (Fixed)
-//HandbrakePressSetting=0//N/A (Fixed)
-TCSetting=0//Available (Fixed)
-ABSSetting=0//N/A (Fixed)
-TractionControlMapSetting=6//6 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-TCPowerCutMapSetting=2//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//TCSlipAngleMapSetting=4//4 (Fixed)
-AntilockBrakeSystemMapSetting=0//N/A (Fixed)
-
-[ENGINE]
-//RevLimitSetting=0//7,400 (Fixed)
-//EngineBoostSetting=0//N/A (Fixed)
-//RegenerationMapSetting=0//0% (Fixed)
-//ElectricMotorMapSetting=0// (Fixed)
-EngineMixtureSetting=1//Race lean (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
-//EngineBrakingMapSetting=0//N/A (Fixed)
-
-[DRIVELINE]
-FinalDriveSetting=0//3.664 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//ReverseSetting=0//3.083 (Fixed)
-Gear1Setting=0//2.067 (~128 mph / ~206 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear2Setting=0//1.706 (~155 mph / ~249 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear3Setting=0//1.368 (~193 mph / ~310 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear4Setting=0//1.143 (~230 mph / ~370 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear5Setting=0//1.000 (~263 mph / ~423 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-Gear6Setting=0//0.889 (~296 mph / ~476 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-RatioSetSetting=0//Standard (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
-//DiffPumpSetting=0//Non-adjustable (Fixed)
-DiffPowerSetting=0//Non-adjustable (Fixed)
-DiffCoastSetting=0//Non-adjustable (Fixed)
-DiffPreloadSetting=18//90 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
-//FrontDiffPumpSetting=0//0% (Fixed)
-//FrontDiffPowerSetting=0//0% (Fixed)
-//FrontDiffCoastSetting=0//0% (Fixed)
-//FrontDiffPreloadSetting=0//1 (Fixed)
-//RearSplitSetting=0//RWD (Fixed)
-//GearAutoUpShiftSetting=0//Off (Fixed)
-//GearAutoDownShiftSetting=0//Off (Fixed)
-
-[FRONTLEFT]
-CamberSetting=28//-2.2 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
-PressureSetting=0//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-PackerSetting=20//2.0 cm (Min: 0, Max: 25) (MUST BE OVERWRITTEN)
-SpringSetting=5//220 N/mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-//TenderSpringSetting=0//Detached (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=0//5.0 cm (MUST BE OVERWRITTEN)
-SlowBumpSetting=8//8 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastBumpSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-SlowReboundSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastReboundSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//BrakeDiscSetting=0//3.56 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Soft (Fixed)
-//EquippedTireIDSetting=0// (Fixed)
-
-[FRONTRIGHT]
-CamberSetting=28//-2.2 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
-PressureSetting=0//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-PackerSetting=20//2.0 cm (Min: 0, Max: 25) (MUST BE OVERWRITTEN)
-SpringSetting=5//220 N/mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-//TenderSpringSetting=0//Detached (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=0//5.0 cm (MUST BE OVERWRITTEN)
-SlowBumpSetting=8//8 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastBumpSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-SlowReboundSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastReboundSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//BrakeDiscSetting=0//3.56 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Soft (Fixed)
-//EquippedTireIDSetting=0// (Fixed)
-
-[REARLEFT]
-CamberSetting=20//-1.2 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
-PressureSetting=0//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-PackerSetting=25//2.5 cm (Min: 0, Max: 25) (MUST BE OVERWRITTEN)
-SpringSetting=1//140 N/mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-//TenderSpringSetting=0//Detached (Fixed)
-//TenderTravelSetting=0//Detached (Fixed)
-//SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=22//7.2 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
-SlowBumpSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastBumpSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-SlowReboundSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastReboundSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//BrakeDiscSetting=0//3.20 cm (Fixed)
-//BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Soft (Fixed)
-//EquippedTireIDSetting=0// (Fixed)
-
-[REARRIGHT]
-CamberSetting=20//-1.2 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
-PressureSetting=0//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-PackerSetting=25//2.5 cm (Min: 0, Max: 25) (MUST BE OVERWRITTEN)
-SpringSetting=1//140 N/mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-TenderSpringSetting=0//Detached (Fixed)
-TenderTravelSetting=0//Detached (Fixed)
-SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=22//7.2 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
-SlowBumpSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastBumpSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-SlowReboundSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-FastReboundSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-BrakeDiscSetting=0//3.20 cm (Fixed)
-BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Soft (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
-EquippedTireIDSetting=0// (Fixed)
-
-[BASIC]
-Downforce=0.400000
-Balance=0.400000
-Ride=0.400000
-Gearing=0.400000
 Custom=1`
 };
 
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
-    // Safely destructure all possible values from the request body
-    const {
-        car, track, request, selectedCarCategory,
-        selectedCarDisplay, selectedTrackDisplay, setupGoal,
-        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
-    } = req.body;
+    // Safely destructure all possible values from the request body
+    const {
+        car, track, request, selectedCarCategory,
+        selectedCarDisplay, selectedTrackDisplay, setupGoal,
+        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
+    } = req.body;
 
-    // Validate essential parameters
-    if (!car || !track || !setupGoal || !selectedCarCategory) {
-        return res.status(400).json({
-            error: "Please provide Car, Track, Setup Goal, and Car Category details."
-        });
-    }
+    // Validate essential parameters
+    if (!car || !track || !setupGoal || !selectedCarCategory) {
+        return res.status(400).json({
+            error: "Please provide Car, Track, Setup Goal, and Car Category details."
+        });
+    }
 
-    // Handle potential category key mismatch
-    let finalCategory = selectedCarCategory;
-    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
-        finalCategory = 'GT3';
-    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
-        finalCategory = 'LMGT3';
-    }
+    // Handle potential category key mismatch
+    let finalCategory = selectedCarCategory;
+    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
+        finalCategory = 'GT3';
+    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
+        finalCategory = 'LMGT3';
+    }
 
-    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
-    if (!exampleTemplate) {
-        return res.status(400).json({
-            error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.`
-        });
-    }
+    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
+    if (!exampleTemplate) {
+        return res.status(400).json({
+            error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.`
+        });
+    }
 
-    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
-    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
-    let finalExampleTemplate = exampleTemplate; // Start with the chosen template
+    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
+    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
+    let finalExampleTemplate = exampleTemplate; // Start with the chosen template
 
-    if (track === "Circuit de la Sarthe (Le Mans)") {
-        // Force RWSetting to absolute minimum (index 0) for Hypercar/LMP2/GT3/GTE
-        // This regex ensures it targets the correct RWSetting line regardless of current value
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RWSetting=)\d+/m, `$10`); // Sets RWSetting=0
+    if (track === "Circuit de la Sarthe (Le Mans)") {
+        const minRwSetting = 0; // Absolute minimum RW for all classes on Le Mans
 
-        // Force FinalDriveSetting to the highest for Hypercar (index 7, based on earlier Max:7)
-        // Adjust for other classes if their max FD is different in the actual game
+        // Programmatically replace RWSetting to its absolute minimum for Le Mans
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RWSetting=)\d+/m, `$1${minRwSetting}`);
+
+        // Programmatically replace FinalDriveSetting to its highest for Le Mans
+        let leMansFinalDrive;
         if (finalCategory === 'Hypercar') {
-            finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$17`);
+            leMansFinalDrive = 7; 
         } else if (finalCategory === 'LMP2') {
-            finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$15`); // Assuming max 5 for LMP2
+            leMansFinalDrive = 5; 
         } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
-            finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$10`); // Assuming fixed/limited max for GT3/GTE, adjust if needed
+            leMansFinalDrive = 10; // Assuming 10 is max for GT3/GTE fixed gears
         }
-
-        // Force ALL individual gears to 1 (Longest Ratio)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${leMansFinalDrive}`);
+        
+        // Programmatically force ALL individual gears to 1 (Longest Ratio)
         finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`);
-    }
 
-    // UPGRADE: Dynamically insert the user's selected car name into the template
-    finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
+        // Inject a specific note into the template about the Le Mans override, so the AI knows
+        // this was pre-set and should still explain it in its notes.
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Le Mans override applied: Absolute minimum drag prioritized. RWSetting set to ${minRwSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${leMansFinalDrive}. This overrides general setup goals for max top speed."`);
+    }
 
-
-    const sessionDuration = req.body.sessionDuration || 'N/A';
-    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
-        `Estimate fuel for a ${sessionDuration} minute race.` : '';
-    const weatherGuidance = `Current weather is ${selectedWeather}.`;
-    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+    // UPGRADE: Dynamically insert the user's selected car name into the template
+    finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
 
 
-    // =====================================================================================
-    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
-    // =====================================================================================
-    const prompt = `
+    const sessionDuration = req.body.sessionDuration || 'N/A';
+    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
+        `Estimate fuel for a ${sessionDuration} minute race.` : '';
+    const weatherGuidance = `Current weather is ${selectedWeather}.`;
+    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+
+
+    // =====================================================================================
+    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
+    // =====================================================================================
+    const prompt = `
 ## PRIME DIRECTIVE
 Generate a complete, physically realistic, and numerically valid .VEH setup. Replace placeholders with calculated, logical numbers. '0' for adjustable settings is a failure.
 
@@ -910,28 +698,28 @@ World-class LMU race engineer. Goal: predictable, realistic setups, suited to dr
 Populate '[GENERAL] Notes' with engineering debrief. If track-specific override (e.g., Le Mans aero) applied, explicitly state it, explaining how it overrides general setup philosophies.
 
 ## THOUGHT PROCESS & HIERARCHY
-1.  **Session Type (Qualifying vs. Race):** Dictates setup philosophy (tire preservation vs. peak performance).
+1.  **Session Type (Qualifying vs. Race):** Dictates setup philosophy.
 2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX'. Apply Primary/Secondary solutions. All other decisions align.
 3.  **Track DNA & Weather:** Analyze track demands ('TRACK DNA DATABASE') and weather ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions. Mention track compromise in notes.
-4.  **Car Architecture:** Apply adjustments based on car's inherent traits ('CAR ARCHITECTURE PHILOSOPHY').
+4.  **Car Architecture:** Apply adjustments based on car's traits ('CAR ARCHITECTURE PHILOSOPHY').
 5.  **Overall Setup Goal:** Use 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') from 'LMU SETUP PHILOSOPHY DIAL' to fine-tune settings.
 5.5. **Generate [BASIC] Parameters (MANDATORY):** Dynamically calculate and GENERATE the [BASIC] section at .VEH end. This is NOT in template.
-    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
-    - Outputting 0.500000 (or any common default) is critical failure, UNLESS your calculation is optimal.
-    - **'Downforce'**: Lower for low-drag (0.075-0.25). Higher for high-downforce/grip (0.75-0.925). Mid for balanced (0.35-0.65).
-    - **'Balance'**: Aggressive oversteer (0.15-0.35). Neutral (0.45-0.55). Stable understeer (0.65-0.85). Adjust per driver/track.
-    - **'Ride'**: Stiff/low (0.075-0.25). Compliant/high (0.75-0.925). Mid for balanced (0.35-0.65). Adjust per track bumps.
-    - **'Gearing'**: Long/top speed (0.85-0.975). Short/acceleration (0.075-0.25). Mid (0.25-0.85). MUST correspond to detailed gear selections.
-    - **Custom**: 1.
-6.  **Engineer's Debrief:** Write concise summary in 'Notes'.
+    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
+    - Outputting 0.500000 (or any common default) is critical failure, UNLESS your calculation is optimal.
+    - **'Downforce'**: Lower for low-drag (0.075-0.25). Higher for high-downforce/grip (0.75-0.925). Mid for balanced (0.35-0.65).
+    - **'Balance'**: Aggressive oversteer (0.15-0.35). Neutral (0.45-0.55). Stable understeer (0.65-0.85). Adjust per driver/track.
+    - **'Ride'**: Stiff/low (0.075-0.25). Compliant/high (0.75-0.925). Mid for balanced (0.35-0.65). Adjust per track bumps.
+    - **'Gearing'**: Long/top speed (0.85-0.975). Short/acceleration (0.075-0.25). Mid (0.25-0.85). MUST correspond to detailed gear selections.
+    - **Custom**: 1.
+6.  **Engineer's Debrief:** Write concise summary in 'Notes'.
 
 ## LMU GAME MECHANICS & NUANCES
 - Tuning MUST be LMU simulation-based.
 
 ### LMU Gearing Index Behavior
 - Individual gears ('Gear1Setting' to 'Gear7Setting'): **INVERSE relationship**.
-    - LOWER index (0) = SHORTEST individual ratio (quickest acceleration).
-    - HIGHER index (1) = LONGEST individual ratio (highest speed).
+    - LOWER index (0) = SHORTEST individual ratio (quickest acceleration).
+    - HIGHER index (1) = LONGEST individual ratio (highest speed).
 - **Range Limit**: Individual gears are LIMITED TO ONLY INDICES 0 AND 1.
 - 'FinalDriveSetting': HIGHER index = longer overall gearing.
 - Apply LMU-specific gearing logic.
@@ -941,7 +729,7 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 - UpgradeSetting values fixed.
 
 ## LMU PHYSICS & TUNING REFERENCE
-- **Aero**: 'FWSetting'/'RWSetting' increase grip/drag. Brake ducts manage temp/drag.
+- **Aero**: Wings ('FWSetting'/'RWSetting'): Grip vs. drag. Ducts: temp/drag.
 - **Suspension**: Springs ('PackerSetting'/'SpringSetting') control ride height/stiffness. Dampers ('Slow Bump'/'Fast Bump', 'Slow Rebound'/'Fast Rebound') control movement rates. 'AntiSwaySetting' (ARB) controls body roll/load transfer. 'CamberSetting' controls tire angle. 'ToeInSetting' controls tire angle. 'RideHeightSetting' impacts drag/CG. Packers limit travel.
 - **Drivetrain**: 'FinalDriveSetting' overall gear ratio. Individual gears fine-tune. Differential ('DiffPowerSetting', 'DiffCoastSetting', 'DiffPreloadSetting') controls power distribution.
 - **Brakes**: 'RearBrakeSetting' (Bias), 'BrakePressureSetting', 'AntilockBrakeSystemMapSetting' (ABS), 'TractionControlMapSetting' (TC) control braking/traction.
@@ -952,9 +740,9 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 ### Tires
 - 'PressureSetting': (Min: 0/~130 kPa, Max: 10/~170 kPa).
 - 'CompoundSetting': **LMU specific compound availability:**
-    - Hypercar/GTE: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
-    - LMP2/GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
-    - MUST select available compound.
+    - Hypercar/GTE: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
+    - LMP2/GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
+    - MUST select available compound.
 
 ### Aero
 - 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce). Max: Hypercar FW:2, RW:10; LMP2 RW:9; GT3 RW:7; GTE RW:10.
@@ -984,23 +772,23 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 - 'TractionControlMapSetting' (TC): (Min: 0, Max: 10).
 
 ## GEARING STRATEGY (CRITICAL)
-1.  **High-Speed Tracks (e.g., Le Mans, Monza):**
-    - 'FinalDriveSetting': MUST be HIGHEST available index.
-    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
-    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
-    - Self-Verification: Confirm 6th/7th gear top speed >300 km/h (>185 mph) for Hypercars/LMP2s.
-2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):**
-    - 'FinalDriveSetting': MUST be LOWER available index.
-    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
-    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+1.  **High-Speed Tracks (e.g., Le Mans, Monza):**
+    - 'FinalDriveSetting': MUST be HIGHEST available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+    - Self-Verification: Confirm 6th/7th gear top speed >300 km/h (>185 mph) for Hypercars/LMP2s.
+2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):**
+    - 'FinalDriveSetting': MUST be LOWER available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
 ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## TRACK DNA DATABASE
 - **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. This ensures lowest drag/max top speed, overriding other general setup goals. Compromise: stability for Porsche Curves. Bumps need good high-speed damping.
 - **Sebring International Raceway:** Extremely bumpy. Focus: SOFT suspension (especially fast dampers), higher ride height. Compromise: softness can hurt responsiveness. Short Gears Recommended.
 - **Spa-Francorchamps:** High-speed, elevation change. Focus: High-speed stability, good aero balance. Stiff springs for Eau Rouge. Long Gears Recommended.
-- **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag. VERY LONG GEARS ESSENTIAL. Compromise: stable braking.
-- **Fuji Speedway:** Long straight, technical final sector. Focus: Compromise top speed/low-speed agility. Balanced Gearing Recommended.
+- **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. Compromise: stable braking.
+- **Fuji Speedway:** Long main straight, technical final sector. Focus: Compromise top speed/low-speed agility. Balanced Gearing Recommended.
 - **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster", elevation, blind crests. Focus: Predictable, stable platform. Medium downforce, compliant suspension. Slightly Shorter Gears Recommended.
 - **Bahrain International Circuit:** High grip, smooth, hot. Focus: Good braking stability, traction. Tire wear high. Balanced Gearing Recommended.
 
@@ -1033,15 +821,15 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - IF Track Temp low (<15C): Higher tire pressures/softer compounds (build temp). Close brake ducts slightly.
 
 ## SETUP SANITY CHECKS
-1.  Low RideHeight REQUIRES Stiff Springs.
-2.  High Aero ('RWSetting') REQUIRES Stiff Springs.
-3.  Bumpy Tracks REQUIRE Softer Fast Damping.
-4.  **Gearing Sanity Check:** High-Speed Tracks: 'FinalDriveSetting' HIGH, 'GearXSetting' 1 (Longest). Technical Tracks: 'FinalDriveSetting' LOW, 'GearXSetting' 0 (Shortest).
-5.  Physics Check: Realistic toe/camber.
-6.  Physics: Dampers complement springs/track.
-7.  Balance Consistency: Aero, mechanical, diff in harmony.
-8.  'FinalDrive' & Gears Cohesion: Logical progression, appropriate top speeds.
-9.  Fuel Consistency: Fuel load aligns with session/track.
+1.  Low RideHeight REQUIRES Stiff Springs.
+2.  High Aero ('RWSetting') REQUIRES Stiff Springs.
+3.  Bumpy Tracks REQUIRE Softer Fast Damping.
+4.  **Gearing Sanity Check:** High-Speed Tracks: 'FinalDriveSetting' HIGH, 'GearXSetting' 1 (Longest). Technical Tracks: 'FinalDriveSetting' LOW, 'GearXSetting' 0 (Shortest).
+5.  Physics Check: Realistic toe/camber.
+6.  Physics: Dampers complement springs/track.
+7.  Balance Consistency: Aero, mechanical, diff in harmony.
+8.  'FinalDrive' & Gears Cohesion: Logical progression, appropriate top speeds.
+9.  Fuel Consistency: Fuel load aligns with session/track.
 10. Tire Compound Logic: 'CompoundSetting' aligns with weather/session.
 
 ## COMMON SETUP COMPROMISES
@@ -1089,78 +877,78 @@ This is the required LMU .VEH structure. You MUST use this exact structure, repl
 ${finalExampleTemplate}
 
 Now, generate the complete and valid .VEH file. Your response MUST contain ONLY the file content and nothing else.
-`; // ***FIX: Added closing backtick and semicolon here***
+`; 
 
-    try {
-        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + OPENROUTER_API_KEY, // Changed to concatenation
-                'Content-Type': 'application/json',
-                'X-Title': 'LMU Setup Generator',
-            },
-            body: JSON.stringify({
-                model: PRIMARY_MODEL,
-                messages: [{
-                    role: "user",
-                    content: prompt
-                }],
-                max_tokens: 8192, // Increased max_tokens to prevent truncation
-                temperature: 0.5, // Slightly increased to encourage more nuance while maintaining structure
-            }),
-        });
+    try {
+        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + OPENROUTER_API_KEY, 
+                'Content-Type': 'application/json',
+                'X-Title': 'LMU Setup Generator',
+            },
+            body: JSON.stringify({
+                model: PRIMARY_MODEL,
+                messages: [{
+                    role: "user",
+                    content: prompt
+                }],
+                max_tokens: 8192, 
+                temperature: 0.8, 
+            }),
+        });
 
-        if (!openrouterResponse.ok) {
-            const errorData = await openrouterResponse.json();
-            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
-            return res.status(openrouterResponse.status).json({
-                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
-            });
-        }
+        if (!openrouterResponse.ok) {
+            const errorData = await openrouterResponse.json();
+            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
+            return res.status(openrouterResponse.status).json({
+                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
+            });
+        }
 
-        const chatCompletion = await openrouterResponse.json();
-        const rawText = chatCompletion.choices[0].message.content;
+        const chatCompletion = await openrouterResponse.json();
+        const rawText = chatCompletion.choices[0].message.content;
 
-        // --- NEW ROBUST PARSING LOGIC ---
-        // Find the start of the actual .VEH content. The AI sometimes adds introductory text.
-        const setupStartIndex = rawText.indexOf('VehicleClassSetting=');
+        // --- NEW ROBUST PARSING LOGIC ---
+        // Find the start of the actual .VEH content. The AI sometimes adds introductory text.
+        const setupStartIndex = rawText.indexOf('VehicleClassSetting=');
 
-        if (setupStartIndex !== -1) {
-            // If the start string is found, extract everything from that point on.
-            let setupText = rawText.substring(setupStartIndex);
+        if (setupStartIndex !== -1) {
+            // If the start string is found, extract everything from that point on.
+            let setupText = rawText.substring(setupStartIndex);
 
-            // Also remove any trailing markdown code blocks if they exist
-            if (setupText.trim().endsWith('```')) {
-                setupText = setupText.trim().slice(0, -3).trim();
-            }
+            // Also remove any trailing markdown code blocks if they exist
+            if (setupText.trim().endsWith('```')) {
+                setupText = setupText.trim().slice(0, -3).trim();
+            }
 
-            // Log the generated setup to the console for debugging
-            console.log("\n--- GENERATED SETUP ---\n", setupText);
+            // Log the generated setup to the console for debugging
+            console.log("\n--- GENERATED SETUP ---\n", setupText);
 
-            res.json({
-                setup: setupText
-            });
+            res.json({
+                setup: setupText
+            });
 
-        } else {
-            // If 'VehicleClassSetting=' is not found at all, the response is invalid.
-            console.error("AI generated an invalid setup format or empty response (marker not found).");
-            console.error("AI Raw Response (first 500 chars):", rawText ? rawText.substring(0, 500) : '[Empty Response]'); // Log a snippet
-            res.status(500).json({
-                error: `AI generated an invalid setup format. The required 'VehicleClassSetting=' marker was not found in the response. Please try again. Raw AI response snippet: ${rawText ? rawText.substring(0, 200) : '[Empty Response]'}`
-            });
-        }
+        } else {
+            // If 'VehicleClassSetting=' is not found at all, the response is invalid.
+            console.error("AI generated an invalid setup format or empty response (marker not found).");
+            console.error("AI Raw Response (first 500 chars):", rawText ? rawText.substring(0, 500) : '[Empty Response]'); // Log a snippet
+            res.status(500).json({
+                error: `AI generated an invalid setup format. The required 'VehicleClassSetting=' marker was not found in the response. Please try again. Raw AI response snippet: ${rawText ? rawText.substring(0, 200) : '[Empty Response]'}`
+            });
+        }
 
-    } catch (error) {
-        console.error("Error communicating with OpenRouter or generating setup:", error);
-        res.status(500).json({
-            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
-        });
-    }
+    } catch (error) {
+        console.error("Error communicating with OpenRouter or generating setup:", error);
+        res.status(500).json({
+            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
+        });
+    }
 });
 
 // 9. Start the server
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-    console.log(`Open your web browser and navigate to http://localhost:${port}`);
-    console.log("Keep this terminal window open while using the generator.");
+    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Open your web browser and navigate to http://localhost:${port}`);
+    console.log("Keep this terminal window open while using the generator.");
 });
