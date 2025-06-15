@@ -48,12 +48,6 @@ const PRIMARY_MODEL = 'NousResearch/Hermes-2-Pro-Llama-3-8B';
 const LMU_VEH_TEMPLATES = {
     'Hypercar': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(2,0,0,0)
-//UpgradeClass=
-//Tyre Restrictions=2
-//AI Tweaks=0
-//Atmos Conditions=0
-//Note: settings commented out if using the default
-
 [GENERAL]
 Notes=""
 Symmetric=1
@@ -61,9 +55,9 @@ CGHeightSetting=0//Non-adjustable (Fixed)
 CGRightSetting=0//Non-adjustable (Fixed)
 CGRearSetting=0//Non-adjustable (Fixed)
 WedgeSetting=0//N/A (Fixed)
-FuelSetting=85//85L (Initial guess, AI adjusts) (MUST BE OVERWRITTEN)
+FuelSetting=85//85L (MUST BE OVERWRITTEN)
 FuelCapacitySetting=0//Max Fuel (Fixed)
-VirtualEnergySetting=72//72% (AI adjusts based on session) (MUST BE OVERWRITTEN)
+VirtualEnergySetting=72//72% (MUST BE OVERWRITTEN)
 NumPitstopsSetting=0//N/A (Fixed)
 Pitstop1Setting=88//N/A (Fixed)
 Pitstop2Setting=88//N/A (Fixed)
@@ -77,11 +71,9 @@ FenderFlareSetting=0//N/A (Fixed)
 
 [FRONTWING]
 FWSetting=1//Standard (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
-// FWSetting: 0=low, 1=medium, 2=high (AI adjusts based on track type)
 
 [REARWING]
 RWSetting=3//P4 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-// RWSetting for Hypercar: 0-10 (P1=low, P10=high)
 
 [BODYAERO]
 WaterRadiatorSetting=1//25% (Min: 0, Max: 4) (MUST BE OVERWRITTEN)
@@ -135,7 +127,7 @@ ChassisAdj11Setting=0//N/A (Fixed)
 SteerLockSetting=0//400 (16) deg (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 RearBrakeSetting=16//52.8:47.2 (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
 BrakeMigrationSetting=0//2.5% F (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-BrakePressureSetting=80//120 kgf (100%) (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
+BrakePressureSetting=80//120 kgf (100%) (MUST BE OVERWRITTEN)
 HandfrontbrakePressSetting=0//0% (Fixed)
 HandbrakePressSetting=0//N/A (Fixed)
 TCSetting=0//Available (Fixed)
@@ -154,7 +146,7 @@ EngineMixtureSetting=1//Race (AI adjusts for session type: 0=Full, 1=Race, 2=Lea
 EngineBrakingMapSetting=0//N/A (Fixed)
 
 [DRIVELINE]
-FinalDriveSetting=3//2.98:1 (AI adjusts for track type: 0=Standard/Short, higher values for Long) (Min: 0, Max: 7) (MUST BE OVERWRITTEN)
+FinalDriveSetting=3//2.98:1 (Min: 0, Max: 7) (MUST BE OVERWRITTEN)
 ReverseSetting=0//2.07 (6.18) (Fixed)
 Gear1Setting=0//2.85 (~62 mph / ~100 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear2Setting=0//2.20 (~81 mph / ~130 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
@@ -163,12 +155,12 @@ Gear4Setting=0//1.56 (~118 mph / ~190 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTE
 Gear5Setting=0//1.35 (~137 mph / ~220 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear6Setting=0//1.19 (~155 mph / ~250 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear7Setting=0//1.05 (~174 mph / ~280 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-RatioSetSetting=0//Short (AI adjusts for track type: 0=Standard, 1=Long/High Speed) (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
+RatioSetSetting=0//Short (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
 DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=3//25% (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
 DiffCoastSetting=10//60% (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 DiffPreloadSetting=24//120 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
-FrontDiffPumpSetting=0//N/A (N/A for RWD) (Fixed)
+FrontDiffPumpSetting=0//N/A (Fixed)
 FrontDiffPowerSetting=0//10% (N/A for RWD) (Fixed)
 FrontDiffCoastSetting=0//10% (N/A for RWD) (Fixed)
 FrontDiffPreloadSetting=0//0 Nm (N/A for RWD) (Fixed)
@@ -267,12 +259,13 @@ Symmetric=1
 //CGRightSetting=0//Non-adjustable (Fixed)
 //CGRearSetting=0//Non-adjustable (Fixed)
 //WedgeSetting=0//N/A (Fixed)
-FuelSetting=65//65L (AI adjusts based on session duration and track) (MUST BE OVERWRITTEN)
-//FuelCapacitySetting=0//N/A (Fixed)
-//NumPitstopsSetting=0//N/A (Fixed)
-//Pitstop1Setting=50//N/A (Fixed)
-//Pitstop2Setting=50//N/A (Fixed)
-//Pitstop3Setting=50//N/A (Fixed)
+FuelSetting=65//65L (MUST BE OVERWRITTEN)
+FuelCapacitySetting=0//N/A (Fixed)
+VirtualEnergySetting=72//72% (MUST BE OVERWRITTEN)
+NumPitstopsSetting=0//N/A (Fixed)
+Pitstop1Setting=50//N/A (Fixed)
+Pitstop2Setting=50//N/A (Fixed)
+Pitstop3Setting=50//N/A (Fixed)
 
 [LEFTFENDER]
 //FenderFlareSetting=0//N/A (Fixed)
@@ -294,18 +287,18 @@ BrakeDuctSetting=1//25% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
 BrakeDuctRearSetting=1//25% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
 
 [SUSPENSION]
-//FrontWheelTrackSetting=0//Non-adjustable (Fixed)
-//RearWheelTrackSetting=0//Non-adjustable (Fixed)
+FrontWheelTrackSetting=0//Non-adjustable (Fixed)
+RearWheelTrackSetting=0//Non-adjustable (Fixed)
 FrontAntiSwaySetting=9//D25 H-H (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 RearAntiSwaySetting=1//D7.5 S-S (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 FrontToeInSetting=13//-0.18 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
 FrontToeOffsetSetting=0//N/A (Fixed)
 RearToeInSetting=22//0.35 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
 //RearToeOffsetSetting=0//N/A (Fixed)
-//LeftCasterSetting=0//Non-adjustable (Fixed)
-//RightCasterSetting=0//Non-adjustable (Fixed)
-//LeftTrackBarSetting=0//N/A (Fixed)
-//RightTrackBarSetting=0//N/A (Fixed)
+LeftCasterSetting=0//Non-adjustable (Fixed)
+RightCasterSetting=0//Non-adjustable (Fixed)
+LeftTrackBarSetting=0//N/A (Fixed)
+RightTrackBarSetting=0//N/A (Fixed)
 Front3rdPackerSetting=6//0.6 cm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 Front3rdSpringSetting=0//N/A (Fixed)
 //Front3rdTenderSpringSetting=0//Detached (Fixed)
@@ -347,7 +340,7 @@ EngineMixtureSetting=1//Race (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
 //EngineBrakingMapSetting=0//N/A (Fixed)
 
 [DRIVELINE]
-FinalDriveSetting=3//2.88:1 (AI adjusts for track type: 0=Standard/Short, higher values for Long) (Min: 0, Max: 5) (MUST BE OVERWRITTEN)
+FinalDriveSetting=3//2.88:1 (Min: 0, Max: 5) (MUST BE OVERWRITTEN)
 ReverseSetting=0//2.85 (8.18) (Fixed)
 Gear1Setting=0//2.85 (~56 mph / ~90 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear2Setting=0//2.20 (~71 mph / ~115 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
@@ -355,15 +348,15 @@ Gear3Setting=0//1.88 (~84 mph / ~135 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN
 Gear4Setting=0//1.62 (~96 mph / ~155 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear5Setting=0//1.42 (~109 mph / ~175 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear6Setting=0//1.27 (~121 mph / ~195 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-RatioSetSetting=1//High Speed (AI adjusts for track type: 0=Standard, 1=High Speed) (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
+RatioSetSetting=1//High Speed (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
 DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=0//FF6-60 deg (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
 DiffCoastSetting=2//FF6-45 deg (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 DiffPreloadSetting=17//85 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
-FrontDiffPumpSetting=0//N/A (N/A for RWD) (Fixed)
+FrontDiffPumpSetting=0//N/A (Fixed)
 FrontDiffPowerSetting=0//0% (N/A for RWD) (Fixed)
 FrontDiffCoastSetting=0//0% (N/A for RWD) (Fixed)
-FrontDiffPreloadSetting=0//1 (N/A for RWD) (Fixed)
+FrontDiffPreloadSetting=0//1 (Fixed)
 RearSplitSetting=0// 0.0:100.0 (Fixed to RWD)
 GearAutoUpShiftSetting=0//Off (Fixed)
 GearAutoDownShiftSetting=0//Off (Fixed)
@@ -460,7 +453,7 @@ Symmetric=1
 //CGRightSetting=0//Non-adjustable (Fixed)
 //CGRearSetting=0//Non-adjustable (Fixed)
 //WedgeSetting=0//N/A (Fixed)
-FuelSetting=92//0.93 (AI adjusts) (MUST BE OVERWRITTEN)
+FuelSetting=92//0.93 (MUST BE OVERWRITTEN)
 //FuelCapacitySetting=0//93.0l (22.5 laps) (Fixed)
 //VirtualEnergySetting=100//100% (22.0 laps) (Fixed)
 //NumPitstopsSetting=0//N/A (Fixed)
@@ -539,25 +532,26 @@ ElectricMotorMapSetting=0//Not Applicable (N/A for Non-Hybrid) (Fixed)
 //EngineBrakingMapSetting=0//N/A (Fixed)
 
 [DRIVELINE]
-FinalDriveSetting=0//Fixed (AI adjusts for track type) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
-//ReverseSetting=0//Fixed
+FinalDriveSetting=0//Fixed (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+ReverseSetting=0//Fixed
 Gear1Setting=0//Fixed (~95 km/h / ~59 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear2Setting=0//Fixed (~130 km/h / ~81 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear3Setting=0//Fixed (~160 km/h / ~99 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear4Setting=0//Fixed (~190 km/h / ~118 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear5Setting=0//Fixed (~220 km/h / ~137 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
 Gear6Setting=0//Fixed (~250 km/h / ~155 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
-RatioSetSetting=0//Short (AI adjusts for track type) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
-//DiffPumpSetting=0//Non-adjustable (Fixed)
-//DiffCoastSetting=0//Non-adjustable (Fixed)
+RatioSetSetting=0//Short (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
+DiffPumpSetting=0//Non-adjustable (Fixed)
+DiffPowerSetting=28//78 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
+DiffCoastSetting=28//78 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
 DiffPreloadSetting=28//78 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
-//FrontDiffPumpSetting=0//0% (Fixed)
-//FrontDiffPowerSetting=0//0% (Fixed)
-//FrontDiffCoastSetting=0//0% (Fixed)
-//FrontDiffPreloadSetting=0//1 (Fixed)
-//RearSplitSetting=0//RWD (Fixed)
-//GearAutoUpShiftSetting=0//Non (Fixed)
-//GearAutoDownShiftSetting=0//Non (Fixed)
+FrontDiffPumpSetting=0//0% (Fixed)
+FrontDiffPowerSetting=0//0% (Fixed)
+FrontDiffCoastSetting=0//0% (Fixed)
+FrontDiffPreloadSetting=0//1 (Fixed)
+RearSplitSetting=0//RWD (Fixed)
+GearAutoUpShiftSetting=0//Non (Fixed)
+GearAutoDownShiftSetting=0//Non (Fixed)
 
 [FRONTLEFT]
 CamberSetting=26//-1.80 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
@@ -632,6 +626,190 @@ Downforce=0.400000
 Balance=0.400000
 Ride=0.400000
 Gearing=0.400000
+Custom=1`,
+
+    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
+UpgradeSetting=(0,0,0,0)
+//Aero package=0
+//Note: settings commented out if using the default
+
+[GENERAL]
+Notes=""
+Symmetric=1
+//CGHeightSetting=0//Non-adjustable (Fixed)
+//CGRightSetting=0//Non-adjustable (Fixed)
+//CGRearSetting=0//Non-adjustable (Fixed)
+//WedgeSetting=0//N/A (Fixed)
+FuelSetting=33//34L (13laps) (MUST BE OVERWRITTEN)
+//FuelCapacitySetting=0//+0L (0laps) (Fixed)
+//NumPitstopsSetting=0// (Fixed)
+//Pitstop1Setting=49//N/A (Fixed)
+//Pitstop2Setting=49//N/A (Fixed)
+//Pitstop3Setting=49//N/A (Fixed)
+
+[LEFTFENDER]
+//FenderFlareSetting=0//Standard
+
+[RIGHTFENDER]
+//FenderFlareSetting=0//Standard
+
+[FRONTWING]
+//FWSetting=0//Standard
+
+[REARWING]
+RWSetting=2//P3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+
+[BODYAERO]
+WaterRadiatorSetting=1//33% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
+OilRadiatorSetting=1//33% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
+BrakeDuctSetting=1//33% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
+BrakeDuctRearSetting=1//33% (Min: 0, Max: 3) (MUST BE OVERWRITTEN)
+
+[SUSPENSION]
+//FrontWheelTrackSetting=0//Non-adjustable (Fixed)
+//RearWheelTrackSetting=0//Non-adjustable (Fixed)
+FrontAntiSwaySetting=5//P5 (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
+RearAntiSwaySetting=1//P1 (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
+FrontToeInSetting=6//-0.23 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+//FrontToeOffsetSetting=0//N/A (Fixed)
+RearToeInSetting=12//0.47 deg (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+//RearToeOffsetSetting=0//N/A (Fixed)
+//LeftCasterSetting=0//Non-adjustable (Fixed)
+//RightCasterSetting=0//Non-adjustable (Fixed)
+//LeftTrackBarSetting=0//N/A (Fixed)
+//RightTrackBarSetting=0//N/A (Fixed)
+//Front3rdPackerSetting=0//N/A (Fixed)
+//Front3rdSpringSetting=0//Detached (Fixed)
+//Front3rdTenderSpringSetting=0//Detached (Fixed)
+//Front3rdTenderTravelSetting=0//Detached (Fixed)
+//Front3rdSlowBumpSetting=0//N/A (Fixed)
+//Front3rdFastBumpSetting=0//N/A (Fixed)
+//Front3rdSlowReboundSetting=0//N/A (Fixed)
+//Front3rdFastReboundSetting=0//N/A (Fixed)
+//Rear3rdPackerSetting=0//N/A (Fixed)
+//Rear3rdSpringSetting=0//Detached (Fixed)
+//Rear3rdTenderSpringSetting=0//Detached (Fixed)
+//Rear3rdTenderTravelSetting=0//Detached (Fixed)
+//Rear3rdSlowBumpSetting=0//N/A (Fixed)
+//Rear3rdFastBumpSetting=0//N/A (Fixed)
+//Rear3rdSlowReboundSetting=0//N/A (Fixed)
+//Rear3rdFastReboundSetting=0//N/A (Fixed)
+//ChassisAdj00Setting=0//N/A (Fixed)
+//ChassisAdj01Setting=0//N/A (Fixed)
+//ChassisAdj02Setting=0//N/A (Fixed)
+//ChassisAdj03Setting=0//N/A (Fixed)
+//ChassisAdj04Setting=0//N/A (Fixed)
+//ChassisAdj05Setting=0//N/A (Fixed)
+//ChassisAdj06Setting=0//N/A (Fixed)
+//ChassisAdj07Setting=0//N/A (Fixed)
+//ChassisAdj08Setting=0//N/A (Fixed)
+//ChassisAdj09Setting=0//N/A (Fixed)
+//ChassisAdj10Setting=0//N/A (Fixed)
+//ChassisAdj11Setting=0//N/A (Fixed)
+
+[CONTROLS]
+SteerLockSetting=6//540 (18) deg (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
+RearBrakeSetting=17//52.8:47.2 (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
+//BrakeMigrationSetting=0// 0.0 (Fixed)
+BrakePressureSetting=40//80 kgf (100%) (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
+//HandfrontbrakePressSetting=0//N/A (Fixed)
+//HandbrakePressSetting=0//N/A (Fixed)
+TCSetting=0//Available (Fixed)
+ABSSetting=0//N/A (Fixed)
+TractionControlMapSetting=6//6 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+TCPowerCutMapSetting=2//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+//TCSlipAngleMapSetting=4//4 (Fixed)
+AntilockBrakeSystemMapSetting=0//N/A (Fixed)
+
+[ENGINE]
+//RevLimitSetting=0//7,400 (Fixed)
+//EngineBoostSetting=0//N/A (Fixed)
+//RegenerationMapSetting=0//0% (Fixed)
+//ElectricMotorMapSetting=0// (Fixed)
+EngineMixtureSetting=1//Race lean (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+//EngineBrakingMapSetting=0//N/A (Fixed)
+
+[DRIVELINE]
+FinalDriveSetting=0//3.664 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+//ReverseSetting=0//3.083 (Fixed)
+Gear1Setting=0//2.067 (~128 mph / ~206 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear2Setting=0//1.706 (~155 mph / ~249 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear3Setting=0//1.368 (~193 mph / ~310 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear4Setting=0//1.143 (~230 mph / ~370 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear5Setting=0//1.000 (~263 mph / ~423 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+Gear6Setting=0//0.889 (~296 mph / ~476 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio.
+RatioSetSetting=0//Standard (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
+//DiffPumpSetting=0//Non-adjustable (Fixed)
+DiffPowerSetting=0//Non-adjustable (Fixed)
+DiffCoastSetting=0//Non-adjustable (Fixed)
+DiffPreloadSetting=18//90 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
+//FrontDiffPumpSetting=0//0% (Fixed)
+//FrontDiffPowerSetting=0//0% (Fixed)
+//FrontDiffCoastSetting=0//0% (Fixed)
+//FrontDiffPreloadSetting=0//1 (Fixed)
+//RearSplitSetting=0//RWD (Fixed)
+//GearAutoUpShiftSetting=0//Off (Fixed)
+//GearAutoDownShiftSetting=0//Off (Fixed)
+
+[FRONTLEFT]
+CamberSetting=28//-2.2 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
+PressureSetting=0//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+PackerSetting=20//2.0 cm (Min: 0, Max: 25) (MUST BE OVERWRITTEN)
+SpringSetting=5//220 N/mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+//TenderSpringSetting=0//Detached (Fixed)
+//TenderTravelSetting=0//Detached (Fixed)
+//SpringRubberSetting=0//Detached (Fixed)
+RideHeightSetting=0//5.0 cm (MUST BE OVERWRITTEN)
+SlowBumpSetting=8//8 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastBumpSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+SlowReboundSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastReboundSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+//BrakeDiscSetting=0//3.56 cm (Fixed)
+//BrakePadSetting=0//1 (Fixed)
+//CompoundSetting=0//Soft (Fixed)
+//EquippedTireIDSetting=0// (Fixed)
+
+[FRONTRIGHT]
+CamberSetting=28//-2.2 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
+PressureSetting=0//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+PackerSetting=20//2.0 cm (Min: 0, Max: 25) (MUST BE OVERWRITTEN)
+SpringSetting=5//220 N/mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+//TenderSpringSetting=0//Detached (Fixed)
+//TenderTravelSetting=0//Detached (Fixed)
+//SpringRubberSetting=0//Detached (Fixed)
+RideHeightSetting=0//5.0 cm (MUST BE OVERWRITTEN)
+SlowBumpSetting=8//8 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastBumpSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+SlowReboundSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastReboundSetting=10//10 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+//BrakeDiscSetting=0//3.56 cm (Fixed)
+//BrakePadSetting=0//1 (Fixed)
+//CompoundSetting=0//Soft (Fixed)
+//EquippedTireIDSetting=0// (Fixed)
+
+[REARLEFT]
+CamberSetting=20//-1.2 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
+PressureSetting=0//140 kPa (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+PackerSetting=25//2.5 cm (Min: 0, Max: 25) (MUST BE OVERWRITTEN)
+SpringSetting=1//140 N/mm (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+//TenderSpringSetting=0//Detached (Fixed)
+//TenderTravelSetting=0//Detached (Fixed)
+//SpringRubberSetting=0//Detached (Fixed)
+RideHeightSetting=22//7.2 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+SlowBumpSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastBumpSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+SlowReboundSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+FastReboundSetting=7//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
+//BrakeDiscSetting=0//3.20 cm (Fixed)
+//BrakePadSetting=0//1 (Fixed)
+//CompoundSetting=0//Soft (Fixed)
+//EquippedTireIDSetting=0// (Fixed)
+
+[BASIC]
+Downforce=0.400000
+Balance=0.400000
+Ride=0.400000
+Gearing=0.400000
 Custom=1`
 };
 
@@ -661,23 +839,27 @@ app.post('/generate-setup', async (req, res) => {
         return res.status(400).json({ error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.` });
     }
 
-    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC ---
+    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
     // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
-    let notesSectionOverride = ""; // To capture AI's generated notes
-    let finalExampleTemplate = exampleTemplate;
+    let finalExampleTemplate = exampleTemplate; // Start with the chosen template
 
     if (track === "Circuit de la Sarthe (Le Mans)") {
-        // Force minimum Rear Wing and extreme low Downforce value
-        const minRwSetting = (finalCategory === 'Hypercar' || finalCategory === 'GTE') ? 0 : // Assuming 0 is min for Hyper/GTE
-                             (finalCategory === 'LMP2') ? 0 : // Assuming 0 is min for LMP2
-                             (finalCategory === 'GT3') ? 0 : 0; // Assuming 0 is min for GT3 (check if 0 or 1 is min for their RW)
-                                                                 // Defaulting to 0, ensure this is the absolute minimum in game.
+        // Force RWSetting to absolute minimum (index 0) for Hypercar/LMP2/GT3/GTE
+        // This regex ensures it targets the correct RWSetting line regardless of current value
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RWSetting=)\d+/m, `$10`); // Sets RWSetting=0
 
-        // Directly modify the template string for these critical values
-        finalExampleTemplate = finalExampleTemplate.replace(/RWSetting=\d+\s*\/\/.*/, `RWSetting=${minRwSetting}//P${minRwSetting+1} (Le Mans OVERRIDE: Absolute Minimum Drag)`);
-        // We cannot directly set [BASIC].Downforce here as it's generated later by AI.
-        // Instead, the prompt must make the AI *itself* set it to the lowest.
-        // The prompt's mandate in TRACK DNA DATABASE is how this is now enforced.
+        // Force FinalDriveSetting to the highest for Hypercar (index 7, based on earlier Max:7)
+        // Adjust for other classes if their max FD is different in the actual game
+        if (finalCategory === 'Hypercar') {
+            finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$17`);
+        } else if (finalCategory === 'LMP2') {
+             finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$15`); // Assuming max 5 for LMP2
+        } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
+             finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$10`); // Assuming fixed/limited max for GT3/GTE, adjust if needed
+        }
+        
+        // Force ALL individual gears to 1 (Longest Ratio)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`);
     }
 
     // UPGRADE: Dynamically insert the user's selected car name into the template
@@ -695,251 +877,179 @@ app.post('/generate-setup', async (req, res) => {
     // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
     // =====================================================================================
     const prompt = `
-## --- PRIME DIRECTIVE ---
-## Your sole mission is to act as a virtual LMU race engineer and generate a complete, physically realistic, and numerically valid .VEH setup file. You must replace every placeholder value with a calculated, logical number based on a strict engineering hierarchy. Returning a file with '0' for gears or other critical settings where a non-zero, adjustable value is applicable is a failure.
+## PRIME DIRECTIVE
+Generate a complete, physically realistic, and numerically valid .VEH setup. Replace placeholders with calculated, logical numbers. '0' for adjustable settings is a failure.
 
-## --- PERSONA & PHILOSOPHY ---
-## You are a world-class Le Mans Ultimate (LMU) race engineer. Your primary philosophy is that a comfortable, confident driver is a fast driver. Your #1 goal is to generate a setup that is predictable, physically realistic, and perfectly suited to the driver's requested style and feedback. You must explain your decisions in the "Notes" section.
+## PERSONA & PHILOSOPHY
+World-class LMU race engineer. Goal: predictable, realistic setups, suited to driver/feedback. Explain decisions in 'Notes'.
 
-## **CRITICAL INSTRUCTION: You MUST populate the '[GENERAL] Notes' section with your engineering debrief, using the exact format specified in 'THE ENGINEER'S DEBRIEF DIRECTIVE'. This is not optional.**
+## CRITICAL INSTRUCTION
+Populate '[GENERAL] Notes' with engineering debrief. If track-specific override (e.g., Le Mans aero) applied, explicitly state it, explaining how it overrides general setup philosophies.
 
-## --- THOUGHT PROCESS & HIERARCHY OF TUNING PRIORITIES (You MUST follow this order) ---
-## 1.  **Session Type (Qualifying vs. Race):** This is the first and most fundamental decision. Is it a 'race' or 'qualifying' session? This choice dictates the entire setup philosophy (e.g., tire preservation vs. peak performance) and must be referenced in my notes.
-## 2.  **Driver Feedback is KING:** Is there a specific handling complaint in 'Driver Problem to Solve'? If yes, fixing this is my next highest priority. I will consult the 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX' and apply the Primary and Secondary solutions. All other decisions must work around this fix.
-## 3.  **Track DNA & Weather:** What are the physical demands of the specific track according to the 'TRACK DNA DATABASE' and the weather? I will consult the 'ADVANCED WEATHER & TIRE STRATEGY' and 'SETUP SANITY CHECKS' sections to make baseline decisions. I must mention the track-specific compromise in my notes (e.g., "Le Mans requires a low wing/long gear compromise for the straights.").
-## 4.  **Car Architecture:** What is the car's inherent nature according to the 'CAR ARCHITECTURE PHILOSOPHY'? I will apply gentle adjustments to either tame a car's negative traits or enhance its strengths.
-## 5.  **Overall Setup Goal:** Finally, I will use the 'Setup Goal' (Safe, Balanced, Aggressive) to fine-tune the settings within the context of the decisions I've already made.
-## 5.5. **Generate [BASIC] Parameters (MANDATORY ADJUSTMENT):** Based on the above decisions, you MUST dynamically calculate and GENERATE the [BASIC] section at the very end of the .VEH file. This section is NOT provided in the template and must be entirely derived from your tuning choices for the specific car, track, and setup goal.
-##    - **Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') in [BASIC] MUST have a uniquely calculated floating-point value (e.g., 0.125000, 0.450000, 0.550000, 0.875000).**
-##    - **Outputting 0.500000 (or any common default like 0.400000) for any [BASIC] parameter is a critical failure, UNLESS your precise calculation explicitly determines it as the optimal value.** You MUST demonstrate active computation.
-##    - **Downforce:** Reflects overall aero strategy. Use lower values for low-drag setups (e.g., 0.075000 - 0.250000). Use higher values for high-downforce/grip setups (e.g., 0.750000 - 0.925000). Use mid-range for balanced (0.350000 - 0.650000).
-##    - **Balance:** Reflects overall aero/mechanical balance. For aggressive oversteer tendency (0.150000 - 0.350000). For neutral balance (0.450000 - 0.550000). For stable understeer tendency (0.650000 - 0.850000). Adjust based on driver feedback and track.
-##    - **Ride:** Reflects overall suspension compliance. For very stiff/low ride (0.075000 - 0.250000). For compliant/high ride (0.750000 - 0.925000). Mid-range for balanced (0.350000 - 0.650000). Adjust based on track bumps.
-##    - **Gearing:** Reflects overall gear length strategy. For very long gears/high top speed (0.850000 - 0.975000). For very short gears/quick acceleration (0.075000 - 0.250000). Mid-range for balanced (0.250000 - 0.850000). MUST directly correspond to the detailed gear selections.
-##    - **Custom:** Always 1.
-## 6.  **Engineer's Debrief:** After generating all values, I will write a concise summary in the '[GENERAL] Notes' section explaining my choices, as per 'THE ENGINEER'S DEBRIEF DIRECTIVE'.
+## THOUGHT PROCESS & HIERARCHY
+1.  **Session Type (Qualifying vs. Race):** Dictates setup philosophy (tire preservation vs. peak performance).
+2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX'. Apply Primary/Secondary solutions. All other decisions align.
+3.  **Track DNA & Weather:** Analyze track demands ('TRACK DNA DATABASE') and weather ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions. Mention track compromise in notes.
+4.  **Car Architecture:** Apply adjustments based on car's inherent traits ('CAR ARCHITECTURE PHILOSOPHY').
+5.  **Overall Setup Goal:** Use 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') from 'LMU SETUP PHILOSOPHY DIAL' to fine-tune settings.
+5.5. **Generate [BASIC] Parameters (MANDATORY):** Dynamically calculate and GENERATE the [BASIC] section at .VEH end. This is NOT in template.
+    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
+    - Outputting 0.500000 (or any common default) is critical failure, UNLESS your calculation is optimal.
+    - **'Downforce'**: Lower for low-drag (0.075-0.25). Higher for high-downforce/grip (0.75-0.925). Mid for balanced (0.35-0.65).
+    - **'Balance'**: Aggressive oversteer (0.15-0.35). Neutral (0.45-0.55). Stable understeer (0.65-0.85). Adjust per driver/track.
+    - **'Ride'**: Stiff/low (0.075-0.25). Compliant/high (0.75-0.925). Mid for balanced (0.35-0.65). Adjust per track bumps.
+    - **'Gearing'**: Long/top speed (0.85-0.975). Short/acceleration (0.075-0.25). Mid (0.25-0.85). MUST correspond to detailed gear selections.
+    - **Custom**: 1.
+6.  **Engineer's Debrief:** Write concise summary in 'Notes'.
 
-## =====================================================================================
-## --- LMU GAME MECHANICS & NUANCES (CRITICAL) ---
-## =====================================================================================
-## All tuning decisions MUST be based on Le Mans Ultimate's simulation and parameter behaviors, NOT generalized real-world engineering where discrepancies exist.
-##
-## **LMU Gearing Index Behavior:**
-## - In LMU, for individual gears ('Gear1Setting' to 'Gear7Setting'), there is an **INVERSE relationship** between the numerical index chosen and the actual "length" of the gear.
-##    - **LOWER numerical index (0) results in the SHORTEST individual gear ratio (quickest acceleration).**
-##    - **HIGHER numerical index (1) results in the LONGEST individual gear ratio (highest speed).**
-## - **Range Limit:** Individual gear ratios ('Gear1Setting'-'Gear7Setting') are **LIMITED TO ONLY INDICES 0 AND 1 in LMU.** This is a critical game-specific constraint.
-## - **FinalDriveSetting:** A HIGHER index for 'FinalDriveSetting' always means longer overall gearing (higher top speed, slower acceleration).
-## - You MUST apply this LMU-specific gearing logic when selecting indices and predicting speeds.
-##
-## **Other Nuances:**
-## - Values for settings like 'FuelSetting', 'FuelCapacitySetting', 'VirtualEnergySetting', 'NumPitstopsSetting' may have specific in-game interpretations or fixed values in templates that should be respected.
-## - UpgradeSetting values are typically fixed by the template and should not be altered.
-##
-## =====================================================================================
-## --- LMU PHYSICS & TUNING REFERENCE ---
-## =====================================================================================
-## This section provides key physics principles and their impact on vehicle behavior *as simulated in LMU*. Use this knowledge to make informed decisions for each setting.
-##
-## **Aero:**
-## - **Front Wing/Rear Wing ('FWSetting'/'RWSetting'):** Increases grip at speed by pushing tires into the ground. More downforce means higher cornering speeds but lower top speed due to drag. Balance between front and rear wings dictates aero balance (understeer/oversteer at speed).
-## - **Brake Ducts:** Controls brake temperature. More open ducts cool brakes better but increase aerodynamic drag. Closed ducts improve aero but risk overheating brakes.
+## LMU GAME MECHANICS & NUANCES
+- Tuning MUST be LMU simulation-based.
 
-## **Suspension:**
-## - **Springs ('PackerSetting'/'SpringSetting'):** Primary control over ride height and overall stiffness. Stiffer springs reduce body roll and dive/squat, improving responsiveness but can make the car nervous over bumps. Softer springs improve mechanical grip and ride quality over bumps but increase body motion.
-## - **Dampers ('Slow Bump'/'Fast Bump', 'Slow Rebound'/'Fast Rebound'):** Control the rate of suspension movement.
-##    - **Bump:** Controls wheel movement *into* the chassis. "Slow" affects weight transfer (e.g., braking, acceleration, cornering entry). "Fast" affects reaction to bumps and curbs.
-##    - **Rebound:** Controls wheel movement *out of* the chassis. "Slow" affects weight transfer release. "Fast" affects how quickly the wheel returns to the road after hitting a bump.
-##    - **Stiffer Bump:** More resistance to compression, can make car "jumpy" over bumps.
-##    - **Softer Bump:** More compression, better bump absorption.
-##    - **Stiffer Rebound:** Holds wheel down longer after compression, can "pack down" over consecutive bumps.
-##    - **Softer Rebound:** Allows wheel to extend quickly, maintaining tire contact over undulations.
-## - **Anti-Roll Bars ('AntiSwaySetting'):** Controls body roll and affects load transfer across the axle. Stiffer anti-roll bar on an axle transfers more load to the outside tire, increasing grip on that axle at the expense of grip on the other axle (e.g., stiffer front increases understeer, stiffer rear increases oversteer).
-## - **Camber Setting:** ('CamberSetting') The vertical angle of the tire. Negative camber ($<0$) allows the tire to sit flatter when the suspension compresses and the car rolls, maximizing tire contact patch during cornering. Too much negative camber reduces straight-line grip and braking performance. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
-## - **Toe In/Out ('FrontToeInSetting'/'RearToeInSetting'):** (Min: 0 / ~-0.2 deg, Max: 30 / ~+0.2 deg). Slight toe-out on front for turn-in, slight toe-in on rear for stability.
-## - **Ride Height:** ('RideHeightSetting') Distance between the chassis and the ground. Lower ride height reduces drag and lowers the center of gravity, improving stability and aero performance. Too low can cause bottoming out on bumps/kerbs. Rake (front vs. rear ride height) impacts aero balance.
-## - **Packers:** Limit suspension travel. Prevents bottoming out on stiff setups or very bumpy tracks.
+### LMU Gearing Index Behavior
+- Individual gears ('Gear1Setting' to 'Gear7Setting'): **INVERSE relationship**.
+    - LOWER index (0) = SHORTEST individual ratio (quickest acceleration).
+    - HIGHER index (1) = LONGEST individual ratio (highest speed).
+- **Range Limit**: Individual gears are LIMITED TO ONLY INDICES 0 AND 1.
+- 'FinalDriveSetting': HIGHER index = longer overall gearing.
+- Apply LMU-specific gearing logic.
 
-## **Drivetrain:**
-## - **Final Drive Setting:** ('FinalDriveSetting') The overall gearing ratio. A *higher index* means longer overall gearing (higher top speed, slower acceleration). A *lower index* results in quicker acceleration but lower top speeds.
-## - **Individual Gear Settings:** ('Gear1Setting'-'Gear7Setting') (Min: 0, Max: 1). Each represents an index for a preset ratio. **LMU specific: 0=Shortest individual ratio for quicker acceleration, 1=Longest individual ratio for higher top speed.** You MUST choose either 0 or 1.
-## - **Differential ('DiffPowerSetting', 'DiffCoastSetting', 'DiffPreloadSetting'):** Controls how power is distributed between the drive wheels.
-##    - **Diff Power (on-throttle):** Higher locking provides more traction on acceleration but can induce understeer on exit. Lower allows more rotation.
-##    - **Diff Coast (off-throttle):** Higher locking provides more stability on lift-off/braking but can cause snap oversteer. Lower allows more rotation on entry.
-##    - **Diff Preload:** Constant locking effect. Higher preload provides more stability and traction at very low speeds, but can cause understeer.
+### Other Nuances
+- 'FuelSetting', 'VirtualEnergySetting', 'NumPitstopsSetting' adjust for session.
+- UpgradeSetting values fixed.
 
-## **Brakes:**
-## - **RearBrakeSetting (Bias):** ('RearBrakeSetting') (Min: 0, Max: 40). Lower value = more front bias. Higher value = more rear bias.
-## - **BrakePressureSetting:** ('BrakePressureSetting') (Min: 0, Max: 100). Max pressure for qualifying.
-## - **AntilockBrakeSystemMapSetting (ABS):** ('AntilockBrakeSystemMapSetting') (Min: 0, Max: 15). Higher value = more ABS intervention.
-## - **TractionControlMapSetting (TC):** ('TractionControlMapSetting') (Min: 0, Max: 10). Higher value = more TC intervention.
-##
-## =====================================================================================
-## --- LMU TUNING GUIDELINES & RANGES (Practical Values) ---
-## =====================================================================================
-## Use these typical in-game numerical ranges and common practices for your adjustments. Always prioritize realistic values.
-##
-## **Tires:**
-## - **PressureSetting:** ('PressureSetting') (Min: 0 / ~130 kPa, Max: 10 / ~170 kPa). Adjust based on track temp, session, and desired grip/wear. Higher pressure reduces rolling resistance but can reduce contact patch. Wet: Increase slightly.
-## - **CompoundSetting:** ('CompoundSetting') **LMU specific compound availability:**
-##     - **Hypercar/GTE:** Full range: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
-##     - **LMP2/GT3:** Limited range: 0=Wet, 1=Medium. (Soft and Hard NOT available for these classes).
-##     - You MUST select a compound available for the specific car category.
-##
-## **Aero:**
-## - **FrontWing/RearWing ('FWSetting'/'RWSetting'):** Indices (0=low, higher=more downforce). Max values are car-specific.
-##    - Hypercar FW: (Min: 0, Max: 2). Hypercar RW: (Min: 0, Max: 10).
-##    - LMP2 RW: (Min: 0, Max: 9).
-##    - GT3 RW: (Min: 0, Max: 7).
-##    - GTE RW: (Min: 0, Max: 10).
-##    - General Rule: High-speed tracks = lower indices. Technical tracks = higher indices.
-## - **BrakeDucts:** Indices (0=open/max cooling, higher=more closed/less cooling/more aero). Max values are car-specific (e.g., Max: 3 for Hypercar, 2 for GT3).
-##
-## **Suspension:**
-## - **RideHeightSetting:** ('RideHeightSetting') (Min: 0 / ~4.0 cm, Max: 30 / ~8.0 cm). Lower for aero, higher for bumps. Rake (front vs. rear ride height) is common.
-## - **SpringSetting:** ('SpringSetting') (Min: 0, Max: 20). Higher index = stiffer spring. Adjust according to track bumps and aero requirements.
-## - **AntiSwaySetting (ARB):** ('FrontAntiSwaySetting'/'RearAntiSwaySetting') (Min: 0, Max: 20). Higher index = stiffer ARB.
-## - **Camber Setting:** ('CamberSetting') (Min: 0 / ~-0.5 deg, Max: 40 / ~-4.0 deg). Most racing cars use negative camber. Front typically more negative than rear. **For Rear Camber: Less negative camber (higher index or closer to 0) can improve straight-line stability and traction on corner exit, but may reduce mid-corner grip.**
-## - **Toe In/Out ('FrontToeInSetting'/'RearToeInSetting'):** (Min: 0 / ~-0.2 deg, Max: 30 / ~+0.2 deg). Slight toe-out on front for turn-in, slight toe-in on rear for stability.
-## - **Damper Settings ('Slow Bump'/'Fast Bump'/'Slow Rebound'/'Fast Rebound'):** (Min: 0, Max: 10). Relative adjustments are key.
-##    - Soft = lower index (0-3). Medium = mid-index (4-7). Stiff = higher index (8-10).
-##    - Bumpy tracks need softer Fast Bump/Rebound. High-speed stability needs balanced/stiffer Slow Bump/Rebound.
-##
-## **Drivetrain:**
-## - **FinalDriveSetting:** ('FinalDriveSetting') (Min: 0, Max: typically 5-10 depending on car. Higher index = longer gear for higher top speed). **For Le Mans/Monza, aim for the highest available index (e.g., 5-7).**
-## - **Individual Gear Settings:** ('Gear1Setting'-'Gear7Setting') (Min: 0, Max: 1). Each represents an index for a preset ratio. **LMU specific: 0=Shortest individual ratio for quicker acceleration, 1=Longest individual ratio for higher top speed.** You MUST choose either 0 or 1.
-## - **DiffPowerSetting:** ('DiffPowerSetting') (Min: 0, Max: 15).
-## - **DiffCoastSetting:** ('DiffCoastSetting') (Min: 0, Max: 20).
-## - **DiffPreloadSetting:** ('DiffPreloadSetting') (Min: 0, Max: 100).
-## - **RatioSetSetting:** ('RatioSetSetting') (Min: 0, Max: 1 or higher). 0=Standard, 1=High Speed.
-##
-## **Brakes:**
-## - **RearBrakeSetting (Bias):** ('RearBrakeSetting') (Min: 0, Max: 40). Lower value = more front bias. Higher value = more rear bias.
-## - **BrakePressureSetting:** ('BrakePressureSetting') (Min: 0, Max: 100). Max pressure for qualifying.
-## - **AntilockBrakeSystemMapSetting (ABS):** ('AntilockBrakeSystemMapSetting') (Min: 0, Max: 15). Higher value = more ABS intervention.
-## - **TractionControlMapSetting (TC):** ('TractionControlMapSetting') (Min: 0, Max: 10). Higher value = more TC intervention.
-##
-## =====================================================================================
-## --- GEARING STRATEGY (CRITICAL FOR FINALDRIVE & INDIVIDUAL GEARS) ---
-## =====================================================================================
-## This is the MOST IMPORTANT section for gearing. Follow these rules precisely:
-##
-## **1. High-Speed Tracks (e.g., Le Mans, Monza, Spa-Francorchamps):**
-##    - **'FinalDriveSetting':** You MUST select one of the **HIGHEST available indices** for the car (e.g., if max is 7, choose 5, 6, or 7). This makes the overall gearing "longer" for high top speed.
-##    - **'Gear1Setting' to 'GearXSetting' (for all applicable gears):** You MUST set all individual gear ratios to **1 (Longest)**. Example: For a 7-speed car, set Gear1Setting=1, Gear2Setting=1, ..., Gear7Setting=1. This will ensure maximum top speed for each gear.
-##    - **Comments:** For each 'GearXSetting', you MUST dynamically calculate and insert a **realistic approximate speed (e.g., ~Y mph / ~Z km/h)** based on the chosen gear index and final drive. Ensure speeds *increase logically* and are *very high* with successive gears (e.g., 6th/7th gear often well over 300 km/h / 185 mph).
-##    - **Self-Verification:** Mentally confirm that 6th or 7th gear top speed reaches *over 300 km/h (or 185 mph)* for Hypercars/LMP2s on tracks like Le Mans, indicating truly long gearing.
-##
-## **2. Technical/Accelerative Tracks (e.g., Sebring, Portimão, Imola):**
-##    - **'FinalDriveSetting':** You MUST select one of the **LOWER available indices** for the car (e.g., 0-3) for quicker acceleration.
-##    - **'Gear1Setting' to 'GearXSetting' (for all applicable gears):** You MUST set all individual gear ratios to **0 (Shortest)**. Example: For a 7-speed car, set Gear1Setting=0, Gear2Setting=0, ..., Gear7Setting=0. This will ensure maximum acceleration for each gear.
-##    - **Comments:** As above, dynamically calculate and insert a **realistic approximate speed (e.g., ~Y mph / ~Z km/h)** for each gear. Ensure speeds *increase logically* and are *appropriate for an accelerative track*.
-##
-## **ALWAYS ensure a non-zero index is chosen for any adjustable gear setting unless it's explicitly fixed to 0.** Leaving them at '0' for non-fixed gears is a critical failure.
-##
-## =====================================================================================
-## --- TRACK DNA DATABASE (Key characteristics for setup decisions) ---
-## =====================================================================================
-## - **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST possible drag (low wings, **VERY LONG GEARS**). The **'Downforce'** parameter within the [BASIC] section **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any value higher is a critical failure. The **'REARWING (RWSetting)'** MUST be set to its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be set to **1 (Longest Ratio)**. This ensures lowest drag and maximum top speed, overriding other general setup goals. Compromise: Must have enough stability for Porsche Curves. Bumps on straights require good high-speed damping.
-## - **Sebring International Raceway:** Extremely bumpy. Focus: SOFT suspension, especially fast dampers, and higher ride height to absorb bumps. Compromise: Softness can hurt responsiveness in slow corners. **Short Gears Recommended.**
-## - **Spa-Francorchamps:** High-speed with significant elevation change (Eau Rouge/Raidillon). Focus: High-speed stability with good aero balance. Requires stiff springs for compression in Eau Rouge. **Long Gears Recommended.**
-## - **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. Compromise: Must be stable on the brakes for heavy braking zones into chicanes.
-## - **Fuji Speedway:** Long main straight but a very tight, technical final sector. Focus: A major compromise between top speed and low-speed agility. Can't sacrifice too much downforce. **Balanced Gearing Recommended.**
-## - **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster" with lots of elevation and blind crests. Focus: A predictable, stable platform is crucial. Medium downforce and compliant suspension. **Slightly Shorter Gears Recommended.**
-## - **Bahrain International Circuit:** High grip, smooth surface, often hot. Focus: Good braking stability and traction out of slow corners. Tire wear can be high. **Balanced Gearing Recommended.**
+## LMU PHYSICS & TUNING REFERENCE
+- **Aero**: 'FWSetting'/'RWSetting' increase grip/drag. Brake ducts manage temp/drag.
+- **Suspension**: Springs ('PackerSetting'/'SpringSetting') control ride height/stiffness. Dampers ('Slow Bump'/'Fast Bump', 'Slow Rebound'/'Fast Rebound') control movement rates. 'AntiSwaySetting' (ARB) controls body roll/load transfer. 'CamberSetting' controls tire angle. 'ToeInSetting' controls tire angle. 'RideHeightSetting' impacts drag/CG. Packers limit travel.
+- **Drivetrain**: 'FinalDriveSetting' overall gear ratio. Individual gears fine-tune. Differential ('DiffPowerSetting', 'DiffCoastSetting', 'DiffPreloadSetting') controls power distribution.
+- **Brakes**: 'RearBrakeSetting' (Bias), 'BrakePressureSetting', 'AntilockBrakeSystemMapSetting' (ABS), 'TractionControlMapSetting' (TC) control braking/traction.
 
-## =====================================================================================
-## --- LMU SETUP PHILOSOPHY DIAL (PACE & DRIVEABILITY) ---
-## =====================================================================================
-## This section defines the true meaning of each Setup Goal for OPTIMAL LMU performance.
-## - **'Aggressive' Setup Goal:** Maximize driveable peak performance and responsiveness. Push limits for raw pace, but NEVER compromise the car to the point of being undrivable, snap-oversteer, or dangerously unstable. Aim for a sharp, reactive car that can be consistently pushed for fastest lap, requiring precision but not superhuman skill. Aero will be lower for speed, mechanical grip optimized for rotation.
-## - **'Balanced' Setup Goal:** Optimize for versatile, all-around performance. A strong compromise between stability and responsiveness. The car should be predictable and efficient across various corner types and speeds, offering both confidence and good pace. Aero and mechanical settings will be harmonized for a neutral feel.
-## - **'Safe' Setup Goal:** Maximize driver confidence and stability for error reduction while maintaining strong, consistent pace. Prioritize predictability, ease of driving, and tire management for long stints, ensuring the car is forgiving without being sluggish or losing significant lap time for the sake of extreme safety. Aero will be higher for stability, suspension softer for compliance.
+## LMU TUNING GUIDELINES & RANGES
+- Prioritize realistic values.
 
-## =====================================================================================
-## --- QUALIFYING VS. RACE PHILOSOPHY ---
-## =====================================================================================
-## - **If Session Goal is 'qualifying':** The only goal is one-lap pace and optimal lap time execution for good timing. Use softest tires, minimal fuel (2-3 laps worth), more aggressive camber, higher brake pressure (near 100%) to ride the limit of lockup, and more aggressive differential settings for maximum rotation. Tire wear is irrelevant. Tire pressures might be slightly higher for peak grip for a short duration.
-## - **If Session Goal is 'race':** The goal is consistent pace and lap times over a stint, not just pure tire survival. The car must be efficient, predictable, and maintain its speed through tire degradation, allowing the driver to hit targets lap after lap without excessive effort or risk of major errors. Tire pressures should be optimized for consistency over a stint (often slightly lower than quali).
+### Tires
+- 'PressureSetting': (Min: 0/~130 kPa, Max: 10/~170 kPa).
+- 'CompoundSetting': **LMU specific compound availability:**
+    - Hypercar/GTE: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
+    - LMP2/GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
+    - MUST select available compound.
 
-## =====================================================================================
-## --- CAR ARCHITECTURE PHILOSOPHY ---
-## =====================================================================================
-## - **Mid-Engine (All Prototypes, Ferrari, Vanwall, Peugeot):** Most balanced layout. Often flexible with setups.
-## - **Rear-Engine (Porsche 911 RSR / GT3 R):** Natively has excellent traction but can be prone to entry understeer due to weight distribution. Benefit from more aggressive front-end (e.g., softer front ARB, more negative front camber) to help turn-in.
-## - **Front-Engine (Corvette, Aston Martin):** Natively stable under braking but can be prone to understeer on entry. Often benefit from more rear-end rotation (e.g., stiffer rear ARB, more aggressive diff settings) to overcome understeer.
+### Aero
+- 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce). Max: Hypercar FW:2, RW:10; LMP2 RW:9; GT3 RW:7; GTE RW:10.
+- BrakeDucts indices: (0=open/max cooling, higher=more closed/less cooling/more aero). Max: Hypercar:3, GT3:3, GTE:3.
+- **Dynamic Radiator/Brake Duct**: Adjust 'BrakeDuctSetting'/'WaterRadiatorSetting'/'OilRadiatorSetting' based on 'Track Temp'. Higher temp = more open. Lower temp = more closed.
 
-## =====================================================================================
-## --- DRIVER FEEDBACK TROUBLESHOOTING MATRIX (High Priority) ---
-## =====================================================================================
-## IF "Understeer on corner entry": 1st: Reduce 'DiffCoastSetting' (less diff lock off-throttle). 2nd: Soften 'FrontAntiSwaySetting'. 3rd: Increase 'FrontToeInSetting' (more toe-out effect).
-## IF "Understeer mid-corner or on exit": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Reduce 'DiffPowerSetting' (less diff lock on-throttle). 3rd: Increase 'FrontCamberSetting' (more negative front camber).
-## IF "Oversteer on corner entry" or "nervous": 1st: Increase 'DiffCoastSetting' (more diff lock off-throttle). 2nd: Stiffen 'FrontAntiSwaySetting'. 3rd: Decrease 'RearToeInSetting' (less toe-in).
-## IF "Oversteer on exit" or "Poor traction": 1st: Soften 'RearAntiSwaySetting'. 2nd: Increase 'DiffPowerSetting' (more diff lock on-throttle). 3rd: Decrease 'RearCamberSetting' (less negative rear camber).
-## IF "Unstable under braking": 1st: Decrease 'RearBrakeSetting' (move bias forward). 2nd: Increase 'EngineBrakingMapSetting'. 3rd: Increase 'DiffCoastSetting'.
-## IF "Loose rear" or "Too much oversteer": 1st: INCREASE 'RearCamberSetting' (make it less negative - HIGHER index) to gain stability. 2nd: Increase 'RearToeInSetting' (more toe-in) for stability. 3rd: Soften 'RearAntiSwaySetting'.
-## IF "Too much Understeer" or "Pushing in corners": 1st: DECREASE 'RearCamberSetting' (make it more negative - LOWER index) for more rotation. 2nd: Decrease 'RearToeInSetting' (less toe-in). 3rd: Stiffen 'RearAntiSwaySetting'.
+### Suspension
+- 'RideHeightSetting': (Min: 0/~4.0 cm, Max: 30/~8.0 cm).
+- 'SpringSetting': (Min: 0, Max: 20).
+- 'AntiSwaySetting (ARB)': (Min: 0, Max: 20).
+- 'Camber Setting': (Min: 0/~-0.5 deg, Max: 40/~-4.0 deg).
+- 'Toe In/Out': ('FrontToeInSetting'/'RearToeInSetting') (Min: 0/~-0.2 deg, Max: 30/~+0.2 deg).
+- Damper Settings: ('Slow Bump'/'Fast Bump'/'Slow Rebound'/'Fast Rebound') (Min: 0, Max: 10). Soft=0-3, Medium=4-7, Stiff=8-10. Bumpy tracks need softer Fast.
 
-## =====================================================================================
-## --- ADVANCED WEATHER & TIRE STRATEGY ---
-## =====================================================================================
-## - IF Weather is 'Rain' or 'Wet': Use Wet tires ('CompoundSetting'=0), INCREASE 'PressureSetting' (+3-5 clicks from dry base), INCREASE 'RideHeightSetting' (+10-15 clicks) for water clearance, SOFTER Springs/Dampers for compliance, HIGHER TC/ABS settings for control. Set BrakeDucts to more open for cooling.
-## - IF Track Temp is high (e.g., >30C): Consider slightly lower tire pressures or harder compounds to manage overheating. Consider opening brake ducts slightly.
-## - IF Track Temp is low (e.g., <15C): Consider slightly higher tire pressures or softer compounds to build temperature. Consider closing brake ducts slightly.
+### Drivetrain
+- 'FinalDriveSetting': (Min: 0, Max: typically 5-10).
+- 'Individual Gear Settings': ('Gear1Setting'-'Gear7Setting') (Min: 0, Max: 1).
+- 'DiffPowerSetting': (Min: 0, Max: 15).
+- 'DiffCoastSetting': (Min: 0, Max: 20).
+- 'DiffPreloadSetting': (Min: 0, Max: 100).
+- 'RatioSetSetting': (Min: 0, Max: 1).
 
-## =====================================================================================
-## --- SETUP SANITY CHECKS (Core Physics Rules & LMU Specifics) ---
-## =====================================================================================
-## 1. Low RideHeight REQUIRES Stiff Springs (to prevent bottoming out).
-## 2. High Aero ('RWSetting') REQUIRES Stiff Springs (to support downforce).
-## 3. Bumpy Tracks (Sebring, Portimão) REQUIRE Softer Fast Damping (for bump absorption).
-## 4. **Gearing Sanity Check:** For High-Speed Tracks (Le Mans/Monza), **ENSURE** that 'FinalDriveSetting' is set to a HIGH index and individual 'GearXSetting' indices are set to **1 (Longest Ratio)**. Conversely, for Technical Tracks, confirm 'GearXSetting' indices are set to **0 (Shortest Ratio)**.
-## 5. **Physics Check:** Ensure toe and camber settings are physically realistic for a racing car (e.g., negative camber for cornering grip, slight toe-out on front for sharper turn-in, slight toe-in on rear for stability).
-## 6. **Physics:** Ensure damper settings (bump/rebound) logically complement spring stiffness and track type. Softer springs often pair with softer damping, stiffer with stiffer.
-## 7. **Balance Consistency:** Aero balance, mechanical balance (springs/ARBs), and differential settings should ideally work in harmony towards the overall setup goal and driver feedback.
-## 8. **FinalDrive & Gears Cohesion:** Ensure the chosen 'FinalDriveSetting' (index) and all individual 'GearXSetting' indices form a logical progression and provide appropriate top speeds for the track. A higher 'FinalDriveSetting' index should correspond to overall higher top speeds for each gear, and vice-versa.
-## 9. **Fuel Consistency:** Ensure estimated fuel load aligns with session duration and track characteristics (e.g., higher consumption on longer tracks).
-## 10. **Tire Compound Logic:** Ensure selected tire compound ('CompoundSetting') aligns with weather conditions and session goal.
+### Brakes
+- 'RearBrakeSetting' (Bias): (Min: 0, Max: 40).
+- 'BrakePressureSetting': (Min: 0, Max: 100).
+- 'AntilockBrakeSystemMapSetting' (ABS): (Min: 0, Max: 15).
+- 'TractionControlMapSetting' (TC): (Min: 0, Max: 10).
 
-## =====================================================================================
-## --- COMMON SETUP COMPROMISES (for AI to be aware of) ---
-## =====================================================================================
-## - **More Downforce = Less Top Speed:** Crucial trade-off. Higher wings ('FWSetting'/'RWSetting') increase cornering grip but penalize straight-line speed.
-## - **Stiffer Suspension = More Responsive, Less Compliant:** Stiffer springs/dampers improve responsiveness and transient handling but can make the car nervous over bumps, curbs, and mid-corner if too stiff.
-## - **Softer Suspension = More Compliant, Less Responsive:** Better over bumps and curbs, but can lead to excessive body roll and slower responsiveness.
-## - **Long Gearing = High Top Speed, Slower Acceleration:** Best for long straights. Can struggle on corner exits or in technical sections.
-## - **Short Gearing = Quick Acceleration, Lower Top Speed:** Excellent for technical tracks, but can hit rev limiter too soon on straights.
-## - **Aggressive Camber = More Cornering Grip, Less Straight-line Stability/Braking:** Too much negative camber can reduce tire contact patch in a straight line.
-## - **High Brake Pressure = More Stopping Power, Higher Risk of Lockup:** Must be balanced with driver skill and ABS settings.
-## - **Forward Brake Bias = More Stable Braking, Risk of Front Lockup:** Common for most cars.
-## - **Rearward Brake Bias = More Rotation/Turn-in on Braking, Risk of Rear Lockup/Spin:** For aggressive drivers or cars that understeer on entry.
-## - **High Differential Lock (Power/Coast) = More Traction/Stability, More Understeer (Power) / Snap Oversteer (Coast):** Be mindful of driver feedback.
+## GEARING STRATEGY (CRITICAL)
+1.  **High-Speed Tracks (e.g., Le Mans, Monza):**
+    - 'FinalDriveSetting': MUST be HIGHEST available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+    - Self-Verification: Confirm 6th/7th gear top speed >300 km/h (>185 mph) for Hypercars/LMP2s.
+2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):**
+    - 'FinalDriveSetting': MUST be LOWER available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
-## =====================================================================================
-## --- DRIVER CONFIDENCE & CONSISTENCY PRINCIPLES (CRITICAL for a great setup) ---
-## =====================================================================================
-## To ensure drivers don't "lose pace," prioritize these aspects:
-## - **Predictability over Peak Aggression:** A setup that is predictable and consistent lap-to-lap is often faster over a race distance than a twitchy, peak-performance setup.
-## - **Stability under Braking & Power:** Crucial for driver confidence into and out of corners, especially under pressure.
-## - **Smooth Transitions:** The car should transition smoothly between braking, cornering and acceleration phases, avoiding abrupt changes in balance.
-## - **Tire Preservation (Race Sessions):** For race setups, managing tire wear through less aggressive camber, toe, and smoother diff settings is paramount to maintain pace over a stint.
-## - **Forgiveness:** A setup that is slightly more forgiving of driver errors will result in fewer mistakes and more consistent lap times.
-## - **Neutral Balance:** A slightly neutral or predictable understeer balance is generally preferred for long-distance consistency over a car prone to snap oversteer.
+## TRACK DNA DATABASE
+- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. This ensures lowest drag/max top speed, overriding other general setup goals. Compromise: stability for Porsche Curves. Bumps need good high-speed damping.
+- **Sebring International Raceway:** Extremely bumpy. Focus: SOFT suspension (especially fast dampers), higher ride height. Compromise: softness can hurt responsiveness. Short Gears Recommended.
+- **Spa-Francorchamps:** High-speed, elevation change. Focus: High-speed stability, good aero balance. Stiff springs for Eau Rouge. Long Gears Recommended.
+- **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag. VERY LONG GEARS ESSENTIAL. Compromise: stable braking.
+- **Fuji Speedway:** Long straight, technical final sector. Focus: Compromise top speed/low-speed agility. Balanced Gearing Recommended.
+- **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster", elevation, blind crests. Focus: Predictable, stable platform. Medium downforce, compliant suspension. Slightly Shorter Gears Recommended.
+- **Bahrain International Circuit:** High grip, smooth, hot. Focus: Good braking stability, traction. Tire wear high. Balanced Gearing Recommended.
 
-## =====================================================================================
-## --- LMU AI GUIDANCE REFINEMENTS (ULTIMATE PRECISION) ---
-## =====================================================================================
-## These are meta-instructions to ensure the highest quality output and adherence to all previous rules.
-## - **NO STATIC DEFAULTS:** You MUST NOT output a value that is identical to the original template's default/placeholder value for ANY adjustable setting, unless your dynamic calculations explicitly prove that value is the single optimal choice for this *specific* setup. Defaulting is a critical failure. This applies especially to values like '0', '1', '0.500000', '0.400000', '25', '30', '35', etc.
-## - **INTERCONNECTEDNESS OF SETTINGS:** Always remember that all setup parameters are interdependent. Adjustments in one area (e.g., aero) necessitate re-evaluation and potential adjustment in other related areas (e.g., suspension, differential, brake bias).
-## - **LMU REALISM CHECK:** Ensure the combination of ALL generated settings is physically realistic and plausible for a competitive racing car in Le Mans Ultimate. Avoid extreme or nonsensical values unless explicitly requested and justified.
-## - **DYNAMIC RANGE UTILIZATION:** Actively utilize the full range (Min to Max) for adjustable parameters where appropriate, especially for parameters like Camber, Toe, Ride Height, Spring/Damper rates, Anti-Sway Bars, and Diff settings. Do not cluster values in the middle unless a neutral setup is specifically requested.
-## - **OPTIMAL RIDE QUALITY:** Prioritize tuning for optimal ride quality to maintain maximum tire contact with the track, especially on bumpy surfaces or over curbs. This is crucial for both grip and driver confidence.
-## - **SPECIFIC NUMERICAL DEVIATION:** When providing numerical examples for ranges or adjustments (e.g., for [BASIC] parameters or Camber), use distinct float numbers (e.g., 0.125000, 0.450000, 0.875000) instead of just rounded halves, to demonstrate calculated precision and avoid any lingering 'default' tendency.
+## LMU SETUP PHILOSOPHY DIAL (PACE & DRIVEABILITY)
+- **'Aggressive' Setup Goal:** Maximize driveable peak performance/responsiveness. NEVER compromise to undrivable/unstable car. Sharp, reactive, consistently fast. Aero lower for speed, mechanical grip for rotation.
+- **'Balanced' Setup Goal:** Optimize versatile, all-around performance. Strong compromise stability/responsiveness. Predictable, efficient. Aero/mechanical harmonized for neutral feel.
+- **'Safe' Setup Goal:** Maximize driver confidence/stability (error reduction) while maintaining strong, consistent pace. Forgiving, not sluggish/losing significant time. Aero higher for stability, suspension softer.
 
-## =====================================================================================
-## --- FINAL REQUEST DETAILS ---
-## =====================================================================================
+## QUALIFYING VS. RACE PHILOSOPHY
+- **'qualifying'**: One-lap pace, optimal timing. Softest tires, minimal fuel (2-3 laps), aggressive camber, high brake pressure, aggressive diff. Tire wear irrelevant.
+- **'race'**: Consistent pace/lap times over stint, NOT just tire survival. Efficient, predictable car maintaining speed through degradation. Optimized tire pressures for consistency. Balance pace & tire wear when choosing 'PressureSetting'/'CamberSetting'.
+
+## CAR ARCHITECTURE PHILOSOPHY
+- **Mid-Engine (Prototypes, Ferrari, Vanwall, Peugeot):** Balanced, flexible.
+- **Rear-Engine (Porsche 911 RSR / GT3 R):** Excellent traction, prone entry understeer. Benefit aggressive front-end (soft front ARB, more negative front camber).
+- **Front-Engine (Corvette, Aston Martin):** Stable braking, prone entry understeer. Benefit rear-end rotation (stiffer rear ARB, aggressive diff).
+- **General Principle:** Lean into positive car characteristics; mitigate negative ones.
+
+## DRIVER FEEDBACK TROUBLESHOOTING MATRIX (High Priority)
+- IF "Understeer on corner entry": 1st: Reduce 'DiffCoastSetting'. 2nd: Soften 'FrontAntiSwaySetting'. 3rd: Increase 'FrontToeInSetting'.
+- IF "Understeer mid-corner or on exit": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Reduce 'DiffPowerSetting'. 3rd: Increase 'FrontCamberSetting'.
+- IF "Oversteer on corner entry" or "nervous": 1st: Increase 'DiffCoastSetting'. 2nd: Stiffen 'FrontAntiSwaySetting'. 3rd: Decrease 'RearToeInSetting'.
+- IF "Oversteer on exit" or "Poor traction" / "Loose rear": 1st: INCREASE 'RearCamberSetting' (less negative - HIGHER index) for stability. 2nd: Increase 'RearToeInSetting' (more toe-in) for stability. 3rd: Soften 'RearAntiSwaySetting'. 4th: Increase 'DiffPowerSetting' (on-throttle lock). 5th: Increase 'DiffCoastSetting' (off-throttle lock).
+- IF "Unstable under braking": 1st: Decrease 'RearBrakeSetting'. 2nd: Increase 'EngineBrakingMapSetting'. 3rd: Increase 'DiffCoastSetting'.
+- IF "Too much Understeer" or "Pushing in corners": 1st: DECREASE 'RearCamberSetting' (more negative - LOWER index) for more rotation. 2nd: Decrease 'RearToeInSetting' (less toe-in). 3rd: Stiffen 'RearAntiSwaySetting'.
+
+## ADVANCED WEATHER & TIRE STRATEGY
+- IF Weather is 'Rain'/'Wet': Wet tires ('CompoundSetting'=0), INCREASE 'PressureSetting' (+3-5 clicks), INCREASE 'RideHeightSetting' (+10-15 cm), SOFTER Springs/Dampers, HIGHER TC/ABS. Open BrakeDucts.
+- IF Track Temp high (>30C): Lower tire pressures/harder compounds (overheating). Open brake ducts slightly.
+- IF Track Temp low (<15C): Higher tire pressures/softer compounds (build temp). Close brake ducts slightly.
+
+## SETUP SANITY CHECKS
+1.  Low RideHeight REQUIRES Stiff Springs.
+2.  High Aero ('RWSetting') REQUIRES Stiff Springs.
+3.  Bumpy Tracks REQUIRE Softer Fast Damping.
+4.  **Gearing Sanity Check:** High-Speed Tracks: 'FinalDriveSetting' HIGH, 'GearXSetting' 1 (Longest). Technical Tracks: 'FinalDriveSetting' LOW, 'GearXSetting' 0 (Shortest).
+5.  Physics Check: Realistic toe/camber.
+6.  Physics: Dampers complement springs/track.
+7.  Balance Consistency: Aero, mechanical, diff in harmony.
+8.  'FinalDrive' & Gears Cohesion: Logical progression, appropriate top speeds.
+9.  Fuel Consistency: Fuel load aligns with session/track.
+10. Tire Compound Logic: 'CompoundSetting' aligns with weather/session.
+
+## COMMON SETUP COMPROMISES
+- More Downforce = Less Top Speed.
+- Stiffer Suspension = More Responsive, Less Compliant.
+- Softer Suspension = More Compliant, Less Responsive.
+- Long Gearing = High Top Speed, Slower Acceleration.
+- Short Gearing = Quick Acceleration, Lower Top Speed.
+- Aggressive Camber = More Cornering Grip, Less Straight-line Stability/Braking.
+- High Brake Pressure = More Stopping Power, Higher Risk of Lockup.
+- Forward Brake Bias = More Stable Braking, Risk of Front Lockup.
+- Rearward Brake Bias = More Rotation/Turn-in on Braking, Risk of Rear Lockup/Spin.
+- High Differential Lock = More Traction/Stability, More Understeer (Power) / Snap Oversteer (Coast).
+
+## DRIVER CONFIDENCE & CONSISTENCY PRINCIPLES
+- Predictability over Peak Aggression.
+- Stability under Braking & Power.
+- Smooth Transitions.
+- Tire Preservation (Race Sessions) for pace.
+- Forgiveness.
+- Neutral Balance (or predictable understeer).
+
+## LMU AI GUIDANCE REFINEMENTS (ULTIMATE PRECISION)
+- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting is critical failure.
+- **INTERCONNECTEDNESS:** All parameters interdependent.
+- **LMU REALISM CHECK:** Ensure physically realistic/plausible settings.
+- **DYNAMIC RANGE UTILIZATION:** Actively use full Min-Max range.
+- **OPTIMAL RIDE QUALITY:** Prioritize optimal tire contact.
+- **SPECIFIC NUMERICAL DEVIATION:** Use distinct floats for [BASIC]/Camber.
+
+## FINAL REQUEST DETAILS
 Car: ${car} (Display Name: ${selectedCarDisplay}, Category: ${finalCategory})
 Track: ${track} (Display Name: ${selectedTrackDisplay})
 Setup Goal: ${setupGoal}
@@ -952,11 +1062,10 @@ Specific User Request: ${specificRequest}
 ${fuelEstimateRequest}
 ${tireCompoundGuidance}
 
-This is the required LMU .VEH structure. You must use this exact structure, replacing all placeholder values with valid integers and dynamically calculated comments. Your response MUST begin IMMEDIATELY with 'VehicleClassSetting=' and contain ONLY the file content. No extra text, no markdown code block formatting (like \`\`\`), no introductory or concluding remarks whatsoever.
-${exampleTemplate}
+This is the required LMU .VEH structure. You MUST use this exact structure, replacing all placeholder values with valid integers and dynamically calculated comments. Your response MUST begin IMMEDIATELY with 'VehicleClassSetting=' and contain ONLY the file content. No extra text, no markdown code block formatting, no introductory or concluding remarks whatsoever.
+${finalExampleTemplate}
 
 Now, generate the complete and valid .VEH file. Your response MUST contain ONLY the file content and nothing else.
-`;
 
     try {
         const openrouterResponse = await fetch(OPENROUTER_API_URL, {
