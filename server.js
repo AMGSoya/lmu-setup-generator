@@ -1071,7 +1071,7 @@ Now, generate the complete and valid .VEH file. Your response MUST contain ONLY 
         const openrouterResponse = await fetch(OPENROUTER_API_URL, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'Authorization': 'Bearer ' + OPENROUTER_API_KEY, // Changed to concatenation
                 'Content-Type': 'application/json',
                 'X-Title': 'LMU Setup Generator',
             },
