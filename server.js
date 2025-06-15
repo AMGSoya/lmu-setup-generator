@@ -243,7 +243,7 @@ Ride=0.400000
 Gearing=0.975000
 Custom=1`,
 
-    'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
+    'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(12,0,0,0)
 [GENERAL]
 Notes=""
@@ -428,7 +428,7 @@ Ride=0.400000
 Gearing=0.400000
 Custom=1`,
 
-    'GT3': `VehicleClassSetting="[[CAR_NAME]]"
+    'GT3': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(3276,0,0,0)
 [GENERAL]
 Notes=""
@@ -678,7 +678,7 @@ app.post('/generate-setup', async (req, res) => {
         finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
 
         // Programmatically force Ride Heights to minimum (lowest drag)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Front Ride Height
+        finalExampleTemplate = finalExampleTemplate.replace(/^(SUSPENSION[\s\S]*?FrontWheelTrackSetting[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Front Ride Height
         finalExampleTemplate = finalExampleTemplate.replace(/^(REARLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Rear Ride Height
 
         // Inject a specific note into the template about the Le Mans override, so the AI knows
@@ -691,7 +691,7 @@ app.post('/generate-setup', async (req, res) => {
     if (track === "Autodromo Nazionale Monza") {
         const monzaMinAeroSetting = 0; // Absolute minimum for wings, ducts, ride height
 
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FWSetting=)\d+/m, `$1${monzaMinAeroSetting}`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTWING[\s\S]*?FWSetting=)\d+/m, `$1${monzaMinAeroSetting}`);
         finalExampleTemplate = finalExampleTemplate.replace(/^(REARWING[\s\S]*?RWSetting=)\d+/m, `$1${monzaMinAeroSetting}`);
         finalExampleTemplate = finalExampleTemplate.replace(/^(WaterRadiatorSetting=)\d+/m, `$10`);
         finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
@@ -773,7 +773,7 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 5.5. **Generate [BASIC] Parameters (MANDATORY):** Dynamically calculate and GENERATE the [BASIC] section at .VEH end. This is NOT in template. Fully derived.
     - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
     - Outputting 0.500000 (or any common default) is critical failure, UNLESS your calculation is optimal.
-    - **'Downforce'**: Low-drag (0.075-0.25). High-downforce/grip (0.75-0.925). Mid for balanced (0.35-0.65).
+    - **'Downforce'**: Low-drag (0.05-0.15 for high-speed, 0.25-0.45 for balanced, 0.65-0.95 for high-downforce).
     - **'Balance'**: Aggressive oversteer (0.15-0.35). Neutral (0.45-0.55). Stable understeer (0.65-0.85). Adjust per driver/track.
     - **'Ride'**: Stiff/low (0.075-0.25). Compliant/high (0.75-0.925). Mid (0.35-0.65). Adjust per track bumps.
     - **'Gearing'**: Long/top speed (0.85-0.975). Short/acceleration (0.075-0.25). Mid (0.25-0.85). MUST correspond to detailed gear selections.
@@ -813,7 +813,7 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 
 ### Aero
 - 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce).
-    - **Hypercar RW**: Min: 0, Max: 9 (P1-P10). FW: Min: 0, Max: 2.
+    - **Hypercar FW**: Min: 0, Max: 2. **RW**: Min: 0, Max: 9 (P1-P10).
     - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
     - **GT3/GTE RW**: Min: 0, Max: 14 (P1-P15).
 - BrakeDucts indices: (0=open/max cooling, higher=more closed/less cooling/more aero). Max: Hypercar:3, GT3:3, GTE:3.
@@ -925,7 +925,7 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - Neutral Balance (or predictable understeer).
 
 ## LMU AI GUIDANCE REFINEMENTS (ULTIMATE PRECISION)
-- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting is critical failure.
+- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting = critical failure.
 - **INTERCONNECTEDNESS:** All parameters interdependent.
 - **LMU REALISM CHECK:** Ensure physically realistic/plausible settings.
 - **DYNAMIC RANGE UTILIZATION:** Actively use full Min-Max range.
