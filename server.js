@@ -790,126 +790,126 @@ FastReboundSetting=2//16 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
-    // Safely destructure all possible values from the request body
-    const {
-        car, track, request, selectedCarCategory,
-        selectedCarDisplay, selectedTrackDisplay, setupGoal,
-        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
-    } = req.body;
+    // Safely destructure all possible values from the request body
+    const {
+        car, track, request, selectedCarCategory,
+        selectedCarDisplay, selectedTrackDisplay, setupGoal,
+        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
+    } = req.body;
 
-    // Validate essential parameters
-    if (!car || !track || !setupGoal || !selectedCarCategory) {
-        return res.status(400).json({
-            error: "Please provide Car, Track, Setup Goal, and Car Category details."
-        });
-    }
+    // Validate essential parameters
+    if (!car || !track || !setupGoal || !selectedCarCategory) {
+        return res.status(400).json({
+            error: "Please provide Car, Track, Setup Goal, and Car Category details."
+        });
+    }
 
-    // Handle potential category key mismatch
-    let finalCategory = selectedCarCategory;
-    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
-        finalCategory = 'GT3';
-    } else if (selectedCarCategory === 'GT3' && !LMU_VEH_TEMPLATES['GT3']) { // Check if 'GT3' is missing
-        finalCategory = 'GTE'; // Fallback if needed, or handle error
-    }
+    // Handle potential category key mismatch
+    let finalCategory = selectedCarCategory;
+    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
+        finalCategory = 'GT3';
+    } else if (selectedCarCategory === 'GT3' && !LMU_VEH_TEMPLATES['GT3']) { // Check if 'GT3' is missing
+        finalCategory = 'GTE'; // Fallback if needed, or handle error
+    }
 
-    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
-    if (!exampleTemplate) {
-        return res.status(400).json({
-            error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.`
-        });
-    }
+    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
+    if (!exampleTemplate) {
+        return res.status(400).json({
+            error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.`
+        });
+    }
 
-    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
-    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
-    let finalExampleTemplate = exampleTemplate; // Start with the chosen template
+    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
+    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
+    let finalExampleTemplate = exampleTemplate; // Start with the chosen template
 
-    const trackOverrides = (trackName, template) => {
-        let overriddenTemplate = template;
-        // Generic regex to replace a setting's number while preserving its trailing comment
-        const replaceSetting = (settingName, newValue, regexFlags = 'm') => {
-            const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, regexFlags);
-            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
-        };
+    const trackOverrides = (trackName, template) => {
+        let overriddenTemplate = template;
+        // Generic regex to replace a setting's number while preserving its trailing comment
+        const replaceSetting = (settingName, newValue, regexFlags = 'm') => {
+            const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, regexFlags);
+            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
+        };
 
-        const replaceSectionSetting = (section, settingName, newValue, regexFlags = 'm') => {
-            const regex = new RegExp(`^(${section}[\\s\\S]*?${settingName}=)\\d+(.*)`, regexFlags);
-            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
-        };
-
-
-        if (trackName === "Circuit de la Sarthe (Le Mans)" || trackName === "Autodromo Nazionale Monza") {
-            const minAeroSetting = 0;
-            const note = trackName === "Circuit de la Sarthe (Le Mans)" ?
-                'Notes="Le Mans override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."' :
-                'Notes="Monza override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."';
-
-            replaceSectionSetting('\\[FRONTWING\\]', 'FWSetting', minAeroSetting);
-            replaceSectionSetting('\\[REARWING\\]', 'RWSetting', minAeroSetting);
-
-            let maxFinalDrive;
-            if (finalCategory === 'Hypercar') maxFinalDrive = 7;
-            else if (finalCategory === 'LMP2') maxFinalDrive = 5;
-            else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10;
-
-            replaceSectionSetting('\\[DRIVELINE\\]', 'FinalDriveSetting', maxFinalDrive);
-            overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
-            replaceSetting('RatioSetSetting', 1);
-
-            replaceSetting('WaterRadiatorSetting', 0);
-            replaceSetting('OilRadiatorSetting', 0);
-            replaceSetting('BrakeDuctSetting', 0);
-            replaceSetting('BrakeDuctRearSetting', 0);
-
-            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
-            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
-
-        } else if (trackName === "Sebring International Raceway") {
-            const note = 'Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to absorb bumps."';
-
-            // Set dampers and ARBs to very soft values (e.g., 0 or 1)
-            replaceSetting('Front3rdSlowBumpSetting', 0);
-            replaceSetting('Front3rdFastBumpSetting', 0);
-            replaceSetting('Front3rdSlowReboundSetting', 0);
-            replaceSetting('Front3rdFastReboundSetting', 0);
-            replaceSetting('Rear3rdSlowBumpSetting', 0);
-            replaceSetting('Rear3rdFastBumpSetting', 0);
-            replaceSetting('Rear3rdSlowReboundSetting', 0);
-            replaceSetting('Rear3rdFastReboundSetting', 0);
-
-            replaceSetting('FrontAntiSwaySetting', 1);
-            replaceSetting('RearAntiSwaySetting', 1);
-
-            // Set ride heights high
-            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$120$2`);
-            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
-        }
-        return overriddenTemplate;
-    };
-
-    finalExampleTemplate = trackOverrides(track, finalExampleTemplate);
-
-    // UPGRADE: Dynamically insert the user's selected car name into the template
-    finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
+        const replaceSectionSetting = (section, settingName, newValue, regexFlags = 'm') => {
+            const regex = new RegExp(`^(${section}[\\s\\S]*?${settingName}=)\\d+(.*)`, regexFlags);
+            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
+        };
 
 
-    const sessionDuration = req.body.sessionDuration || 'N/A';
-    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
-        `Estimate fuel for a ${sessionDuration} minute race.` : '';
-    const weatherGuidance = `Current weather is ${selectedWeather}.`;
-    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+        if (trackName === "Circuit de la Sarthe (Le Mans)" || trackName === "Autodromo Nazionale Monza") {
+            const minAeroSetting = 0;
+            const note = trackName === "Circuit de la Sarthe (Le Mans)" ?
+                'Notes="Le Mans override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."' :
+                'Notes="Monza override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."';
+
+            replaceSectionSetting('\\[FRONTWING\\]', 'FWSetting', minAeroSetting);
+            replaceSectionSetting('\\[REARWING\\]', 'RWSetting', minAeroSetting);
+
+            let maxFinalDrive;
+            if (finalCategory === 'Hypercar') maxFinalDrive = 7;
+            else if (finalCategory === 'LMP2') maxFinalDrive = 5;
+            else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10;
+
+            replaceSectionSetting('\\[DRIVELINE\\]', 'FinalDriveSetting', maxFinalDrive);
+            overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
+            replaceSetting('RatioSetSetting', 1);
+
+            replaceSetting('WaterRadiatorSetting', 0);
+            replaceSetting('OilRadiatorSetting', 0);
+            replaceSetting('BrakeDuctSetting', 0);
+            replaceSetting('BrakeDuctRearSetting', 0);
+
+            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
+            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
+
+        } else if (trackName === "Sebring International Raceway") {
+            const note = 'Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to absorb bumps."';
+
+            // Set dampers and ARBs to very soft values (e.g., 0 or 1)
+            replaceSetting('Front3rdSlowBumpSetting', 0);
+            replaceSetting('Front3rdFastBumpSetting', 0);
+            replaceSetting('Front3rdSlowReboundSetting', 0);
+            replaceSetting('Front3rdFastReboundSetting', 0);
+            replaceSetting('Rear3rdSlowBumpSetting', 0);
+            replaceSetting('Rear3rdFastBumpSetting', 0);
+            replaceSetting('Rear3rdSlowReboundSetting', 0);
+            replaceSetting('Rear3rdFastReboundSetting', 0);
+
+            replaceSetting('FrontAntiSwaySetting', 1);
+            replaceSetting('RearAntiSwaySetting', 1);
+
+            // Set ride heights high
+            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$120$2`);
+            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
+        }
+        return overriddenTemplate;
+    };
+
+    finalExampleTemplate = trackOverrides(track, finalExampleTemplate);
+
+    // UPGRADE: Dynamically insert the user's selected car name into the template
+    finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
 
 
-    // =====================================================================================
-    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN MASTERIZED ---
-    // =====================================================================================
-    const prompt = `
+    const sessionDuration = req.body.sessionDuration || 'N/A';
+    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
+        `Estimate fuel for a ${sessionDuration} minute race.` : '';
+    const weatherGuidance = `Current weather is ${selectedWeather}.`;
+    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+
+
+    // =====================================================================================
+    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN MASTERIZED ---
+    // =====================================================================================
+    const prompt = `
 You are a world-class LMU race engineer. Your task is to take the user's request and the provided .VEH template, and output a complete, physically realistic, and numerically valid .VEH setup file.
 
 **ULTRA-CRITICAL FORMATTING INSTRUCTIONS - FAILURE TO FOLLOW THESE IS A TASK FAILURE:**
-1.  You will be given a complete .VEH file template below.
-2.  You MUST output the ENTIRE file, modified with your new values.
-3.  You MUST PRESERVE THE ORIGINAL COMMENTS (the text starting with //) on every line that has one.
-4.  Your ONLY job is to change the **NUMBER** before the comment. DO NOT delete or alter the comments.
+1.  You will be given a complete .VEH file template below.
+2.  You MUST output the ENTIRE file, modified with your new values.
+3.  You MUST PRESERVE THE ORIGINAL COMMENTS (the text starting with //) on every line that has one.
+4.  Your ONLY job is to change the **NUMBER** before the comment. DO NOT delete or alter the comments.
 
 ---
 **EXAMPLE OF PERFECT EXECUTION:**
@@ -933,20 +933,20 @@ You are a world-class LMU race engineer. Your core philosophy is to prioritize a
 Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specific override (e.g., Le Mans aero) was applied, explicitly state it and explain how it overrides general setup philosophies. For your most important adjustments, explain the engineering reason for the specific parameter changes (e.g., 'Increased RearCamberSetting to reduce oversteer on exit', 'Softened front fast dampers for better bump absorption at Sebring').
 
 ## THOUGHT PROCESS & HIERARCHY
-1.  **Session Type (Qualifying vs. Race):** Dictates overall setup philosophy.
-2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX' and the new 'DRIVER REQUEST INTERPRETATION GUIDE'. Apply Primary/Secondary solutions. All other decisions must align with solving the driver's issue.
-3.  **Track DNA & Weather:** Analyze the track's unique demands ('TRACK DNA DATABASE') and weather conditions ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions and mention any necessary compromises in your notes.
-4.  **Car Architecture:** Apply specific adjustments based on the car's inherent traits ('CAR ARCHITECTURE PHILOSOPHY'). Consult the new **DIFFERENTIAL MASTER GUIDE** and **HYBRID POWER UNIT STRATEGY** guides for car/track-specific logic.
-5.  **Overall Setup Goal:** Use the driver's 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') from the 'LMU SETUP PHILOSOPHY DIAL' to fine-tune all settings.
+1.  **Session Type (Qualifying vs. Race):** Dictates overall setup philosophy.
+2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX' and the new 'DRIVER REQUEST INTERPRETATION GUIDE'. Apply Primary/Secondary solutions. All other decisions must align with solving the driver's issue.
+3.  **Track DNA & Weather:** Analyze the track's unique demands ('TRACK DNA DATABASE') and weather conditions ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions and mention any necessary compromises in your notes.
+4.  **Car Architecture:** Apply specific adjustments based on the car's inherent traits ('CAR ARCHITECTURE PHILOSOPHY'). Consult the new **DIFFERENTIAL MASTER GUIDE** and **HYBRID POWER UNIT STRATEGY** guides for car/track-specific logic.
+5.  **Overall Setup Goal:** Use the driver's 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') from the 'LMU SETUP PHILOSOPHY DIAL' to fine-tune all settings.
 5.5. **Generate [BASIC] Parameters (MANDATORY):** You MUST dynamically calculate and GENERATE the [BASIC] section at the end of the .VEH file. This section is NOT in the template you are given; it must be fully derived from your setup choices.
-    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
-    - Outputting a generic default like 0.500000 is a critical failure, UNLESS your calculation genuinely results in that optimal value.
-    - **'Downforce'**: Represents overall aero grip from 0.0 (min) to 1.0 (max). Calculate this as the average of the normalized wing settings: \`( (FWSetting / FW_Max) + (RWSetting / RW_Max) ) / 2\`. Low-drag setups (Le Mans) should be low (0.05-0.15). High-downforce tracks (Portimão) should be high (0.65-0.95).
-    - **'Balance'**: Represents aero/mechanical balance from 0.0 (oversteer) to 1.0 (understeer). Start with aero balance: \`AeroBalance = (FWSetting / FW_Max) / ((FWSetting / FW_Max) + (RWSetting / RW_Max))\`. Adjust this baseline for mechanical balance. Stiffer front ARB vs. rear pushes value UP (more understeer). Stiffer rear ARB pushes it DOWN (more oversteer). Aggressive setups are low (0.15-0.35). Stable setups are high (0.65-0.85).
-    - **'Ride'**: Represents suspension compliance from 0.0 (stiff/low) to 1.0 (soft/high). Calculate this by averaging the normalized values of: Ride Height (value/max), Spring Stiffness (value/max), and Fast Bump Damper settings (value/max). A stiff car for a smooth track should be low (0.1-0.3). A soft car for a bumpy track (Sebring) must be high (0.8-0.95).
-    - **'Gearing'**: Represents acceleration (0.0) vs. top speed (1.0). Calculate as a weighted average: \`0.7 * (FinalDriveSetting / FinalDrive_Max) + 0.3 * (RatioSetSetting)\`. Value near 1.0 for top speed tracks. Value near 0.1 for acceleration tracks.
-    - **'Custom'**: Must always be 1.
-6.  **Engineer's Debrief:** Write your concise summary in the 'Notes' section as per the 'CRITICAL INSTRUCTION'.
+    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
+    - Outputting a generic default like 0.500000 is a critical failure, UNLESS your calculation genuinely results in that optimal value.
+    - **'Downforce'**: Represents overall aero grip from 0.0 (min) to 1.0 (max). Calculate this as the average of the normalized wing settings: \`( (FWSetting / FW_Max) + (RWSetting / RW_Max) ) / 2\`. Low-drag setups (Le Mans) should be low (0.05-0.15). High-downforce tracks (Portimão) should be high (0.65-0.95).
+    - **'Balance'**: Represents aero/mechanical balance from 0.0 (oversteer) to 1.0 (understeer). Start with aero balance: \`AeroBalance = (FWSetting / FW_Max) / ((FWSetting / FW_Max) + (RWSetting / RW_Max))\`. Adjust this baseline for mechanical balance. Stiffer front ARB vs. rear pushes value UP (more understeer). Stiffer rear ARB pushes it DOWN (more oversteer). Aggressive setups are low (0.15-0.35). Stable setups are high (0.65-0.85).
+    - **'Ride'**: Represents suspension compliance from 0.0 (stiff/low) to 1.0 (soft/high). Calculate this by averaging the normalized values of: Ride Height (value/max), Spring Stiffness (value/max), and Fast Bump Damper settings (value/max). A stiff car for a smooth track should be low (0.1-0.3). A soft car for a bumpy track (Sebring) must be high (0.8-0.95).
+    - **'Gearing'**: Represents acceleration (0.0) vs. top speed (1.0). Calculate as a weighted average: \`0.7 * (FinalDriveSetting / FinalDrive_Max) + 0.3 * (RatioSetSetting)\`. Value near 1.0 for top speed tracks. Value near 0.1 for acceleration tracks.
+    - **'Custom'**: Must always be 1.
+6.  **Engineer's Debrief:** Write your concise summary in the 'Notes' section as per the 'CRITICAL INSTRUCTION'.
 
 // =====================================================================================
 // --- START OF MASTERIZED KNOWLEDGE BASE (UPGRADED June 2024) ---
@@ -967,70 +967,70 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 - **Toe:** Front Toe-out (negative) improves turn-in but can cause instability. Front Toe-in (positive) improves stability but hurts turn-in. Rear Toe-in is CRITICAL for stability under braking and acceleration; almost all setups use it.
 - **Anti-Roll Bars (ARBs):** Connect left/right wheels to control body roll. Stiffening the front ARB increases understeer. Stiffening the rear ARB increases oversteer. Primary tool for mid-corner balance.
 - **Dampers:** Control the *speed* of suspension movement.
-  - **Bump (Compression):** Slow-Speed for body movements (roll, pitch). Fast-Speed for bumps/kerbs.
-  - **Rebound (Extension):** Slow-Speed for how the car "takes a set". Fast-Speed for keeping the wheel on the road after a bump.
-  - **Relationship:** Dampers must harmonize with springs. Stiff springs need strong rebound damping.
+  - **Bump (Compression):** Slow-Speed for body movements (roll, pitch). Fast-Speed for bumps/kerbs.
+  - **Rebound (Extension):** Slow-Speed for how the car "takes a set". Fast-Speed for keeping the wheel on the road after a bump.
+  - **Relationship:** Dampers must harmonize with springs. Stiff springs need strong rebound damping.
 
 // --- MASTERIZED DIFFERENTIAL GUIDE --- //
 ## DIFFERENTIAL MASTER GUIDE: TRACK & CAR SPECIFIC TUNING
 - The differential is a primary tool for managing stability (entry) and traction (exit). Your settings MUST be based on a deep understanding of the car, track, and driver request.
 - **Power (Acceleration) Lock - \`DiffPowerSetting\`:** Controls locking on-throttle.
-  - **More Lock (Higher Value):** Forces rear wheels to rotate together. Improves straight-line traction, prevents inside wheelspin, makes exits stable.
-  - **Less Lock (Lower Value):** Allows wheels to rotate at different speeds. Helps the car rotate (turn) with the throttle but can cause inside wheelspin and make the car "loose" on power.
+  - **More Lock (Higher Value):** Forces rear wheels to rotate together. Improves straight-line traction, prevents inside wheelspin, makes exits stable.
+  - **Less Lock (Lower Value):** Allows wheels to rotate at different speeds. Helps the car rotate (turn) with the throttle but can cause inside wheelspin and make the car "loose" on power.
 - **Coast (Deceleration) Lock - \`DiffCoastSetting\`:** Controls locking off-throttle (braking/turn-in).
-  - **More Lock (Higher Value):** Locks the rear axle on entry, providing significant stability. Prevents "lift-off oversteer".
-  - **Less Lock (Lower Value):** Unlocks the rear axle on entry, helping the car to point into the corner and reducing entry understeer. Can make the car feel "nervous" if too low.
+  - **More Lock (Higher Value):** Locks the rear axle on entry, providing significant stability. Prevents "lift-off oversteer".
+  - **Less Lock (Lower Value):** Unlocks the rear axle on entry, helping the car to point into the corner and reducing entry understeer. Can make the car feel "nervous" if too low.
 - **Preload (\`DiffPreloadSetting\`):** A static amount of lock always present. Smooths the transition between power/coast.
-  - **Higher Preload:** Increases overall stability, predictability, and smoothness. Essential for bumpy tracks.
-  - **Lower Preload:** Makes the differential feel more "active" and responsive. Can improve initial turn-in but may feel "snappy".
+  - **Higher Preload:** Increases overall stability, predictability, and smoothness. Essential for bumpy tracks.
+  - **Lower Preload:** Makes the differential feel more "active" and responsive. Can improve initial turn-in but may feel "snappy".
 
 ### Track Archetype Differential Philosophy:
 - **Traction-Limited & Bumpy (Sebring, Portimão):**
-  - **\`DiffPowerSetting\` -> HIGH:** Essential to put power down on bumpy, low-speed exits. Prevents inside wheelspin.
-  - **\`DiffPreloadSetting\` -> HIGH:** CRITICAL to prevent the diff from erratically locking/unlocking as tires lose contact over bumps. This is a key to driver confidence.
-  - **\`DiffCoastSetting\` -> MEDIUM/LOW:** The car needs to rotate in the slow corners. A lower coast setting will help point the car on entry, but don't go too low or it will be nervous over bumps.
+  - **\`DiffPowerSetting\` -> HIGH:** Essential to put power down on bumpy, low-speed exits. Prevents inside wheelspin.
+  - **\`DiffPreloadSetting\` -> HIGH:** CRITICAL to prevent the diff from erratically locking/unlocking as tires lose contact over bumps. This is a key to driver confidence.
+  - **\`DiffCoastSetting\` -> MEDIUM/LOW:** The car needs to rotate in the slow corners. A lower coast setting will help point the car on entry, but don't go too low or it will be nervous over bumps.
 - **High-Speed & Flowing (Le Mans, Monza, Spa):**
-  - **\`DiffCoastSetting\` -> HIGH:** This is the #1 priority for high-speed stability. It keeps the rear planted and predictable during fast, loaded entries like Porsche Curves or Pouhon.
-  - **\`DiffPowerSetting\` -> LOW/MEDIUM:** On these tracks, corner exit is more about smooth momentum than raw traction. A lower power lock prevents exit understeer and allows the car to maintain speed without scrubbing.
-  - **\`DiffPreloadSetting\` -> MEDIUM:** Enough to keep it smooth, but not so high that it masks the car's reactions.
+  - **\`DiffCoastSetting\` -> HIGH:** This is the #1 priority for high-speed stability. It keeps the rear planted and predictable during fast, loaded entries like Porsche Curves or Pouhon.
+  - **\`DiffPowerSetting\` -> LOW/MEDIUM:** On these tracks, corner exit is more about smooth momentum than raw traction. A lower power lock prevents exit understeer and allows the car to maintain speed without scrubbing.
+  - **\`DiffPreloadSetting\` -> MEDIUM:** Enough to keep it smooth, but not so high that it masks the car's reactions.
 - **Technical & Mixed (Fuji, Bahrain):**
-  - This is a compromise. Prioritize exit traction (\`DiffPowerSetting\` -> HIGH) for the slow corners leading onto long straights, but balance it with enough entry rotation (\`DiffCoastSetting\` -> MEDIUM) for the technical sections. Preload should be tuned to driver feel.
+  - This is a compromise. Prioritize exit traction (\`DiffPowerSetting\` -> HIGH) for the slow corners leading onto long straights, but balance it with enough entry rotation (\`DiffCoastSetting\` -> MEDIUM) for the technical sections. Preload should be tuned to driver feel.
 
 ### Car Architecture Differential Philosophy:
 - **Rear-Engine (Porsche):**
-  - **Problem:** Natural traction, but prone to entry/mid-corner understeer.
-  - **Solution:** Use **LOW \`DiffCoastSetting\`** to help the car turn in. Use a **LOW \`DiffPowerSetting\`** because its natural traction doesn't require high locking, and this further helps the car rotate on-throttle.
+  - **Problem:** Natural traction, but prone to entry/mid-corner understeer.
+  - **Solution:** Use **LOW \`DiffCoastSetting\`** to help the car turn in. Use a **LOW \`DiffPowerSetting\`** because its natural traction doesn't require high locking, and this further helps the car rotate on-throttle.
 - **Front-Engine (Corvette, Aston Martin):**
-  - **Problem:** Traction-limited on exit, can have exit understeer.
-  - **Solution:** MUST use a **HIGH \`DiffPowerSetting\`** to manage wheelspin. Can tolerate a lower \`DiffCoastSetting\` as the front mass helps turn-in, but prioritize exit traction.
+  - **Problem:** Traction-limited on exit, can have exit understeer.
+  - **Solution:** MUST use a **HIGH \`DiffPowerSetting\`** to manage wheelspin. Can tolerate a lower \`DiffCoastSetting\` as the front mass helps turn-in, but prioritize exit traction.
 - **Mid-Engine (Prototypes, Ferrari, etc.):**
-  - **Problem:** Most balanced, so the diff is a primary tuning tool.
-  - **Solution:** These cars are highly sensitive to diff settings. Use the track archetypes above as the baseline and tune precisely to driver feedback. They offer the most flexibility.
+  - **Problem:** Most balanced, so the diff is a primary tuning tool.
+  - **Solution:** These cars are highly sensitive to diff settings. Use the track archetypes above as the baseline and tune precisely to driver feedback. They offer the most flexibility.
 
 // --- MASTERIZED HYBRID SYSTEM GUIDE --- //
 ## HYBRID POWER UNIT (HPU) STRATEGY (Hypercars ONLY)
 - HPU management is a trade-off between outright pace and energy efficiency. Your choices for \`ElectricMotorMapSetting\` (deployment) and \`RegenerationMapSetting\` (harvesting) are critical.
 - **\`RegenerationMapSetting\` (Regen/Harvesting):**
-  - **Function:** Controls how aggressively the car harvests energy under braking. Higher values create a stronger "engine braking" effect.
-  - **High Values (8-10):** Maximizes energy recovery. Ideal for race stints and on "stop-and-go" tracks (Bahrain, Fuji) with many heavy braking zones. **Trade-off:** Can destabilize the car's rear under braking if too high.
-  - **Low Values (4-7):** Minimizes braking effect, providing a more stable, traditional braking feel. Ideal for qualifying hot laps where stability is paramount, or for flowing tracks where a sudden braking effect could unsettle the car in a fast corner.
+  - **Function:** Controls how aggressively the car harvests energy under braking. Higher values create a stronger "engine braking" effect.
+  - **High Values (8-10):** Maximizes energy recovery. Ideal for race stints and on "stop-and-go" tracks (Bahrain, Fuji) with many heavy braking zones. **Trade-off:** Can destabilize the car's rear under braking if too high.
+  - **Low Values (4-7):** Minimizes braking effect, providing a more stable, traditional braking feel. Ideal for qualifying hot laps where stability is paramount, or for flowing tracks where a sudden braking effect could unsettle the car in a fast corner.
 - **\`ElectricMotorMapSetting\` (Deployment):**
-  - **Function:** Controls how the stored energy is deployed.
-  - **\`4\` (Qualifying Mode):** Most aggressive deployment. Uses energy very quickly. Use ONLY for qualifying or a final-lap push.
-  - **\`1\` (High/Attack Mode):** Aggressive deployment for race situations (overtakes, defending). Not sustainable for a full stint.
-  - **\`2\` (Balanced Mode):** The standard, default race mode. Provides a good balance of performance and energy conservation. This should be your default for race setups.
-  - **\`3\` (Low/Conservative Mode):** Saves energy. Useful for laps behind a safety car, or on tracks like Le Mans where you need to ensure you have enough energy for the entire long straight.
+  - **Function:** Controls how the stored energy is deployed.
+  - **\`4\` (Qualifying Mode):** Most aggressive deployment. Uses energy very quickly. Use ONLY for qualifying or a final-lap push.
+  - **\`1\` (High/Attack Mode):** Aggressive deployment for race situations (overtakes, defending). Not sustainable for a full stint.
+  - **\`2\` (Balanced Mode):** The standard, default race mode. Provides a good balance of performance and energy conservation. This should be your default for race setups.
+  - **\`3\` (Low/Conservative Mode):** Saves energy. Useful for laps behind a safety car, or on tracks like Le Mans where you need to ensure you have enough energy for the entire long straight.
 
 ### HPU Strategy by Session & Track:
 - **Qualifying:**
-  - **\`ElectricMotorMapSetting\` -> 4:** Maximum power deployment.
-  - **\`RegenerationMapSetting\` -> 6-8:** Prioritize stability over maximum harvesting for the perfect lap. A nervous rear under braking is slow.
+  - **\`ElectricMotorMapSetting\` -> 4:** Maximum power deployment.
+  - **\`RegenerationMapSetting\` -> 6-8:** Prioritize stability over maximum harvesting for the perfect lap. A nervous rear under braking is slow.
 - **Race:**
-  - **\`ElectricMotorMapSetting\` -> 2 (Balanced):** The default choice for a race stint.
-  - **\`RegenerationMapSetting\` -> 10:** Default choice to maximize energy for the stint. Instruct the AI to note that the driver should lower this if braking stability is a problem.
+  - **\`ElectricMotorMapSetting\` -> 2 (Balanced):** The default choice for a race stint.
+  - **\`RegenerationMapSetting\` -> 10:** Default choice to maximize energy for the stint. Instruct the AI to note that the driver should lower this if braking stability is a problem.
 - **Track-Specific Race Strategy:**
-  - **Le Mans/Monza:** Long straights drain the battery. Consider a more conservative deployment (\`ElectricMotorMapSetting=3\`) to ensure boost is available for the full length of the main straights. Regen is less effective here due to fewer heavy braking zones.
-  - **Bahrain/Fuji/Sebring:** Many heavy braking zones. These are "harvest-rich" environments. Use aggressive regeneration (\`RegenerationMapSetting=10\`) and plan to use the deployment (\`ElectricMotorMapSetting=1\` or \`2\`) to rocket out of the slow corners.
+  - **Le Mans/Monza:** Long straights drain the battery. Consider a more conservative deployment (\`ElectricMotorMapSetting=3\`) to ensure boost is available for the full length of the main straights. Regen is less effective here due to fewer heavy braking zones.
+  - **Bahrain/Fuji/Sebring:** Many heavy braking zones. These are "harvest-rich" environments. Use aggressive regeneration (\`RegenerationMapSetting=10\`) and plan to use the deployment (\`ElectricMotorMapSetting=1\` or \`2\`) to rocket out of the slow corners.
 
 // =====================================================================================
 // --- END OF MASTERIZED KNOWLEDGE BASE ---
@@ -1055,8 +1055,8 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 
 ### LMU Gearing Index Behavior
 - Individual gears ('Gear1Setting' to 'Gear7Setting'): **INVERSE relationship**.
-    - LOWER index (0) = SHORTEST ratio.
-    - HIGHER index (1) = LONGEST ratio.
+    - LOWER index (0) = SHORTEST ratio.
+    - HIGHER index (1) = LONGEST ratio.
 - **Range Limit**: Individual gears LIMITED TO ONLY INDICES 0 AND 1.
 - 'FinalDriveSetting': HIGHER index = longer overall gearing.
 - Apply LMU-specific gearing logic.
@@ -1074,17 +1074,17 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 ### Tires
 - 'PressureSetting': (Min: 0/~130 kPa, Max: 10/~170 kPa). **Goal: Optimal operating temperature/pressure window.**
 - 'CompoundSetting': **LMU specific compound availability:**
-    - Hypercar/GTE: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
-    - LMP2: ONLY 0=Wet, 1=Medium, 2=Hard. (Soft NOT available).
-    - GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
-    - MUST select available compound.
+    - Hypercar/GTE: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
+    - LMP2: ONLY 0=Wet, 1=Medium, 2=Hard. (Soft NOT available).
+    - GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
+    - MUST select available compound.
 
 ### Aero (Index to UI mapping is CRITICAL)
 - 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce). Index 0 = P1, Index 1 = P2, etc.
-    - **Hypercar FW**: Min: 0, Max: 2. **RW**: Min: 0, Max: 9 (P1-P10).
-    - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
-    - **GTE RW**: Min: 0, Max: 12 (P1-P13).
-    - **GT3 RW**: Min: 0, Max: 14 (P1-P15).
+    - **Hypercar FW**: Min: 0, Max: 2. **RW**: Min: 0, Max: 9 (P1-P10).
+    - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
+    - **GTE RW**: Min: 0, Max: 12 (P1-P13).
+    - **GT3 RW**: Min: 0, Max: 14 (P1-P15).
 - BrakeDucts indices: (0=open/max cooling, higher=more closed/less cooling/more aero). Max: Hypercar:3, GT3:3, GTE:3.
 - **Dynamic Radiator/Brake Duct**: Adjust 'BrakeDuctSetting'/'WaterRadiatorSetting'/'OilRadiatorSetting' based on 'Track Temp'. High temp = more open (LOWER index). Low temp = more closed (HIGHER index).
 
@@ -1111,17 +1111,17 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 - 'TractionControlMapSetting' (TC): (Min: 0, Max: 10).
 
 ## GEARING STRATEGY (CRITICAL)
-1.  **High-Speed Tracks (e.g., Le Mans, Monza):**
-    - 'FinalDriveSetting': MUST be HIGHEST available index.
-    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
-    - 'RatioSetSetting': MUST be **1 (Long)**.
-    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
-    - Self-Verification: Confirm 6th/7th gear top speed >300 km/h (>185 mph) for Hypercars/LMP2s.
-2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):**
-    - 'FinalDriveSetting': MUST be LOWER available index.
-    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
-    - 'RatioSetSetting': MUST be **0 (Short)**.
-    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+1.  **High-Speed Tracks (e.g., Le Mans, Monza):**
+    - 'FinalDriveSetting': MUST be HIGHEST available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
+    - 'RatioSetSetting': MUST be **1 (Long)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+    - Self-Verification: Confirm 6th/7th gear top speed >300 km/h (>185 mph) for Hypercars/LMP2s.
+2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):**
+    - 'FinalDriveSetting': MUST be LOWER available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
+    - 'RatioSetSetting': MUST be **0 (Short)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
 ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## TRACK DNA DATABASE (EXPANDED!)
@@ -1162,15 +1162,15 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - IF Track Temp low (<15C): Higher tire pressures/softer compounds (build temp). Close brake ducts slightly (higher index).
 
 ## SETUP SANITY CHECKS
-1.  Low RideHeight REQUIRES Stiff Springs.
-2.  High Aero ('RWSetting') REQUIRES Stiff Springs.
-3.  Bumpy Tracks REQUIRE Softer Fast Damping.
-4.  **Gearing Sanity Check:** High-Speed Tracks: 'FinalDriveSetting' HIGH, 'GearXSetting' 1 (Longest). Technical Tracks: 'FinalDriveSetting' LOW, 'GearXSetting' 0 (Shortest).
-5.  Physics Check: Realistic toe/camber.
-6.  Physics: Dampers complement springs/track.
-7.  Balance Consistency: Aero, mechanical, diff in harmony.
-8.  'FinalDrive' & Gears Cohesion: Logical progression, appropriate top speeds.
-9.  Fuel Consistency: Fuel load aligns with session/track.
+1.  Low RideHeight REQUIRES Stiff Springs.
+2.  High Aero ('RWSetting') REQUIRES Stiff Springs.
+3.  Bumpy Tracks REQUIRE Softer Fast Damping.
+4.  **Gearing Sanity Check:** High-Speed Tracks: 'FinalDriveSetting' HIGH, 'GearXSetting' 1 (Longest). Technical Tracks: 'FinalDriveSetting' LOW, 'GearXSetting' 0 (Shortest).
+5.  Physics Check: Realistic toe/camber.
+6.  Physics: Dampers complement springs/track.
+7.  Balance Consistency: Aero, mechanical, diff in harmony.
+8.  'FinalDrive' & Gears Cohesion: Logical progression, appropriate top speeds.
+9.  Fuel Consistency: Fuel load aligns with session/track.
 10. Tire Compound Logic: 'CompoundSetting' aligns with weather/session.
 
 **FINAL COMMAND: The user's template is provided below. Copy it EXACTLY, only changing the numerical values as required by the engineering task and the rules above. You must also add the [BASIC] section at the end, fully calculated according to the new master instructions. Do not omit any lines or any comments.**${finalExampleTemplate}
