@@ -1,4 +1,4 @@
-// --- server.js (Final Version with Syntax Fix and Improved AI Output Directives) ---
+// --- server.js (Final Version with Masterized AI Knowledge Base) ---
 
 // 1. Load environment variables from .env file
 require('dotenv').config();
@@ -237,10 +237,10 @@ BrakePadSetting=0//1 (Fixed)
 CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
 [BASIC]
-Downforce=0.050000
-Balance=0.500000
-Ride=0.400000
-Gearing=0.975000
+Downforce=0.050000// (MUST BE OVERWRITTEN)
+Balance=0.500000// (MUST BE OVERWRITTEN)
+Ride=0.400000// (MUST BE OVERWRITTEN)
+Gearing=0.400000// (MUST BE OVERWRITTEN)
 Custom=1`,
 
     'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
@@ -422,10 +422,10 @@ FastReboundSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
 [BASIC]
-Downforce=0.400000
-Balance=0.400000
-Ride=0.400000
-Gearing=0.400000
+Downforce=0.400000// (MUST BE OVERWRITTEN)
+Balance=0.400000// (MUST BE OVERWRITTEN)
+Ride=0.400000// (MUST BE OVERWRITTEN)
+Gearing=0.400000// (MUST BE OVERWRITTEN)
 Custom=1`,
 
     'GTE': `VehicleClassSetting="[[CAR_NAME]]"
@@ -625,10 +625,10 @@ FastReboundSetting=7//7
 //EquippedTireIDSetting=0//
 
 [BASIC]
-Downforce=0.500000
-Balance=0.500000
-Ride=0.500000
-Gearing=0.500000
+Downforce=0.500000// (MUST BE OVERWRITTEN)
+Balance=0.500000// (MUST BE OVERWRITTEN)
+Ride=0.500000// (MUST BE OVERWRITTEN)
+Gearing=0.500000// (MUST BE OVERWRITTEN)
 Custom=1`,
 
     'GT3': `VehicleClassSetting="[[CAR_NAME]]"
@@ -806,13 +806,13 @@ SlowReboundSetting=11//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=2//16 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//3.20 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+//CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 
 [BASIC]
-Downforce=0.400000
-Balance=0.400000
-Ride=0.400000
-Gearing=0.400000
+Downforce=0.400000// (MUST BE OVERWRITTEN)
+Balance=0.400000// (MUST BE OVERWRITTEN)
+Ride=0.400000// (MUST BE OVERWRITTEN)
+Gearing=0.400000// (MUST BE OVERWRITTEN)
 Custom=1`
 };
 
@@ -928,7 +928,7 @@ app.post('/generate-setup', async (req, res) => {
 
 
     // =====================================================================================
-    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
+    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN MASTERIZED ---
     // =====================================================================================
     const prompt = `
 You are a world-class LMU race engineer. Your task is to take the user's request and the provided .VEH template, and output a complete, physically realistic, and numerically valid .VEH setup file.
@@ -952,7 +952,7 @@ You will do this for the entire file. Any other format is a failure.
 ---
 
 ## PRIME DIRECTIVE
-Generate a complete, physically realistic, and numerically valid .VEH setup. Replace placeholders with calculated, logical numbers. '0' for adjustable settings is a failure.
+Generate a complete, physically realistic, and numerically valid .VEH setup. Replace placeholders with calculated, logical numbers. '0' for adjustable settings is a failure unless it's the physically correct choice (e.g., minimum wing at Monza).
 
 ## PERSONA & PHILOSOPHY
 You are a world-class LMU race engineer. Your core philosophy is to prioritize a stable, predictable platform that inspires driver confidence, not one that is simply fast on paper. You understand that every setup change is a trade-off. Your goal is to generate predictable, realistic setups, perfectly suited to the driver's request and feedback. You MUST explain your key decisions in the '[GENERAL] Notes' section.
@@ -969,10 +969,10 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 5.5. **Generate [BASIC] Parameters (MANDATORY):** You MUST dynamically calculate and GENERATE the [BASIC] section at the end of the .VEH file. This section is NOT in the template you are given; it must be fully derived from your setup choices.
     - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
     - Outputting a generic default like 0.500000 is a critical failure, UNLESS your calculation genuinely results in that optimal value.
-    - **'Downforce'**: Represents overall aero grip. Low-drag setups (Le Mans, Monza) should be low (0.05-0.15). High-downforce tracks (Portimão) should be high (0.65-0.95). Balanced tracks get the middle range (0.25-0.45).
-    - **'Balance'**: Represents understeer/oversteer. Aggressive oversteer setups are low (0.15-0.35). Neutral is mid-range (0.45-0.55). Stable understeer setups are high (0.65-0.85). Adjust according to driver request and track needs.
-    - **'Ride'**: Represents suspension compliance. Stiff and low for smooth tracks (0.075-0.25). Compliant and high for bumpy tracks like Sebring (0.75-0.925). Mid-range for others (0.35-0.65).
-    - **'Gearing'**: Represents the trade-off between acceleration and top speed. Long gearing for top speed tracks is high (0.85-0.975). Short gearing for acceleration tracks is low (0.075-0.25). Mid-range for balanced tracks (0.25-0.85). This MUST correspond to your detailed gear ratio selections.
+    - **'Downforce'**: Represents overall aero grip as a value from 0.0 (min) to 1.0 (max). Calculate this based on the `RWSetting` and `FWSetting` as a proportion of their max values. Low-drag setups (Le Mans, Monza) should be low (0.05-0.15). High-downforce tracks (Portimão) should be high (0.65-0.95). Balanced tracks get the middle range (0.25-0.45).
+    - **'Balance'**: Represents aero balance from 0.0 (oversteer) to 1.0 (understeer). Calculate this from the ratio of front to rear wing settings. `Balance = (FWSetting / FW_Max) / ((FWSetting / FW_Max) + (RWSetting / RW_Max))`. Adjust this baseline for mechanical balance (springs, ARBs). Aggressive setups are low (0.15-0.35). Neutral is mid-range (0.45-0.55). Stable setups are high (0.65-0.85).
+    - **'Ride'**: Represents suspension compliance from 0.0 (stiff) to 1.0 (soft). Stiff and low for smooth tracks (0.075-0.25). Compliant and high for bumpy tracks like Sebring (0.75-0.925). Calculate based on a combination of spring, damper, and ride height settings.
+    - **'Gearing'**: Represents the trade-off between acceleration (0.0) and top speed (1.0). Long gearing for top speed tracks is high (0.85-0.975). Short gearing for acceleration tracks is low (0.075-0.25). This MUST correspond to your detailed `FinalDriveSetting` and individual gear selections.
     - **'Custom'**: Must always be 1.
 6.  **Engineer's Debrief:** Write your concise summary in the 'Notes' section as per the 'CRITICAL INSTRUCTION'.
 
@@ -1011,7 +1011,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 
 ## DIFFERENTIAL DEEP DIVE (ADVANCED)
 - The differential allows the outside wheel to rotate faster than the inside wheel in a corner. Tuning it controls how much it "locks" the two wheels together. This is a primary tool for managing stability and rotation. Your settings here MUST be based on the car and track.
-- **Power (Acceleration) Lock - \`DiffPowerSetting\`:** Controls locking on-throttle.
+- **Power (Acceleration) Lock - `DiffPowerSetting`:** Controls locking on-throttle.
   - **More Lock (Higher Value):** Forces rear wheels to rotate at a similar speed. Improves traction on corner exit, preventing inside wheelspin. **CRITICAL FOR:**
     - **Traction-Limited Tracks:** Use higher values for tracks with slow, hard acceleration zones (e.g., **Sebring, Portimão**).
     - **Front-Engine Cars (Corvette, Aston):** These cars are traction-limited on exit. MUST use higher power lock to prevent wheelspin.
@@ -1021,7 +1021,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
     - **Rear-Engine Cars (Porsche):** These have natural traction. They can use less power lock, which helps mitigate their inherent understeer.
     - **'Aggressive' Setups:** Lower lock allows a skilled driver to use the throttle to help steer the car.
 
-- **Coast (Deceleration) Lock - \`DiffCoastSetting\`:** Controls locking off-throttle (braking/turn-in).
+- **Coast (Deceleration) Lock - `DiffCoastSetting`:** Controls locking off-throttle (braking/turn-in).
   - **More Lock (Higher Value):** Provides significant stability on corner entry by locking the rear axle. **CRITICAL FOR:**
     - **High-Speed Stability:** Essential for tracks with fast, challenging entries (e.g., **Le Mans Porsche Curves, Monza chicanes, Spa Pouhon**). Prevents the rear from becoming light and loose.
     - **'Safe'/'Stable' Setups:** This is a primary tool for confidence on corner entry.
@@ -1029,7 +1029,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
     - **Technical Tracks:** Helpful for tight, low-speed corners where rotation is key (e.g., **Fuji Sector 3, Sebring T7/T10**).
     - **'Aggressive' Setups:** The main tool for achieving a "pointy" car that turns in sharply. If too low, the car will be very nervous on entry ('lift-off oversteer').
 
-- **Preload (\`DiffPreloadSetting\`):** A static amount of lock always present. It determines the breakaway force required before the power/coast settings engage and smooths the transition between them.
+- **Preload (`DiffPreloadSetting`):** A static amount of lock always present. It determines the breakaway force required before the power/coast settings engage and smooths the transition between them.
   - **Higher Preload:** Increases overall stability and predictability. The differential feels less "active". **CRITICAL FOR:**
     - **Bumpy Tracks (Sebring):** Prevents the differential from locking/unlocking erratically as tires momentarily lose contact with the ground. This is a key to compliance and driver confidence.
     - **'Safe'/'Stable' Setups:** Makes the car's reactions to throttle/brake inputs smoother and more benign.
@@ -1079,22 +1079,24 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 - 'PressureSetting': (Min: 0/~130 kPa, Max: 10/~170 kPa). **Goal: Optimal operating temperature/pressure window.**
 - 'CompoundSetting': **LMU specific compound availability:**
     - Hypercar/GTE: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
-    - LMP2/GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
+    - LMP2: ONLY 0=Wet, 1=Medium, 2=Hard. (Soft NOT available).
+    - GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
     - MUST select available compound.
 
-### Aero
-- 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce).
+### Aero (Index to UI mapping is CRITICAL)
+- 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce). Index 0 = P1, Index 1 = P2, etc.
     - **Hypercar FW**: Min: 0, Max: 2. **RW**: Min: 0, Max: 9 (P1-P10).
     - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
-    - **GT3/GTE RW**: Min: 0, Max: 14 (P1-P15).
+    - **GTE RW**: Min: 0, Max: 12 (P1-P13).
+    - **GT3 RW**: Min: 0, Max: 14 (P1-P15).
 - BrakeDucts indices: (0=open/max cooling, higher=more closed/less cooling/more aero). Max: Hypercar:3, GT3:3, GTE:3.
-- **Dynamic Radiator/Brake Duct**: Adjust 'BrakeDuctSetting'/'WaterRadiatorSetting'/'OilRadiatorSetting' based on 'Track Temp'. High temp = more open (higher index). Low temp = more closed (lower index).
+- **Dynamic Radiator/Brake Duct**: Adjust 'BrakeDuctSetting'/'WaterRadiatorSetting'/'OilRadiatorSetting' based on 'Track Temp'. High temp = more open (LOWER index). Low temp = more closed (HIGHER index).
 
 ### Suspension
 - 'RideHeightSetting': (Min: 0/~4.0 cm, Max: 30/~8.0 cm).
 - 'SpringSetting': (Min: 0, Max: 20).
 - 'AntiSwaySetting (ARB)': (Min: 0, Max: 20).
-- 'Camber Setting': (Min: 0/~-0.5 deg, Max: 40/~-4.0 deg). **Note on index mapping:** Higher index = less negative camber. Lower index = more negative camber.
+- 'Camber Setting': (Min: 0/~-0.5 deg, Max: 40/~-4.0 deg). **Note on index mapping:** Higher index = more negative camber.
 - 'Toe In/Out': ('FrontToeInSetting'/'RearToeInSetting') (Min: 0/~-0.2 deg, Max: 30/~+0.2 deg).
 - Damper Settings: ('Slow Bump'/'Fast Bump'/'Slow Rebound'/'Fast Rebound') (Min: 0, Max: 10). Soft=0-3, Medium=4-7, Stiff=8-10. Bumpy tracks need softer Fast.
 
@@ -1154,14 +1156,14 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - IF "Understeer on corner entry": 1st: Reduce 'DiffCoastSetting'. 2nd: Soften 'FrontAntiSwaySetting'. 3rd: Increase 'FrontToeInSetting' (more toe out).
 - IF "Understeer mid-corner or on exit": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Reduce 'DiffPowerSetting'. 3rd: Stiffen Rear Springs or increase rear ride height (rake).
 - IF "Oversteer on corner entry" or "nervous": 1st: Increase 'DiffCoastSetting'. 2nd: Stiffen 'FrontAntiSwaySetting'. 3rd: Increase 'RearToeInSetting' (more toe in).
-- IF "Oversteer on exit" or "Poor traction" / "Loose rear": 1st: INCREASE 'RearCamberSetting' (less negative - HIGHER index) for stability. 2nd: Increase 'RearToeInSetting' (more toe-in) for stability. 3rd: Soften 'RearAntiSwaySetting'. 4th: Increase 'DiffPowerSetting' (on-throttle lock). 5th: Soften rear springs or reduce rear ride height (rake).
+- IF "Oversteer on exit" or "Poor traction" / "Loose rear": 1st: Soften 'RearAntiSwaySetting'. 2nd: Increase 'DiffPowerSetting' (on-throttle lock). 3rd: Softer rear springs or reduce rear ride height (rake). 4. Use less negative rear camber.
 - IF "Unstable under braking": 1st: Decrease 'RearBrakeSetting' (move bias forward). 2nd: Increase 'EngineBrakingMapSetting'. 3rd: Increase 'DiffCoastSetting'.
-- IF "Too much Understeer" or "Pushing in corners": 1st: DECREASE 'RearCamberSetting' (more negative - LOWER index) for more rotation. 2nd: Decrease 'RearToeInSetting' (less toe-in). 3rd: Stiffen 'RearAntiSwaySetting'.
+- IF "Too much Understeer" or "Pushing in corners": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Soften 'FrontAntiSwaySetting'. 3rd: Decrease 'RearToeInSetting' (less toe-in).
 
 ## ADVANCED WEATHER & TIRE STRATEGY
-- IF Weather is 'Rain'/'Wet': Wet tires ('CompoundSetting'=0), INCREASE 'PressureSetting' (+3-5 clicks), INCREASE 'RideHeightSetting' (+10-15 cm), SOFTER Springs/Dampers, HIGHER TC/ABS. Open BrakeDucts.
-- IF Track Temp high (>30C): Lower tire pressures/harder compounds (overheating). Open brake ducts slightly.
-- IF Track Temp low (<15C): Higher tire pressures/softer compounds (build temp). Close brake ducts slightly.
+- IF Weather is 'Rain'/'Wet': Wet tires ('CompoundSetting'=0), INCREASE 'PressureSetting' (+3-5 clicks), INCREASE 'RideHeightSetting' (+10-15), SOFTER Springs/Dampers, HIGHER TC/ABS. Open BrakeDucts (lower index).
+- IF Track Temp high (>30C): Lower tire pressures/harder compounds (overheating). Open brake ducts slightly (lower index).
+- IF Track Temp low (<15C): Higher tire pressures/softer compounds (build temp). Close brake ducts slightly (higher index).
 
 ## SETUP SANITY CHECKS
 1.  Low RideHeight REQUIRES Stiff Springs.
@@ -1174,34 +1176,6 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 8.  'FinalDrive' & Gears Cohesion: Logical progression, appropriate top speeds.
 9.  Fuel Consistency: Fuel load aligns with session/track.
 10. Tire Compound Logic: 'CompoundSetting' aligns with weather/session.
-
-## COMMON SETUP COMPROMISES
-- More Downforce = Less Top Speed.
-- Stiffer Suspension = More Responsive, Less Compliant.
-- Softer Suspension = More Compliant, Less Responsive.
-- Long Gearing = High Top Speed, Slower Acceleration.
-- Short Gearing = Quick Acceleration, Lower Top Speed.
-- Aggressive Camber = More Cornering Grip, Less Straight-line Stability/Braking.
-- High Brake Pressure = More Stopping Power, Higher Risk of Lockup.
-- Forward Brake Bias = More Stable Braking, Risk of Front Lockup.
-- Rearward Brake Bias = More Rotation/Turn-in on Braking, Risk of Rear Lockup/Spin.
-- High Differential Lock = More Traction/Stability, More Understeer (Power) / Snap Oversteer (Coast).
-
-## DRIVER CONFIDENCE & CONSISTENCY PRINCIPLES
-- Predictability over Peak Aggression.
-- Stability under Braking & Power.
-- Smooth Transitions.
-- Tire Preservation (Race Sessions) for pace.
-- Forgiveness.
-- Neutral Balance (or predictable understeer).
-
-## LMU AI GUIDANCE REFINEMENTS (ULTIMATE PRECISION)
-- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting = critical failure.
-- **INTERCONNECTEDNESS:** All parameters interdependent.
-- **LMU REALISM CHECK:** Ensure physically realistic/plausible settings.
-- **DYNAMIC RANGE UTILIZATION:** Actively use full Min-Max range.
-- **OPTIMAL RIDE QUALITY:** Prioritize optimal tire contact.
-- **SPECIFIC NUMERICAL DEVIATION:** Use distinct floats for [BASIC]/Camber.
 
 **FINAL COMMAND: The user's template is provided below. Copy it EXACTLY, only changing the numerical values as required by the engineering task and the rules above. Do not omit any lines or any comments.**
 ${finalExampleTemplate}
