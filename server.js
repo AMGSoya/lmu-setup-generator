@@ -936,7 +936,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 1.  **Session Type (Qualifying vs. Race):** Dictates overall setup philosophy.
 2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX' and the new 'DRIVER REQUEST INTERPRETATION GUIDE'. Apply Primary/Secondary solutions. All other decisions must align with solving the driver's issue.
 3.  **Track DNA & Weather:** Analyze the track's unique demands ('TRACK DNA DATABASE') and weather conditions ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions and mention any necessary compromises in your notes.
-4.  **Car Architecture:** Apply specific adjustments based on the car's inherent traits ('CAR ARCHITECTURE PHILOSOPHY').
+4.  **Car Architecture:** Apply specific adjustments based on the car's inherent traits ('CAR ARCHITECTURE PHILOSOPHY'). Consult the new **DIFFERENTIAL MASTER GUIDE** and **HYBRID POWER UNIT STRATEGY** guides for car/track-specific logic.
 5.  **Overall Setup Goal:** Use the driver's 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') from the 'LMU SETUP PHILOSOPHY DIAL' to fine-tune all settings.
 5.5. **Generate [BASIC] Parameters (MANDATORY):** You MUST dynamically calculate and GENERATE the [BASIC] section at the end of the .VEH file. This section is NOT in the template you are given; it must be fully derived from your setup choices.
     - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
