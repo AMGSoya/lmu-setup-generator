@@ -62,9 +62,9 @@ CGRightSetting=0//Non-adjustable (Fixed)
 CGRearSetting=0//Non-adjustable (Fixed)
 WedgeSetting=0//N/A (Fixed)
 FuelSetting=85//85L (Initial guess, AI adjusts) (MUST BE OVERWRITTEN)
-FuelCapacitySetting=0//Max Fuel (AI adjusts based on duration) (Fixed)
+FuelCapacitySetting=0//Max Fuel (Fixed)
 VirtualEnergySetting=72//72% (AI adjusts based on session) (MUST BE OVERWRITTEN)
-NumPitstopsSetting=0//N/A (AI calculates) (Fixed)
+NumPitstopsSetting=0//N/A (Fixed)
 Pitstop1Setting=88//N/A (Fixed)
 Pitstop2Setting=88//N/A (Fixed)
 Pitstop3Setting=88//N/A (Fixed)
@@ -156,13 +156,13 @@ EngineBrakingMapSetting=0//N/A (Fixed)
 [DRIVELINE]
 FinalDriveSetting=3//2.98:1 (AI adjusts for track type: 0=Standard/Short, higher values for Long) (Min: 0, Max: 7. Higher index = longer gear for higher top speed) (MUST BE OVERWRITTEN)
 ReverseSetting=0//2.07 (6.18) (Fixed)
-Gear1Setting=0//2.85 (~100 km/h / ~62 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear2Setting=0//2.20 (~130 km/h / ~81 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear3Setting=0//1.82 (~160 km/h / ~99 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear4Setting=0//1.56 (~190 km/h / ~118 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear5Setting=0//1.35 (~220 km/h / ~137 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear6Setting=0//1.19 (~250 km/h / ~155 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear7Setting=0//1.05 (~280 km/h / ~174 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
+Gear1Setting=0//2.85 (~100 km/h / ~62 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear2Setting=0//2.20 (~130 km/h / ~81 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear3Setting=0//1.82 (~160 km/h / ~99 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear4Setting=0//1.56 (~190 km/h / ~118 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear5Setting=0//1.35 (~220 km/h / ~137 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear6Setting=0//1.19 (~250 km/h / ~155 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear7Setting=0//1.05 (~280 km/h / ~174 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
 RatioSetSetting=0//Short (AI adjusts for track type: 0=Standard, 1=Long/High Speed) (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
 DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=3//25% (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
@@ -349,12 +349,12 @@ EngineMixtureSetting=1//Race (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
 [DRIVELINE]
 FinalDriveSetting=3//2.88:1 (AI adjusts for track type: 0=Standard/Short, higher values=Long) (Min: 0, Max: 5. Higher index = longer gear for higher top speed) (MUST BE OVERWRITTEN)
 ReverseSetting=0//2.85 (8.18) (Fixed)
-Gear1Setting=0//2.85 (~90 km/h / ~56 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear2Setting=0//2.20 (~115 km/h / ~71 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear3Setting=0//1.88 (~135 km/h / ~84 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear4Setting=0//1.62 (~155 km/h / ~96 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear5Setting=0//1.42 (~175 km/h / ~109 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear6Setting=0//1.27 (~195 km/h / ~121 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
+Gear1Setting=0//2.85 (~90 km/h / ~56 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear2Setting=0//2.20 (~115 km/h / ~71 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear3Setting=0//1.88 (~135 km/h / ~84 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear4Setting=0//1.62 (~155 km/h / ~96 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear5Setting=0//1.42 (~175 km/h / ~109 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear6Setting=0//1.27 (~195 km/h / ~121 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
 RatioSetSetting=1//High Speed (AI adjusts for track type: 0=Standard, 1=High Speed) (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
 DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=0//FF6-60 deg (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
@@ -463,7 +463,7 @@ Symmetric=1
 FuelSetting=92//0.93 (AI adjusts) (MUST BE OVERWRITTEN)
 //FuelCapacitySetting=0//93.0l (22.5 laps) (Fixed)
 //VirtualEnergySetting=100//100% (22.0 laps) (Fixed)
-//NumPitstopsSetting=0//N/A (AI calculates) (Fixed)
+//NumPitstopsSetting=0//N/A (Fixed)
 //Pitstop1Setting=59//N/A (Fixed)
 //Pitstop2Setting=59//N/A (Fixed)
 //Pitstop3Setting=59//N/A (Fixed)
@@ -531,7 +531,7 @@ TCPowerCutMapSetting=3//3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 AntilockBrakeSystemMapSetting=11//11 (Min: 0, Max: 15) (MUST BE OVERWRITTEN)
 
 [ENGINE]
-//RevLimitSetting=0//9,400 (Non-adjustable) (Fixed)
+//RevLimitSetting=0//9,400 (Fixed)
 //EngineBoostSetting=0//N/A (Fixed)
 //RegenerationMapSetting=0//0% (N/A for Non-Hybrid) (Fixed)
 ElectricMotorMapSetting=0//Not Applicable (N/A for Non-Hybrid) (Fixed)
@@ -539,22 +539,22 @@ ElectricMotorMapSetting=0//Not Applicable (N/A for Non-Hybrid) (Fixed)
 //EngineBrakingMapSetting=0//N/A (Fixed)
 
 [DRIVELINE]
-FinalDriveSetting=0//Fixed (AI adjusts for track type) (Min: 0, Max: depends on car, often fixed for GT3) (MUST BE OVERWRITTEN)
+FinalDriveSetting=0//Fixed (AI adjusts for track type) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //ReverseSetting=0//Fixed
-Gear1Setting=0//Fixed (~95 km/h / ~59 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear2Setting=1//Fixed (~130 km/h / ~81 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear3Setting=1//Fixed (~160 km/h / ~99 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear4Setting=1//Fixed (~190 km/h / ~118 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear5Setting=1//Fixed (~220 km/h / ~137 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-Gear6Setting=1//Fixed (~250 km/h / ~155 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Longest ratio, 1=Shortest ratio. Range 0-1 ONLY.
-RatioSetSetting=0//Short (AI adjusts for track type) (Min: 0, Max: 1 or higher based on car) (MUST BE OVERWRITTEN)
+Gear1Setting=0//Fixed (~95 km/h / ~59 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear2Setting=1//Fixed (~130 km/h / ~81 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear3Setting=1//Fixed (~160 km/h / ~99 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear4Setting=1//Fixed (~190 km/h / ~118 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear5Setting=1//Fixed (~220 km/h / ~137 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear6Setting=1//Fixed (~250 km/h / ~155 mph) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+RatioSetSetting=0//Short (AI adjusts for track type) (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
 //DiffPumpSetting=0//Non-adjustable (Fixed)
 //DiffCoastSetting=0//Non-adjustable (Fixed)
 DiffPreloadSetting=28//78 Nm (Min: 0, Max: 100) (MUST BE OVERWRITTEN)
-//FrontDiffPumpSetting=0//0% (N/A for RWD) (Fixed)
-//FrontDiffPowerSetting=0//0% (N/A for RWD) (Fixed)
-//FrontDiffCoastSetting=0//0% (N/A for RWD) (Fixed)
-//FrontDiffPreloadSetting=0//1 (N/A for RWD) (Fixed)
+//FrontDiffPumpSetting=0//0% (Fixed)
+//FrontDiffPowerSetting=0//0% (Fixed)
+//FrontDiffCoastSetting=0//0% (Fixed)
+//FrontDiffPreloadSetting=0//1 (Fixed)
 //RearSplitSetting=0//RWD (Fixed)
 //GearAutoUpShiftSetting=0//Non (Fixed)
 //GearAutoDownShiftSetting=0//Non (Fixed)
@@ -634,7 +634,7 @@ Ride=0.400000
 Gearing=0.400000
 Custom=1`,
 
-    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
+    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(0,0,0,0)
 //Aero package=0
 //Note: settings commented out if using the default
@@ -730,7 +730,7 @@ AntilockBrakeSystemMapSetting=0//N/A (Fixed)
 [ENGINE]
 //RevLimitSetting=0//7,400 (Fixed)
 //EngineBoostSetting=0//N/A (Fixed)
-//RegenerationMapSetting=0//0% (N/A for Non-Hybrid) (Fixed)
+//RegenerationMapSetting=0//0% (Fixed)
 //ElectricMotorMapSetting=0// (Fixed)
 EngineMixtureSetting=1//Race lean (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 //EngineBrakingMapSetting=0//N/A (Fixed)
@@ -738,12 +738,12 @@ EngineMixtureSetting=1//Race lean (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
 [DRIVELINE]
 FinalDriveSetting=0//3.664 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //ReverseSetting=0//3.083 (Fixed)
-Gear1Setting=0//2.067 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-Gear2Setting=0//1.706 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-Gear3Setting=0//1.368 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-Gear4Setting=0//1.143 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-Gear5Setting=0//1.000 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
-Gear6Setting=0//0.889 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
+Gear1Setting=0//2.067 (~128 mph / ~206 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear2Setting=0//1.706 (~155 mph / ~249 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear3Setting=0//1.368 (~193 mph / ~310 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear4Setting=0//1.143 (~230 mph / ~370 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear5Setting=0//1.000 (~263 mph / ~423 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
+Gear6Setting=0//0.889 (~296 mph / ~476 km/h) (Min: 0, Max: 1) (MUST BE OVERWRITTEN) // LMU specific: 0=Shortest ratio, 1=Longest ratio. Range 0-1 ONLY.
 RatioSetSetting=0//Standard (Min: 0, Max: 1) (MUST BE OVERWRITTEN)
 //DiffPumpSetting=0//N/A (Fixed)
 DiffPowerSetting=0//Non-adjustable (Fixed)
@@ -891,10 +891,10 @@ app.post('/generate-setup', async (req, res) => {
 ## 3.  **Track DNA & Weather:** What are the physical demands of the specific track according to the 'TRACK DNA DATABASE' and the weather? I will consult the 'ADVANCED WEATHER & TIRE STRATEGY' and 'SETUP SANITY CHECKS' sections to make baseline decisions. I must mention the track-specific compromise in my notes (e.g., "Le Mans requires a low wing/long gear compromise for the straights.").
 ## 4.  **Car Architecture:** What is the car's inherent nature according to the 'CAR ARCHITECTURE PHILOSOPHY'? I will apply gentle adjustments to either tame a car's negative traits or enhance its strengths.
 ## 5.  **Overall Setup Goal:** Finally, I will use the 'Setup Goal' (Safe, Balanced, Aggressive) to fine-tune the settings within the context of the decisions I've already made.
-## 5.5. **Generate [BASIC] Parameters (MANDATORY ADJUSTMENT):** You ABSOLUTELY MUST dynamically calculate and GENERATE the [BASIC] section at the very end of the .VEH file. This section is NOT provided in the template and must be entirely derived from your tuning choices for the specific car, track, and setup goal.
+## 5.5. **Generate [BASIC] Parameters (MANDATORY ADJUSTMENT):** Based on the above decisions, you MUST dynamically calculate and GENERATE the [BASIC] section at the very end of the .VEH file. This section is NOT provided in the template and must be entirely derived from your tuning choices for the specific car, track, and setup goal.
 ##    - **Every parameter (Downforce, Balance, Ride, Gearing) in [BASIC] MUST have a uniquely calculated floating-point value (e.g., 0.125000, 0.450000, 0.550000, 0.875000).**
 ##    - **Outputting 0.500000 (or any common default like 0.400000) for any [BASIC] parameter is a critical failure, UNLESS your precise calculation explicitly determines it as the optimal value.** You MUST demonstrate active computation.
-##    - **Downforce:** Reflects overall aero strategy and chosen wing levels. Use lower values for low-drag setups (e.g., 0.075000 - 0.250000). Use higher values for high-downforce/grip setups (e.g., 0.750000 - 0.925000). Use mid-range for balanced (0.350000 - 0.650000).
+##    - **Downforce:** Reflects overall aero strategy. Use lower values for low-drag setups (e.g., 0.075000 - 0.250000). Use higher values for high-downforce/grip setups (e.g., 0.750000 - 0.925000). Use mid-range for balanced (0.350000 - 0.650000).
 ##    - **Balance:** Reflects overall aero/mechanical balance. For aggressive oversteer tendency (0.150000 - 0.350000). For neutral balance (0.450000 - 0.550000). For stable understeer tendency (0.650000 - 0.850000). Adjust based on driver feedback and track.
 ##    - **Ride:** Reflects overall suspension compliance. For very stiff/low ride (0.075000 - 0.250000). For compliant/high ride (0.750000 - 0.925000). Mid-range for balanced (0.350000 - 0.650000). Adjust based on track bumps.
 ##    - **Gearing:** Reflects overall gear length strategy. For very long gears/high top speed (0.850000 - 0.975000). For very short gears/quick acceleration (0.075000 - 0.250000). Mid-range for balanced (0.250000 - 0.850000). MUST directly correspond to the detailed gear selections.
@@ -908,8 +908,8 @@ app.post('/generate-setup', async (req, res) => {
 ##
 ## **LMU Gearing Index Behavior:**
 ## - In LMU, for individual gears (Gear1Setting to Gear7Setting), there is an **INVERSE relationship** between the numerical index chosen and the actual "length" of the gear.
-##    - **LOWER numerical index (0) results in the LONGEST individual gear ratio (highest speed for that gear).**
-##    - **HIGHER numerical index (1) results in the SHORTEST individual gear ratio (quickest acceleration for that gear).**
+##    - **LOWER numerical index (0) results in the SHORTEST individual gear ratio (quickest acceleration).**
+##    - **HIGHER numerical index (1) results in the LONGEST individual gear ratio (highest speed).**
 ## - **Range Limit:** Individual gear ratios (Gear1Setting-Gear7Setting) are **LIMITED TO ONLY INDICES 0 AND 1 in LMU.** This is a critical game-specific constraint.
 ## - **FinalDriveSetting:** A HIGHER index for FinalDriveSetting always means longer overall gearing (higher top speed, slower acceleration).
 ## - You MUST apply this LMU-specific gearing logic when selecting indices and predicting speeds.
@@ -988,7 +988,7 @@ app.post('/generate-setup', async (req, res) => {
 ##
 ## **Drivetrain:**
 ## - **FinalDriveSetting:** (Min: 0, Max: typically 5-10 depending on car. Higher index = longer gear for higher top speed). **For Le Mans/Monza, aim for the highest available index (e.g., 5-7).**
-## - **Gear1Setting-Gear7Setting:** (Min: 0, Max: 1). Each represents an index for a preset ratio. **LMU specific: 0=Longest individual ratio for higher top speed, 1=Shortest individual ratio for quicker acceleration.** You MUST choose either 0 or 1.
+## - **Gear1Setting-Gear7Setting:** (Min: 0, Max: 1). Each represents an index for a preset ratio. **LMU specific: 0=Shortest individual ratio for quicker acceleration, 1=Longest individual ratio for higher top speed.** You MUST choose either 0 or 1.
 ## - **DiffPowerSetting:** (Min: 0, Max: 15).
 ## - **DiffCoastSetting:** (Min: 0, Max: 20).
 ## - **DiffPreloadSetting:** (Min: 0, Max: 100).
@@ -1007,13 +1007,13 @@ app.post('/generate-setup', async (req, res) => {
 ##
 ## **1. High-Speed Tracks (e.g., Le Mans, Monza, Spa-Francorchamps):**
 ##    - **FinalDriveSetting:** You MUST select one of the **HIGHEST available indices** for the car (e.g., if max is 7, choose 5, 6, or 7). This makes the overall gearing "longer" for high top speed.
-##    - **Gear1Setting to GearXSetting (for all applicable gears):** You MUST set all individual gear ratios to **0 (Longest)**. Example: For a 7-speed car, set Gear1Setting=0, Gear2Setting=0, ..., Gear7Setting=0. This will ensure maximum top speed for each gear.
+##    - **Gear1Setting to GearXSetting (for all applicable gears):** You MUST set all individual gear ratios to **1 (Longest)**. Example: For a 7-speed car, set Gear1Setting=1, Gear2Setting=1, ..., Gear7Setting=1. This will ensure maximum top speed for each gear.
 ##    - **Comments:** For each GearXSetting, you MUST dynamically calculate and insert a **realistic approximate speed (e.g., ~Y mph / ~Z km/h)** based on the chosen gear index and final drive. Ensure speeds *increase logically* and are *very high* with successive gears (e.g., 6th/7th gear often well over 300 km/h / 185 mph).
 ##    - **Self-Verification:** Mentally confirm that 6th or 7th gear top speed reaches *over 300 km/h (or 185 mph)* for Hypercars/LMP2s on tracks like Le Mans, indicating truly long gearing.
 ##
 ## **2. Technical/Accelerative Tracks (e.g., Sebring, Portimão, Imola):**
 ##    - **FinalDriveSetting:** You MUST select one of the **LOWER available indices** for the car (e.g., 0-3) for quicker acceleration.
-##    - **Gear1Setting to GearXSetting (for all applicable gears):** You MUST set all individual gear ratios to **1 (Shortest)**. Example: For a 7-speed car, set Gear1Setting=1, Gear2Setting=1, ..., Gear7Setting=1. This will ensure maximum acceleration for each gear.
+##    - **Gear1Setting to GearXSetting (for all applicable gears):** You MUST set all individual gear ratios to **0 (Shortest)**. Example: For a 7-speed car, set Gear1Setting=0, Gear2Setting=0, ..., Gear7Setting=0. This will ensure maximum acceleration for each gear.
 ##    - **Comments:** As above, dynamically calculate and insert a **realistic approximate speed (e.g., ~Y mph / ~Z km/h)** for each gear. Ensure speeds *increase logically* and are *appropriate for an accelerative track*.
 ##
 ## **ALWAYS ensure a non-zero index is chosen for any adjustable gear setting unless it's explicitly fixed to 0.** Leaving them at '0' for non-fixed gears is a critical failure.
@@ -1065,7 +1065,7 @@ app.post('/generate-setup', async (req, res) => {
 ## 1. Low RideHeight REQUIRES Stiff Springs (to prevent bottoming out).
 ## 2. High Aero (RWSetting) REQUIRES Stiff Springs (to support downforce).
 ## 3. Bumpy Tracks (Sebring, Portimão) REQUIRE Softer Fast Damping (for bump absorption).
-## 4. **Gearing Sanity Check:** For High-Speed Tracks (Le Mans/Monza), **ENSURE** that \`FinalDriveSetting\` is set to a HIGH index and individual \`GearXSetting\` indices are set to **0 (Longest Ratio)**. Conversely, for Technical Tracks, confirm \`GearXSetting\` indices are set to **1 (Shortest Ratio)**.
+## 4. **Gearing Sanity Check:** For High-Speed Tracks (Le Mans/Monza), **ENSURE** that \`FinalDriveSetting\` is set to a HIGH index and individual \`GearXSetting\` indices are set to **1 (Longest Ratio)**. Conversely, for Technical Tracks, confirm \`GearXSetting\` indices are set to **0 (Shortest Ratio)**.
 ## 5. **Physics Check:** Ensure toe and camber settings are physically realistic for a racing car (e.g., negative camber for cornering grip, slight toe-out on front for sharper turn-in, slight toe-in on rear for stability).
 ## 6. **Physics:** Ensure damper settings (bump/rebound) logically complement spring stiffness and track type. Softer springs often pair with softer damping, stiffer with stiffer.
 ## 7. **Balance Consistency:** Aero balance, mechanical balance (springs/ARBs), and differential settings should ideally work in harmony towards the overall setup goal and driver feedback.
@@ -1093,7 +1093,7 @@ app.post('/generate-setup', async (req, res) => {
 ## To ensure drivers don't "lose pace," prioritize these aspects:
 ## - **Predictability over Peak Aggression:** A setup that is predictable and consistent lap-to-lap is often faster over a race distance than a twitchy, peak-performance setup.
 ## - **Stability under Braking & Power:** Crucial for driver confidence into and out of corners, especially under pressure.
-## - **Smooth Transitions:** The car should transition smoothly between braking, cornering, and acceleration phases, avoiding abrupt changes in balance.
+## - **Smooth Transitions:** The car should transition smoothly between braking, cornering and acceleration phases, avoiding abrupt changes in balance.
 ## - **Tire Preservation (Race Sessions):** For race setups, managing tire wear through less aggressive camber, toe, and smoother diff settings is paramount to maintain pace over a stint.
 ## - **Forgiveness:** A setup that is slightly more forgiving of driver errors will result in fewer mistakes and more consistent lap times.
 ## - **Neutral Balance:** A slightly neutral or predictable understeer balance is generally preferred for long-distance consistency over a car prone to snap oversteer.
