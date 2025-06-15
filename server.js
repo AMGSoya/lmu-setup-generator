@@ -613,76 +613,77 @@ Custom=1`
 
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
-    // Safely destructure all possible values from the request body
-    const {
-        car, track, request, selectedCarCategory,
-        selectedCarDisplay, selectedTrackDisplay, setupGoal,
-        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
-    } = req.body;
+    // Safely destructure all possible values from the request body
+    const {
+        car, track, request, selectedCarCategory,
+        selectedCarDisplay, selectedTrackDisplay, setupGoal,
+        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
+    } = req.body;
 
-    // Validate essential parameters
-    if (!car || !track || !setupGoal || !selectedCarCategory) {
-        return res.status(400).json({
-            error: "Please provide Car, Track, Setup Goal, and Car Category details."
-        });
-    }
+    // Validate essential parameters
+    if (!car || !track || !setupGoal || !selectedCarCategory) {
+        return res.status(400).json({
+            error: "Please provide Car, Track, Setup Goal, and Car Category details."
+        });
+    }
 
-    // Handle potential category key mismatch
-    let finalCategory = selectedCarCategory;
-    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
-        finalCategory = 'GT3';
-    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
-        finalCategory = 'LMGT3';
-    }
+    // Handle potential category key mismatch
+    let finalCategory = selectedCarCategory;
+    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
+        finalCategory = 'GT3';
+    } else if (selectedCarCategory === 'GT3' && LMU_VEH_TEMPLATES['LMGT3']) {
+        finalCategory = 'LMGT3';
+    }
 
-    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
-    if (!exampleTemplate) {
-        return res.status(400).json({
-            error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.`
-        });
-    }
+    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
+    if (!exampleTemplate) {
+        return res.status(400).json({
+            error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.`
+        });
+    }
 
-    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
-    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
-    let finalExampleTemplate = exampleTemplate; // Start with the chosen template
+    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
+    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
+    let finalExampleTemplate = exampleTemplate; // Start with the chosen template
 
-    if (track === "Circuit de la Sarthe (Le Mans)") {
-        const minAeroSetting = 0; // Absolute minimum for wings, ducts, ride height
+    if (track === "Circuit de la Sarthe (Le Mans)") {
+        const minAeroSetting = 0; // Absolute minimum for wings, ducts, ride height
 
-        // Programmatically replace FWSetting and RWSetting to their absolute minimum for Le Mans
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTWING[\s\S]*?FWSetting=)\d+/m, `$1${minAeroSetting}`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(REARWING[\s\S]*?RWSetting=)\d+/m, `$1${minAeroSetting}`);
+        // Programmatically replace FWSetting and RWSetting to their absolute minimum for Le Mans
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTWING[\s\S]*?FWSetting=)\d+/m, `$1${minAeroSetting}`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(REARWING[\s\S]*?RWSetting=)\d+/m, `$1${minAeroSetting}`);
 
-        // Programmatically replace FinalDriveSetting to its highest for Le Mans
-        let leMansFinalDrive;
-        if (finalCategory === 'Hypercar') {
-            leMansFinalDrive = 7; 
-        } else if (finalCategory === 'LMP2') {
-            leMansFinalDrive = 5; 
-        } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
-            leMansFinalDrive = 10; // Assuming 10 is max for GT3/GTE fixed gears
-        }
-        finalExampleTemplate = finalExampleTemplate.replace(/^(DRIVELINE[\s\S]*?FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${leMansFinalDrive}`);
-        
-        // Programmatically force ALL individual gears to 1 (Longest Ratio)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`);
+        // Programmatically replace FinalDriveSetting to its highest for Le Mans
+        let leMansFinalDrive;
+        if (finalCategory === 'Hypercar') {
+            leMansFinalDrive = 7; 
+        } else if (finalCategory === 'LMP2') {
+            leMansFinalDrive = 5; 
+        } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
+            leMansFinalDrive = 10; // Assuming 10 is max for GT3/GTE fixed gears
+        }
+        finalExampleTemplate = finalExampleTemplate.replace(/^(DRIVELINE[\s\S]*?FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${leMansFinalDrive}`);
+        
+        // Programmatically force ALL individual gears to 1 (Longest Ratio)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`);
         finalExampleTemplate = finalExampleTemplate.replace(/^(RatioSetSetting=)\d+\s*\/\/.*/m, `$11`); // Force RatioSetSetting to 1 (Long)
 
 
-        // Programmatically force Radiator and Brake Ducts to minimum (most closed)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(BODYAERO[\s\S]*?WaterRadiatorSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
+        // Programmatically force Radiator and Brake Ducts to minimum (most closed)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(BODYAERO[\s\S]*?WaterRadiatorSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
 
-        // Programmatically force Ride Heights to minimum (lowest drag)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(SUSPENSION[\s\S]*?FrontWheelTrackSetting[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Front Ride Height
+        // Programmatically force Ride Heights to minimum (lowest drag)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(SUSPENSION[\s\S]*?FrontWheelTrackSetting[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Front Ride Height
         finalExampleTemplate = finalExampleTemplate.replace(/^(REARLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Rear Ride Height
 
-        // Inject a specific note into the template about the Le Mans override, so the AI knows
-        // this was pre-set and should still explain it in its notes.
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Le Mans override applied: Absolute minimum drag prioritized. FW/RW set to ${minFwSetting}/${minRwSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${leMansFinalDrive}. Radiators/Brake Ducts closed. Ride Heights minimized. This overrides general setup goals for max top speed."`);
-    }
+        // Inject a specific note into the template about the Le Mans override, so the AI knows
+        // this was pre-set and should still explain it in its notes.
+        // --- FIX APPLIED ON THE LINE BELOW ---
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Le Mans override applied: Absolute minimum drag prioritized. FW/RW set to ${minAeroSetting}/${minAeroSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${leMansFinalDrive}. Radiators/Brake Ducts closed. Ride Heights minimized. This overrides general setup goals for max top speed."`);
+    }
 
     // --- CRITICAL: MONZA SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
     // Ensures Monza gets optimal low drag/long gearing regardless of AI interpretation.
@@ -738,21 +739,21 @@ app.post('/generate-setup', async (req, res) => {
         finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to 20. This overrides general setup goals for ride quality on bumpy track."`);
     }
 
-    // UPGRADE: Dynamically insert the user's selected car name into the template
-    finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
+    // UPGRADE: Dynamically insert the user's selected car name into the template
+    finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
 
 
-    const sessionDuration = req.body.sessionDuration || 'N/A';
-    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
-        `Estimate fuel for a ${sessionDuration} minute race.` : '';
-    const weatherGuidance = `Current weather is ${selectedWeather}.`;
-    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+    const sessionDuration = req.body.sessionDuration || 'N/A';
+    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
+        `Estimate fuel for a ${sessionDuration} minute race.` : '';
+    const weatherGuidance = `Current weather is ${selectedWeather}.`;
+    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
 
 
-    // =====================================================================================
-    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
-    // =====================================================================================
-    const prompt = `
+    // =====================================================================================
+    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
+    // =====================================================================================
+    const prompt = `
 ## PRIME DIRECTIVE
 Generate a complete, physically realistic, and numerically valid .VEH setup. Replace placeholders with calculated, logical numbers. '0' for adjustable settings is a failure.
 
@@ -763,28 +764,28 @@ World-class LMU race engineer. Goal: predictable, realistic setups, suited to dr
 Populate '[GENERAL] Notes' with engineering debrief. If track-specific override (e.g., Le Mans aero) applied, explicitly state it, explaining how it overrides general setup philosophies. For key adjustments, explain the engineering reason for the specific parameter changes (e.g., 'Increased RearCamberSetting to reduce oversteer on exit', 'Softened front dampers for better bump absorption').
 
 ## THOUGHT PROCESS & HIERARCHY
-1.  **Session Type (Qualifying vs. Race):** Dictates setup philosophy.
-2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX'. Apply Primary/Secondary solutions. All other decisions align.
-3.  **Track DNA & Weather:** Analyze track demands ('TRACK DNA DATABASE') and weather ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions. Mention track compromise in notes.
-4.  **Car Architecture:** Apply adjustments based on car's traits ('CAR ARCHITECTURE PHILOSOPHY').
+1.  **Session Type (Qualifying vs. Race):** Dictates setup philosophy.
+2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX'. Apply Primary/Secondary solutions. All other decisions align.
+3.  **Track DNA & Weather:** Analyze track demands ('TRACK DNA DATABASE') and weather ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions. Mention track compromise in notes.
+4.  **Car Architecture:** Apply adjustments based on car's traits ('CAR ARCHITECTURE PHILOSOPHY').
 5.  **Overall Setup Goal:** Use 'Setup Goal' ('Safe', 'Balanced', 'Aggressive') from 'LMU SETUP PHILOSOPHY DIAL' to fine-tune settings.
 5.5. **Generate [BASIC] Parameters (MANDATORY):** Dynamically calculate and GENERATE the [BASIC] section at .VEH end. This is NOT in template. Fully derived.
-    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
-    - Outputting 0.500000 (or any common default) is critical failure, UNLESS your calculation is optimal.
-    - **'Downforce'**: Low-drag (0.05-0.15 for high-speed, 0.25-0.45 for balanced, 0.65-0.95 for high-downforce).
-    - **'Balance'**: Aggressive oversteer (0.15-0.35). Neutral (0.45-0.55). Stable understeer (0.65-0.85). Adjust per driver/track.
-    - **'Ride'**: Stiff/low (0.075-0.25). Compliant/high (0.75-0.925). Mid (0.35-0.65). Adjust per track bumps.
-    - **'Gearing'**: Long/top speed (0.85-0.975). Short/acceleration (0.075-0.25). Mid (0.25-0.85). MUST correspond to detailed gear selections.
-    - **Custom**: 1.
-6.  **Engineer's Debrief:** Write concise summary in 'Notes'.
+    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
+    - Outputting 0.500000 (or any common default) is critical failure, UNLESS your calculation is optimal.
+    - **'Downforce'**: Low-drag (0.05-0.15 for high-speed, 0.25-0.45 for balanced, 0.65-0.95 for high-downforce).
+    - **'Balance'**: Aggressive oversteer (0.15-0.35). Neutral (0.45-0.55). Stable understeer (0.65-0.85). Adjust per driver/track.
+    - **'Ride'**: Stiff/low (0.075-0.25). Compliant/high (0.75-0.925). Mid (0.35-0.65). Adjust per track bumps.
+    - **'Gearing'**: Long/top speed (0.85-0.975). Short/acceleration (0.075-0.25). Mid (0.25-0.85). MUST correspond to detailed gear selections.
+    - **Custom**: 1.
+6.  **Engineer's Debrief:** Write concise summary in 'Notes'.
 
 ## LMU GAME MECHANICS & NUANCES
 - Tuning MUST be LMU simulation-based.
 
 ### LMU Gearing Index Behavior
 - Individual gears ('Gear1Setting' to 'Gear7Setting'): **INVERSE relationship**.
-    - LOWER index (0) = SHORTEST ratio.
-    - HIGHER index (1) = LONGEST ratio.
+    - LOWER index (0) = SHORTEST ratio.
+    - HIGHER index (1) = LONGEST ratio.
 - **Range Limit**: Individual gears LIMITED TO ONLY INDICES 0 AND 1.
 - 'FinalDriveSetting': HIGHER index = longer overall gearing.
 - Apply LMU-specific gearing logic.
@@ -805,15 +806,15 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 ### Tires
 - 'PressureSetting': (Min: 0/~130 kPa, Max: 10/~170 kPa). **Goal: Optimal operating temperature/pressure window.**
 - 'CompoundSetting': **LMU specific compound availability:**
-    - Hypercar/GTE: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
-    - LMP2/GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
-    - MUST select available compound.
+    - Hypercar/GTE: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
+    - LMP2/GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
+    - MUST select available compound.
 
 ### Aero
 - 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce).
-    - **Hypercar FW**: Min: 0, Max: 2. **RW**: Min: 0, Max: 9 (P1-P10).
-    - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
-    - **GT3/GTE RW**: Min: 0, Max: 14 (P1-P15).
+    - **Hypercar FW**: Min: 0, Max: 2. **RW**: Min: 0, Max: 9 (P1-P10).
+    - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
+    - **GT3/GTE RW**: Min: 0, Max: 14 (P1-P15).
 - BrakeDucts indices: (0=open/max cooling, higher=more closed/less cooling/more aero). Max: Hypercar:3, GT3:3, GTE:3.
 - **Dynamic Radiator/Brake Duct**: Adjust 'BrakeDuctSetting'/'WaterRadiatorSetting'/'OilRadiatorSetting' based on 'Track Temp'. High temp = more open (higher index). Low temp = more closed (lower index).
 
@@ -840,17 +841,17 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 - 'TractionControlMapSetting' (TC): (Min: 0, Max: 10).
 
 ## GEARING STRATEGY (CRITICAL)
-1.  **High-Speed Tracks (e.g., Le Mans, Monza):**
-    - 'FinalDriveSetting': MUST be HIGHEST available index.
-    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
-    - 'RatioSetSetting': MUST be **1 (Long)**.
-    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
-    - Self-Verification: Confirm 6th/7th gear top speed >300 km/h (>185 mph) for Hypercars/LMP2s.
-2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):**
-    - 'FinalDriveSetting': MUST be LOWER available index.
-    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
-    - 'RatioSetSetting': MUST be **0 (Short)**.
-    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+1.  **High-Speed Tracks (e.g., Le Mans, Monza):**
+    - 'FinalDriveSetting': MUST be HIGHEST available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
+    - 'RatioSetSetting': MUST be **1 (Long)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+    - Self-Verification: Confirm 6th/7th gear top speed >300 km/h (>185 mph) for Hypercars/LMP2s.
+2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):**
+    - 'FinalDriveSetting': MUST be LOWER available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
+    - 'RatioSetSetting': MUST be **0 (Short)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
 ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## TRACK DNA DATABASE
@@ -891,15 +892,15 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - IF Track Temp low (<15C): Higher tire pressures/softer compounds (build temp). Close brake ducts slightly.
 
 ## SETUP SANITY CHECKS
-1.  Low RideHeight REQUIRES Stiff Springs.
-2.  High Aero ('RWSetting') REQUIRES Stiff Springs.
-3.  Bumpy Tracks REQUIRE Softer Fast Damping.
-4.  **Gearing Sanity Check:** High-Speed Tracks: 'FinalDriveSetting' HIGH, 'GearXSetting' 1 (Longest). Technical Tracks: 'FinalDriveSetting' LOW, 'GearXSetting' 0 (Shortest).
-5.  Physics Check: Realistic toe/camber.
-6.  Physics: Dampers complement springs/track.
-7.  Balance Consistency: Aero, mechanical, diff in harmony.
-8.  'FinalDrive' & Gears Cohesion: Logical progression, appropriate top speeds.
-9.  Fuel Consistency: Fuel load aligns with session/track.
+1.  Low RideHeight REQUIRES Stiff Springs.
+2.  High Aero ('RWSetting') REQUIRES Stiff Springs.
+3.  Bumpy Tracks REQUIRE Softer Fast Damping.
+4.  **Gearing Sanity Check:** High-Speed Tracks: 'FinalDriveSetting' HIGH, 'GearXSetting' 1 (Longest). Technical Tracks: 'FinalDriveSetting' LOW, 'GearXSetting' 0 (Shortest).
+5.  Physics Check: Realistic toe/camber.
+6.  Physics: Dampers complement springs/track.
+7.  Balance Consistency: Aero, mechanical, diff in harmony.
+8.  'FinalDrive' & Gears Cohesion: Logical progression, appropriate top speeds.
+9.  Fuel Consistency: Fuel load aligns with session/track.
 10. Tire Compound Logic: 'CompoundSetting' aligns with weather/session.
 
 ## COMMON SETUP COMPROMISES
@@ -949,76 +950,76 @@ ${finalExampleTemplate}
 Now, generate the complete and valid .VEH file. Your response MUST contain ONLY the file content and nothing else.
 `;
 
-    try {
-        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + OPENROUTER_API_KEY, 
-                'Content-Type': 'application/json',
-                'X-Title': 'LMU Setup Generator',
-            },
-            body: JSON.stringify({
-                model: PRIMARY_MODEL,
-                messages: [{
-                    role: "user",
-                    content: prompt
-                }],
-                max_tokens: 8192, 
-                temperature: 0.8, 
-            }),
-        });
+    try {
+        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + OPENROUTER_API_KEY, 
+                'Content-Type': 'application/json',
+                'X-Title': 'LMU Setup Generator',
+            },
+            body: JSON.stringify({
+                model: PRIMARY_MODEL,
+                messages: [{
+                    role: "user",
+                    content: prompt
+                }],
+                max_tokens: 8192, 
+                temperature: 0.8, 
+            }),
+        });
 
-        if (!openrouterResponse.ok) {
-            const errorData = await openrouterResponse.json();
-            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
-            return res.status(openrouterResponse.status).json({
-                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
-            });
-        }
+        if (!openrouterResponse.ok) {
+            const errorData = await openrouterResponse.json();
+            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
+            return res.status(openrouterResponse.status).json({
+                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
+            });
+        }
 
-        const chatCompletion = await openrouterResponse.json();
-        const rawText = chatCompletion.choices[0].message.content;
+        const chatCompletion = await openrouterResponse.json();
+        const rawText = chatCompletion.choices[0].message.content;
 
-        // --- NEW ROBUST PARSING LOGIC ---
-        // Find the start of the actual .VEH content. The AI sometimes adds introductory text.
-        const setupStartIndex = rawText.indexOf('VehicleClassSetting=');
+        // --- NEW ROBUST PARSING LOGIC ---
+        // Find the start of the actual .VEH content. The AI sometimes adds introductory text.
+        const setupStartIndex = rawText.indexOf('VehicleClassSetting=');
 
-        if (setupStartIndex !== -1) {
-            // If the start string is found, extract everything from that point on.
-            let setupText = rawText.substring(setupStartIndex);
+        if (setupStartIndex !== -1) {
+            // If the start string is found, extract everything from that point on.
+            let setupText = rawText.substring(setupStartIndex);
 
-            // Also remove any trailing markdown code blocks if they exist
-            if (setupText.trim().endsWith('```')) {
-                setupText = setupText.trim().slice(0, -3).trim();
-            }
+            // Also remove any trailing markdown code blocks if they exist
+            if (setupText.trim().endsWith('```')) {
+                setupText = setupText.trim().slice(0, -3).trim();
+            }
 
-            // Log the generated setup to the console for debugging
-            console.log("\n--- GENERATED SETUP ---\n", setupText);
+            // Log the generated setup to the console for debugging
+            console.log("\n--- GENERATED SETUP ---\n", setupText);
 
-            res.json({
-                setup: setupText
-            });
+            res.json({
+                setup: setupText
+            });
 
-        } else {
-            // If 'VehicleClassSetting=' is not found at all, the response is invalid.
-            console.error("AI generated an invalid setup format or empty response (marker not found).");
-            console.error("AI Raw Response (first 500 chars):", rawText ? rawText.substring(0, 500) : '[Empty Response]'); // Log a snippet
-            res.status(500).json({
-                error: `AI generated an invalid setup format. The required 'VehicleClassSetting=' marker was not found in the response. Please try again. Raw AI response snippet: ${rawText ? rawText.substring(0, 200) : '[Empty Response]'}`
-            });
-        }
+        } else {
+            // If 'VehicleClassSetting=' is not found at all, the response is invalid.
+            console.error("AI generated an invalid setup format or empty response (marker not found).");
+            console.error("AI Raw Response (first 500 chars):", rawText ? rawText.substring(0, 500) : '[Empty Response]'); // Log a snippet
+            res.status(500).json({
+                error: `AI generated an invalid setup format. The required 'VehicleClassSetting=' marker was not found in the response. Please try again. Raw AI response snippet: ${rawText ? rawText.substring(0, 200) : '[Empty Response]'}`
+            });
+        }
 
-    } catch (error) {
-        console.error("Error communicating with OpenRouter or generating setup:", error);
-        res.status(500).json({
-            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
-        });
-    }
+    } catch (error) {
+        console.error("Error communicating with OpenRouter or generating setup:", error);
+        res.status(500).json({
+            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
+        });
+    }
 });
 
 // 9. Start the server
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-    console.log(`Open your web browser and navigate to http://localhost:${port}`);
-    console.log("Keep this terminal window open while using the generator.");
+    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Open your web browser and navigate to http://localhost:${port}`);
+    console.log("Keep this terminal window open while using the generator.");
 });
