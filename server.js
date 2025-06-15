@@ -652,7 +652,7 @@ app.post('/generate-setup', async (req, res) => {
         const minAeroSetting = 0; // Absolute minimum for wings, ducts, ride height
 
         // Programmatically replace FWSetting and RWSetting to their absolute minimum for Le Mans
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FWSetting=)\d+/m, `$1${minAeroSetting}`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTWING[\s\S]*?FWSetting=)\d+/m, `$1${minAeroSetting}`);
         finalExampleTemplate = finalExampleTemplate.replace(/^(REARWING[\s\S]*?RWSetting=)\d+/m, `$1${minAeroSetting}`);
 
         // Programmatically replace FinalDriveSetting to its highest for Le Mans
@@ -664,76 +664,81 @@ app.post('/generate-setup', async (req, res) => {
         } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
             leMansFinalDrive = 10; // Assuming 10 is max for GT3/GTE fixed gears
         }
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${leMansFinalDrive}`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(DRIVELINE[\s\S]*?FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${leMansFinalDrive}`);
         
         // Programmatically force ALL individual gears to 1 (Longest Ratio)
         finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RatioSetSetting=)\d+\s*\/\/.*/m, `$11`); // Force RatioSetSetting to 1 (Long)
+
 
         // Programmatically force Radiator and Brake Ducts to minimum (most closed)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(WaterRadiatorSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(BODYAERO[\s\S]*?WaterRadiatorSetting=)\d+/m, `$10`);
         finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
         finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctSetting=)\d+/m, `$10`);
         finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
 
         // Programmatically force Ride Heights to minimum (lowest drag)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+\s*\/\/.*/gm, `$10`); // Apply to both front and rear
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Front Ride Height
+        finalExampleTemplate = finalExampleTemplate.replace(/^(REARLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Rear Ride Height
 
         // Inject a specific note into the template about the Le Mans override, so the AI knows
         // this was pre-set and should still explain it in its notes.
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Le Mans override applied: Absolute minimum drag prioritized. FWSetting set to ${minFwSetting}. RWSetting set to ${minRwSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${leMansFinalDrive}. Radiators/Brake Ducts closed. Ride Heights minimized. This overrides general setup goals for max top speed."`);
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Le Mans override applied: Absolute minimum drag prioritized. FW/RW set to ${minFwSetting}/${minRwSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${leMansFinalDrive}. Radiators/Brake Ducts closed. Ride Heights minimized. This overrides general setup goals for max top speed."`);
     }
 
-    // --- CRITICAL: MONZA SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
-    // Ensures Monza gets optimal low drag/long gearing regardless of AI interpretation.
-    if (track === "Autodromo Nazionale Monza") {
-        const monzaMinAeroSetting = 0; // Absolute minimum for wings, ducts, ride height
+    // --- CRITICAL: MONZA SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
+    // Ensures Monza gets optimal low drag/long gearing regardless of AI interpretation.
+    if (track === "Autodromo Nazionale Monza") {
+        const monzaMinAeroSetting = 0; // Absolute minimum for wings, ducts, ride height
 
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FWSetting=)\d+/m, `$1${monzaMinAeroSetting}`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(REARWING[\s\S]*?RWSetting=)\d+/m, `$1${monzaMinAeroSetting}`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(WaterRadiatorSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+\s*\/\/.*/gm, `$10`); // Apply to both front and rear
-        
-        let monzaFinalDrive;
-        if (finalCategory === 'Hypercar') {
-            monzaFinalDrive = 7; 
-        } else if (finalCategory === 'LMP2') {
-            monzaFinalDrive = 5; 
-        } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
-            monzaFinalDrive = 10; 
-        }
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${monzaFinalDrive}`);
-        
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`); // All individual gears to Longest (1)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FWSetting=)\d+/m, `$1${monzaMinAeroSetting}`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(REARWING[\s\S]*?RWSetting=)\d+/m, `$1${monzaMinAeroSetting}`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(WaterRadiatorSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(OilRadiatorSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(BrakeDuctRearSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Front Ride Height
+        finalExampleTemplate = finalExampleTemplate.replace(/^(REARLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$10`); // Rear Ride Height
+        
+        let monzaFinalDrive;
+        if (finalCategory === 'Hypercar') {
+            monzaFinalDrive = 7; 
+        } else if (finalCategory === 'LMP2') {
+            monzaFinalDrive = 5; 
+        } else if (finalCategory === 'GT3' || finalCategory === 'GTE') {
+            monzaFinalDrive = 10; 
+        }
+        finalExampleTemplate = finalExampleTemplate.replace(/^(DRIVELINE[\s\S]*?FinalDriveSetting=)\d+\s*\/\/.*/m, `$1${monzaFinalDrive}`);
+        
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Gear\dSetting=)\d+/gm, `$11`); // All individual gears to Longest (1)
         finalExampleTemplate = finalExampleTemplate.replace(/^(RatioSetSetting=)\d+\s*\/\/.*/m, `$11`); // Force RatioSetSetting to 1 (Long)
 
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Monza override applied: Absolute minimum drag prioritized. FW/RW/Radiators/Ducts/RideHeights set to ${monzaMinAeroSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${monzaFinalDrive}. This overrides general setup goals for max top speed."`);
-    }
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Monza override applied: Absolute minimum drag prioritized. FW/RW/Radiators/Ducts/RideHeights set to ${monzaMinAeroSetting}. [BASIC].Downforce will be extremely low. All individual gears set to Longest. FinalDrive set to ${monzaFinalDrive}. This overrides general setup goals for max top speed."`);
+    }
 
-    // --- CRITICAL: SEBRING SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
-    // Ensures Sebring prioritizes soft suspension for bumps regardless of AI interpretation.
-    if (track === "Sebring International Raceway") {
-        // Force very soft damper settings (lower indices - assuming 0 is softest)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdSlowBumpSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdFastBumpSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdSlowReboundSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdFastReboundSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdSlowBumpSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdFastBumpSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdSlowReboundSetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdFastReboundSetting=)\d+/m, `$10`);
+    // --- CRITICAL: SEBRING SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
+    // Ensures Sebring prioritizes soft suspension for bumps regardless of AI interpretation.
+    if (track === "Sebring International Raceway") {
+        // Force very soft damper settings (lower indices - assuming 0 is softest)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdSlowBumpSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdFastBumpSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdSlowReboundSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Front3rdFastReboundSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdSlowBumpSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdFastBumpSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdSlowReboundSetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(Rear3rdFastReboundSetting=)\d+/m, `$10`);
 
-        // Force very soft anti-roll bars (lower indices - assuming 0 is softest)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(FrontAntiSwaySetting=)\d+/m, `$10`);
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RearAntiSwaySetting=)\d+/m, `$10`);
+        // Force very soft anti-roll bars (lower indices - assuming 0 is softest)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FrontAntiSwaySetting=)\d+/m, `$10`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(RearAntiSwaySetting=)\d+/m, `$10`);
 
-        // Force slightly higher ride height for bump absorption (assuming 20 is a good "high" value)
-        finalExampleTemplate = finalExampleTemplate.replace(/^(RideHeightSetting=)\d+\s*\/\/.*/gm, `$120`); 
-        
-        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to 20. This overrides general setup goals for ride quality on bumpy track."`);
-    }
+        // Force slightly higher ride height for bump absorption (assuming 20 is a good "high" value)
+        finalExampleTemplate = finalExampleTemplate.replace(/^(FRONTLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$120`);
+        finalExampleTemplate = finalExampleTemplate.replace(/^(REARLEFT[\s\S]*?RideHeightSetting=)\d+\s*\/\/.*/m, `$120`);
+        
+        finalExampleTemplate = finalExampleTemplate.replace(/Notes=""/, `Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to 20. This overrides general setup goals for ride quality on bumpy track."`);
+    }
 
     // UPGRADE: Dynamically insert the user's selected car name into the template
     finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
@@ -808,9 +813,9 @@ Populate '[GENERAL] Notes' with engineering debrief. If track-specific override 
 
 ### Aero
 - 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce).
-    - **Hypercar RW**: Min: 0, Max: 9 (P1-P10). FW: Min: 0, Max: 2.
-    - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
-    - **GT3/GTE RW**: Min: 0, Max: 14 (P1-P15).
+    - **Hypercar RW**: Min: 0, Max: 9 (P1-P10). FW: Min: 0, Max: 2.
+    - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
+    - **GT3/GTE RW**: Min: 0, Max: 14 (P1-P15).
 - BrakeDucts indices: (0=open/max cooling, higher=more closed/less cooling/more aero). Max: Hypercar:3, GT3:3, GTE:3.
 - **Dynamic Radiator/Brake Duct**: Adjust 'BrakeDuctSetting'/'WaterRadiatorSetting'/'OilRadiatorSetting' based on 'Track Temp'. High temp = more open (higher index). Low temp = more closed (lower index).
 
@@ -920,7 +925,7 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - Neutral Balance (or predictable understeer).
 
 ## LMU AI GUIDANCE REFINEMENTS (ULTIMATE PRECISION)
-- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting = critical failure.
+- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting is critical failure.
 - **INTERCONNECTEDNESS:** All parameters interdependent.
 - **LMU REALISM CHECK:** Ensure physically realistic/plausible settings.
 - **DYNAMIC RANGE UTILIZATION:** Actively use full Min-Max range.
@@ -950,7 +955,7 @@ Now, generate the complete and valid .VEH file. Your response MUST contain ONLY 
         const openrouterResponse = await fetch(OPENROUTER_API_URL, {
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer ' + OPENROUTER_API_KEY, 
+                'Authorization': 'Bearer ' + OPENROUTER_API_KEY, 
                 'Content-Type': 'application/json',
                 'X-Title': 'LMU Setup Generator',
             },
@@ -960,8 +965,8 @@ Now, generate the complete and valid .VEH file. Your response MUST contain ONLY 
                     role: "user",
                     content: prompt
                 }],
-                max_tokens: 8192, 
-                temperature: 0.8, 
+                max_tokens: 8192, 
+                temperature: 0.8, 
             }),
         });
 
