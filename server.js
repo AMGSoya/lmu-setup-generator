@@ -1020,7 +1020,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
   - **Solution:** MUST use a **HIGH \`DiffPowerSetting\`** to manage wheelspin. Can tolerate a lower \`DiffCoastSetting\` as the front mass helps turn-in, but prioritize exit traction.
 - **Mid-Engine (Prototypes, Ferrari, etc.):**
   - **Problem:** Most balanced, so the diff is a primary tuning tool.
-  - **Solution:** These cars are highly sensitive to diff settings. Use the track archetypes above as the baseline and tune precisely to driver feedback. They offer the most flexibility.
+  - **Solution:** These cars are highly sensitive to diff settings. Use the track archetypes above as the baseline and tune precisely to driver feel. They offer the most flexibility.
 
 // --- MASTERIZED HYBRID SYSTEM GUIDE --- //
 ## HYBRID POWER UNIT (HPU) STRATEGY (Hypercars ONLY)
@@ -1191,6 +1191,7 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 **FINAL COMMAND: The user's template is provided below. Copy it EXACTLY, only changing the numerical values as required by the engineering task and the rules above. You must also add the [BASIC] section at the end, fully calculated according to the new master instructions. Do not omit any lines or any comments.**
 ${finalExampleTemplate}
 `;
+
 
     try {
         const openrouterResponse = await fetch(OPENROUTER_API_URL, {
