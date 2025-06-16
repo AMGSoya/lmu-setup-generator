@@ -942,40 +942,15 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
     - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000).
     - Outputting a generic default like 0.500000 is a critical failure, UNLESS your calculation genuinely results in that optimal value.
     - **'Downforce'**: Represents overall aero grip from 0.0 (min) to 1.0 (max). Calculate this as the average of the normalized wing settings: \`( (FWSetting / FW_Max) + (RWSetting / RW_Max) ) / 2\`. Low-drag setups (Le Mans) should be low (0.05-0.15). High-downforce tracks (Portimão) should be high (0.65-0.95).
-    - **'Balance'**: Represents aero/mechanical balance from 0.0 (oversteer) to 1.0 (understeer). Start with aero balance: \`AeroBalance = (FWSetting / FW_Max) / ((FWSetting / FW_Max) + (RWSetting / RW_Max))\`. Adjust this baseline for mechanical balance. Stiffer front ARB vs. rear pushes value UP (more understeer). Stiffer rear ARB pushes it DOWN (more oversteer). Aggressive setups are low (0.15-0.35). Stable setups are high (0.65-0.85).
+    - **'Balance'**: Represents aero/mechanical balance from 0.0 (oversteer) to 1.0 (understeer). Start with aero balance: \`AeroBalance = (FWSetting / FW_Max) / ((FWSetting / FW_Max) + (RWSetting / RW_Max))\`. **Adjust this baseline for mechanical balance. Stiffer front ARB vs. rear pushes value UP (more understeer). Stiffer rear ARB pushes it DOWN (more oversteer).** Aggressive setups are low (0.15-0.35). Stable setups are high (0.65-0.85).
     - **'Ride'**: Represents suspension compliance from 0.0 (stiff/low) to 1.0 (soft/high). Calculate this by averaging the normalized values of: Ride Height (value/max), Spring Stiffness (value/max), and Fast Bump Damper settings (value/max). A stiff car for a smooth track should be low (0.1-0.3). A soft car for a bumpy track (Sebring) must be high (0.8-0.95).
     - **'Gearing'**: Represents acceleration (0.0) vs. top speed (1.0). Calculate as a weighted average: \`0.7 * (FinalDriveSetting / FinalDrive_Max) + 0.3 * (RatioSetSetting)\`. Value near 1.0 for top speed tracks. Value near 0.1 for acceleration tracks.
     - **'Custom'**: Must always be 1.
 6.  **Engineer's Debrief:** Write your concise summary in the 'Notes' section as per the 'CRITICAL INSTRUCTION'.
 
 // =====================================================================================
-// --- START OF MASTERIZED KNOWLEDGE BASE (IMPROVED AND REFINED) ---
+// --- START OF MASTERIZED KNOWLEDGE BASE (UPGRADED June 2024) ---
 // =====================================================================================
-
-## DRIVER REQUEST INTERPRETATION GUIDE (REFINED!)
-- IF the driver asks for "oversteer", "rotation", or a "pointy" car, their goal is NOT an unstable car. You must interpret this as a request for an AGGRESSIVE setup philosophy. The car must turn in sharply but remain PREDICTABLE and CONTROLLABLE on throttle exit. It should feel 'on the edge' but never 'over the edge'.
-- IF the driver asks for "understeer", "stability", or a "safe" car, you must interpret this as a request for a SAFE setup philosophy. The car should be forgiving and inspire confidence, even if it sacrifices some ultimate rotation speed.
-- In all cases, a setup that is "so oversteery it's undrivable" is a COMPLETE FAILURE. The ultimate goal is always a drivable car that fits the driver's preference on the spectrum from Safe to Aggressive.
-
-## REAR PLATFORM STABILITY (MANDATORY PHILOSOPHY - REFINED!)
-- The rear of the car MUST be predictable. A "loose" or "snappy" rear end is a failed setup, regardless of the user's request for "oversteer".
-- Your goal is to create a rear end that rotates willingly but is always predictable and communicative. You must achieve this with a balanced combination of rear toe, damping, and differential settings.
-- **AVOID** setting Anti-Roll Bars (FrontAntiSwaySetting, RearAntiSwaySetting) to 0, which detaches them. A detached bar often creates an unpredictable platform. Always start from a connected, functional baseline.
-- **Rear Toe:** ALWAYS use a significant amount of Rear Toe-In for stability. For most cars and tracks, a value between 18 and 24 is a safe and effective starting point. NEVER use rear toe-out.
-- **Differential Power Lock:** To prevent corner exit wheelspin and a loose rear, use a relatively HIGH 'DiffPowerSetting'. A higher value locks the differential more on-throttle, forcing both wheels to turn together and providing better traction. Start with higher values (e.g., 10-14 for Hypercar) and only reduce if the car has too much understeer on exit.
-- **Rear Anti-Roll Bar:** Err on the side of a SOFTER rear anti-roll bar ('RearAntiSwaySetting'). A stiff rear ARB is a primary cause of snap oversteer. It is better to have a slightly softer rear and use other tools to manage rotation.
-- **Summary:** Prioritize Rear Toe-In and a locked Diff Power setting as your primary tools for creating a stable but rotatable car. Avoid an overly stiff rear anti-roll bar.
-
-## GEARING STRATEGY (CRITICAL AND REFINED)
-1.  **High-Speed Tracks (e.g., Le Mans, Monza):** The goal is MAXIMUM top speed.
-    - 'FinalDriveSetting': MUST be HIGHEST available index.
-    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
-    - 'RatioSetSetting': MUST be **1 (Long)**.
-2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):** The goal is MAXIMUM acceleration out of corners.
-    - 'FinalDriveSetting': MUST be LOWER available index.
-    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
-    - 'RatioSetSetting': MUST be **0 (Short)**.
-3.  **Balanced Tracks (e.g., Fuji, Spa):** Make a logical choice based on the most critical parts of the track. If a long straight is the best overtaking spot, lean towards longer gears. If exiting a slow corner onto that straight is more important, lean towards shorter gears. Explain your choice in the notes.
 
 ## LMU SETUP FUNDAMENTALS (DEEP DIVE)
 - **The Platform Concept:** The car's chassis is a 'platform'. All setup changes aim to keep this platform stable and predictable. A stable platform allows the aerodynamics to work efficiently and gives the driver confidence. Key elements are pitch (braking/acceleration), roll (cornering), and heave (vertical movement over bumps). Your goal is to control these motions.
@@ -1037,7 +1012,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 - HPU management is a trade-off between outright pace and energy efficiency. Your choices for \`ElectricMotorMapSetting\` (deployment) and \`RegenerationMapSetting\` (harvesting) are critical.
 - **\`RegenerationMapSetting\` (Regen/Harvesting):**
   - **Function:** Controls how aggressively the car harvests energy under braking. Higher values create a stronger "engine braking" effect.
-  - **High Values (8-10):** Maximizes energy recovery. Ideal for race stints and on "stop-and-go" tracks (Bahrain, Fuji) with many heavy braking zones. **Trade-off:** Can destabilize the car's rear under braking if too high.
+  - **High Values (8-10):** Maximizes energy recovery. Ideal for race stints and on "stop-and-go" tracks (Bahrain, Fuji) with many heavy braking zones. **Trade-off: Can destabilize the car's rear under braking if too high.**
   - **Low Values (4-7):** Minimizes braking effect, providing a more stable, traditional braking feel. Ideal for qualifying hot laps where stability is paramount, or for flowing tracks where a sudden braking effect could unsettle the car in a fast corner.
 - **\`ElectricMotorMapSetting\` (Deployment):**
   - **Function:** Controls how the stored energy is deployed.
@@ -1060,6 +1035,20 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 // =====================================================================================
 // --- END OF MASTERIZED KNOWLEDGE BASE ---
 // =====================================================================================
+
+## DRIVER REQUEST INTERPRETATION GUIDE (REFINED!)
+- IF the driver asks for "oversteer", "rotation", or a "pointy" car, their goal is NOT an unstable car. You must interpret this as a request for an AGGRESSIVE setup philosophy. The car must turn in sharply but remain PREDICTABLE and CONTROLLABLE on throttle exit. It should feel 'on the edge' but never 'over the edge'.
+- IF the driver asks for "understeer", "stability", or a "safe" car, you must interpret this as a request for a SAFE setup philosophy. The car should be forgiving and inspire confidence, even if it sacrifices some ultimate rotation speed.
+- In all cases, a setup that is "so oversteery it's undrivable" is a COMPLETE FAILURE. The ultimate goal is always a drivable car that fits the driver's preference on the spectrum from Safe to Aggressive.
+
+## REAR PLATFORM STABILITY (MANDATORY PHILOSOPHY - REFINED!)
+- The rear of the car MUST be predictable. A "loose" or "snappy" rear end is a failed setup, regardless of the user's request for "oversteer".
+- Your goal is to create a rear end that rotates willingly but is always predictable and communicative. You must achieve this with a balanced combination of rear toe, damping, and differential settings.
+- **AVOID** setting Anti-Roll Bars (FrontAntiSwaySetting, RearAntiSwaySetting) to 0, which detaches them. A detached bar often creates an unpredictable platform. Always start from a connected, functional baseline.
+- **Rear Toe:** ALWAYS use a significant amount of Rear Toe-In for stability. For most cars and tracks, a value between 18 and 24 is a safe and effective starting point. NEVER use rear toe-out.
+- **Differential Power Lock:** To prevent corner exit wheelspin and a loose rear, use a relatively HIGH 'DiffPowerSetting'. A higher value locks the differential more on-throttle, forcing both wheels to turn together and providing better traction. Start with higher values (e.g., 10-14 for Hypercar) and only reduce if the car has too much understeer on exit.
+- **Rear Anti-Roll Bar:** Err on the side of a SOFTER rear anti-roll bar ('RearAntiSwaySetting'). A stiff rear ARB is a primary cause of snap oversteer. It is better to have a slightly softer rear and use other tools to manage rotation.
+- **Summary:** Prioritize Rear Toe-In and a locked Diff Power setting as your primary tools for creating a stable but rotatable car. Avoid an overly stiff rear anti-roll bar.
 
 ## LMU GAME MECHANICS & NUANCES
 - Tuning MUST be LMU simulation-based.
@@ -1121,6 +1110,20 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 - 'AntilockBrakeSystemMapSetting' (ABS): (Min: 0, Max: 15).
 - 'TractionControlMapSetting' (TC): (Min: 0, Max: 10).
 
+## GEARING STRATEGY (CRITICAL)
+1.  **High-Speed Tracks (e.g., Le Mans, Monza):**
+    - 'FinalDriveSetting': MUST be HIGHEST available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
+    - 'RatioSetSetting': MUST be **1 (Long)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+    - Self-Verification: Confirm 6th/7th gear top speed >300 km/h (>185 mph) for Hypercars/LMP2s.
+2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):**
+    - 'FinalDriveSetting': MUST be LOWER available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
+    - 'RatioSetSetting': MUST be **0 (Short)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
+
 ## TRACK DNA DATABASE (EXPANDED!)
 - **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. **Deep Dive:** The challenge is surviving the Porsche Curves. You need high-speed stability. Use a higher \`DiffCoastSetting\` to keep the rear planted on entry to these fast corners, even with minimal wing. A slightly higher \`DiffPreloadSetting\` adds predictability. Bumps on the Mulsanne require good fast-speed damping.
 - **Sebring International Raceway:** Extremely bumpy (old concrete slabs). Focus: SOFT suspension, higher ride height. **It requires soft fast damping for its harsh bumps but can still use stiffer slow damping for platform control in the smoother corners.** The **'Ride'** parameter in [BASIC] **MUST be set to its ABSOLUTE HIGHEST possible value (e.g., 0.900000-0.975000)**. **Dampers (Slow/Fast Bump/Rebound) and Anti-Roll Bars (Front/Rear AntiSwaySetting) MUST be set to their absolute softest (index 0 for dampers, 0-2 for ARBs)**. 'RideHeightSetting' MUST be set to a high value (e.g., 20-30). This ensures maximum bump absorption, overriding general setup goals for stiffness. **Deep Dive:** Turn 17 is notoriously brutal. Short gearing is vital for hairpins. You MUST use a high \`DiffPowerSetting\` for traction on bumpy exits and a high \`DiffPreloadSetting\` to stabilize the differential over the slabs.
@@ -1145,11 +1148,11 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 - **Front-Engine (Corvette, Aston Martin):** Great braking stability, but can be prone to exit understeer and wheelspin. **MUST use a higher \`DiffPowerSetting\` to manage traction.** Benefits from setup choices that promote rear-end rotation (stiffer rear ARB, lower \`DiffCoastSetting\`) to get the car pointed correctly before applying power.
 - **General Principle:** Lean into the positive characteristics of a car's architecture while actively using setup tools to mitigate its inherent negative traits.
 
-## DRIVER FEEDBACK TROUBLESHOOTING MATRIX (High Priority & Refined)
+## DRIVER FEEDBACK TROUBLESHOOTING MATRIX (High Priority)
 - IF "Understeer on corner entry": 1st: Reduce 'DiffCoastSetting'. 2nd: Soften 'FrontAntiSwaySetting'. 3rd: Increase 'FrontToeInSetting' (more toe out).
 - IF "Understeer mid-corner or on exit": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Reduce 'DiffPowerSetting'. 3rd: Stiffen Rear Springs or increase rear ride height (rake).
 - IF "Oversteer on corner entry" or "nervous": 1st: Increase 'DiffCoastSetting'. 2nd: Stiffen 'FrontAntiSwaySetting'. 3rd: Increase 'RearToeInSetting' (more toe in).
-- IF "Oversteer on exit" or "Poor traction" / "Loose rear": 1st: **Increase 'DiffPowerSetting' (on-throttle lock)**. 2nd: Soften 'RearAntiSwaySetting'. 3rd: Softer rear springs or reduce rear ride height (rake). 4. Use less negative rear camber.
+- IF "Oversteer on exit" or "Poor traction" / "Loose rear": 1st: Soften 'RearAntiSwaySetting'. 2nd: Increase 'DiffPowerSetting' (on-throttle lock). 3rd: Softer rear springs or reduce rear ride height (rake). 4. Use less negative rear camber.
 - IF "Unstable under braking": 1st: Decrease 'RearBrakeSetting' (move bias forward). 2nd: Increase 'EngineBrakingMapSetting'. 3rd: Increase 'DiffCoastSetting'.
 - IF "Too much Understeer" or "Pushing in corners": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Soften 'FrontAntiSwaySetting'. 3rd: Decrease 'RearToeInSetting' (less toe-in).
 
