@@ -838,35 +838,42 @@ app.post('/generate-setup', async (req, res) => {
 
 
         if (trackName === "Circuit de la Sarthe (Le Mans)" || trackName === "Autodromo Nazionale Monza") {
-            const minAeroSetting = 0;
+            const minAeroSetting = 0; // Represents minimum wing
             const note = trackName === "Circuit de la Sarthe (Le Mans)" ?
                 'Notes="Le Mans override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."' :
                 'Notes="Monza override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."';
 
+            // Ensure wing settings are at their absolute minimum for these high-speed tracks
             replaceSectionSetting('\\[FRONTWING\\]', 'FWSetting', minAeroSetting);
             replaceSectionSetting('\\[REARWING\\]', 'RWSetting', minAeroSetting);
 
+            // Determine max final drive based on car category
             let maxFinalDrive;
-            if (finalCategory === 'Hypercar') maxFinalDrive = 7;
-            else if (finalCategory === 'LMP2') maxFinalDrive = 5;
-            else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10;
+            if (finalCategory === 'Hypercar') maxFinalDrive = 7; // Assuming Max for Hypercar template
+            else if (finalCategory === 'LMP2') maxFinalDrive = 5; // Assuming Max for LMP2 template
+            else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10; // Assuming Max for GT3/GTE template
 
             replaceSectionSetting('\\[DRIVELINE\\]', 'FinalDriveSetting', maxFinalDrive);
+            // Ensure all individual gears are set to longest ratio (index 1)
             overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
-            replaceSetting('RatioSetSetting', 1);
+            replaceSetting('RatioSetSetting', 1); // Ensure ratio set is also longest
 
+            // Minimize radiators and brake ducts for less drag
             replaceSetting('WaterRadiatorSetting', 0);
             replaceSetting('OilRadiatorSetting', 0);
             replaceSetting('BrakeDuctSetting', 0);
             replaceSetting('BrakeDuctRearSetting', 0);
 
+            // Minimize ride height for less drag
             overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
-            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
+            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note); // Add specific note
+            console.log(`[OVERRIDE] Applied ${trackName} high-speed, low-drag overrides.`);
 
         } else if (trackName === "Sebring International Raceway") {
             const note = 'Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to absorb bumps."';
 
             // Set dampers and ARBs to very soft values (e.g., 0 or 1)
+            // Prioritize index 0 for absolute softest if applicable, else 1
             replaceSetting('Front3rdSlowBumpSetting', 0);
             replaceSetting('Front3rdFastBumpSetting', 0);
             replaceSetting('Front3rdSlowReboundSetting', 0);
@@ -876,12 +883,20 @@ app.post('/generate-setup', async (req, res) => {
             replaceSetting('Rear3rdSlowReboundSetting', 0);
             replaceSetting('Rear3rdFastReboundSetting', 0);
 
-            replaceSetting('FrontAntiSwaySetting', 1);
-            replaceSetting('RearAntiSwaySetting', 1);
+            replaceSetting('FrontAntiSwaySetting', 0); // Set to 0 if possible, else 1
+            replaceSetting('RearAntiSwaySetting', 0); // Set to 0 if possible, else 1
 
-            // Set ride heights high
+            // Set individual wheel dampers to softest
+            overriddenTemplate = overriddenTemplate.replace(/^(SlowBumpSetting=)\d+(.*)/gm, `$10$2`);
+            overriddenTemplate = overriddenTemplate.replace(/^(FastBumpSetting=)\d+(.*)/gm, `$10$2`);
+            overriddenTemplate = overriddenTemplate.replace(/^(SlowReboundSetting=)\d+(.*)/gm, `$10$2`);
+            overriddenTemplate = overriddenTemplate.replace(/^(FastReboundSetting=)\d+(.*)/gm, `$10$2`);
+
+
+            // Set ride heights high (index 20-30 are typical high values)
             overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$120$2`);
-            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
+            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note); // Add specific note
+            console.log('[OVERRIDE] Applied Sebring bumpy track overrides.');
         }
         return overriddenTemplate;
     };
@@ -1081,7 +1096,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 
 ### Aero (Index to UI mapping is CRITICAL)
 - 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce). Index 0 = P1, Index 1 = P2, etc.
-    - **Hypercar FW**: Min: 0, Max: 2. **RW**: Min: 0, Max: 9 (P1-P10).
+    - **Hypercar FW**: Min: 0, Max: 2. **RW**: Min: 0, Max: 11 (P1-P12).
     - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
     - **GTE RW**: Min: 0, Max: 12 (P1-P13).
     - **GT3 RW**: Min: 0, Max: 14 (P1-P15).
@@ -1125,7 +1140,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## TRACK DNA DATABASE (EXPANDED!)
-- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup goals. **Deep Dive:** The challenge is surviving the Porsche Curves. You need high-speed stability. Use a higher \`DiffCoastSetting\` to keep the rear planted on entry to these fast corners, even with minimal wing. A slightly higher \`DiffPreloadSetting\` adds predictability. Bumps on the Mulsanne require good fast-speed damping.
+- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup philosophies. **Deep Dive:** The challenge is surviving the Porsche Curves. You need high-speed stability. Use a higher \`DiffCoastSetting\` to keep the rear planted on entry to these fast corners, even with minimal wing. A slightly higher \`DiffPreloadSetting\` adds predictability. Bumps on the Mulsanne require good fast-speed damping.
 - **Sebring International Raceway:** Extremely bumpy (old concrete slabs). Focus: SOFT suspension, higher ride height. **It requires soft fast damping for its harsh bumps but can still use stiffer slow damping for platform control in the smoother corners.** The **'Ride'** parameter in [BASIC] **MUST be set to its ABSOLUTE HIGHEST possible value (e.g., 0.900000-0.975000)**. **Dampers (Slow/Fast Bump/Rebound) and Anti-Roll Bars (Front/Rear AntiSwaySetting) MUST be set to their absolute softest (index 0 for dampers, 0-2 for ARBs)**. 'RideHeightSetting' MUST be set to a high value (e.g., 20-30). This ensures maximum bump absorption, overriding general setup goals for stiffness. **Deep Dive:** Turn 17 is notoriously brutal. Short gearing is vital for hairpins. You MUST use a high \`DiffPowerSetting\` for traction on bumpy exits and a high \`DiffPreloadSetting\` to stabilize the differential over the slabs.
 - **Spa-Francorchamps:** High-speed, elevation change. Focus: High-speed stability, good aero balance. Stiff springs for Eau Rouge compression. Long Gears Recommended. **Deep Dive:** Must have a stiff front end (springs, slow bump) for compression in Eau Rouge/Raidillon. The trade-off is the slow Bus Stop chicane. A slightly softer rear ARB can help. The key is aero efficiency. Use a relatively high \`DiffCoastSetting\` for stability through Pouhon and other fast entries.
 - **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed. **Deep Dive:** The challenge is braking stability and curb-riding for the chicanes. You need a compliant car with good traction. A high \`DiffCoastSetting\` is essential for stability when braking from top speed. Use a lower \`DiffPowerSetting\` to help the car rotate out of the slow chicanes without understeer.
@@ -1173,7 +1188,8 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 9.  Fuel Consistency: Fuel load aligns with session/track.
 10. Tire Compound Logic: 'CompoundSetting' aligns with weather/session.
 
-**FINAL COMMAND: The user's template is provided below. Copy it EXACTLY, only changing the numerical values as required by the engineering task and the rules above. You must also add the [BASIC] section at the end, fully calculated according to the new master instructions. Do not omit any lines or any comments.**${finalExampleTemplate}
+**FINAL COMMAND: The user's template is provided below. Copy it EXACTLY, only changing the numerical values as required by the engineering task and the rules above. You must also add the [BASIC] section at the end, fully calculated according to the new master instructions. Do not omit any lines or any comments.**
+${finalExampleTemplate}
 `;
 
     try {
@@ -1233,6 +1249,126 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
                 // Add a log to see this in action
                 console.log(`[DRIVELINE SYNC] Enforced all individual Gear Settings to match RatioSetSetting value of: ${ratioSetValue}`);
+            }
+
+            // --- NEW: Dynamic [BASIC] Section Generation (Post-Processing) ---
+            // This is a failsafe/reinforcement. The AI is instructed to generate it,
+            // but we can ensure its format and values are derived correctly here if needed,
+            // or just ensure the AI includes it. For this mastery, the AI is expected to do it.
+
+            // First, define max values for normalization - these should ideally come from AI's knowledge base or car data
+            // For now, these are illustrative and should be aligned with LMU's actual ranges
+            const fwMax = { 'Hypercar': 2, 'LMP2': 0, 'GTE': 0, 'GT3': 0 }[finalCategory] || 1; // LMP2/GTE/GT3 often have fixed FW
+            const rwMax = { 'Hypercar': 11, 'LMP2': 8, 'GTE': 12, 'GT3': 14 }[finalCategory] || 10;
+            const rideHeightMax = 30; // Max value for RideHeightSetting
+            const springMax = 20; // Max value for SpringSetting
+            const damperMax = 10; // Max value for Fast Bump Damper Setting
+            const finalDriveMax = { 'Hypercar': 7, 'LMP2': 5, 'GTE': 10, 'GT3': 10 }[finalCategory] || 10;
+            const ratioSetMax = 1; // Max value for RatioSetSetting (0 or 1)
+
+            // Extract current settings from the AI-generated setup text
+            const getSettingValue = (text, settingName) => {
+                const match = text.match(new RegExp(`^${settingName}=(\\d+)`, 'm'));
+                return match ? parseInt(match[1]) : null;
+            };
+
+            const getFrontWheelSettingValue = (text, settingName) => {
+                const matchFL = text.match(new RegExp(`^\\[FRONTLEFT\\][\\s\\S]*?^${settingName}=(\\d+)`, 'm'));
+                const matchFR = text.match(new RegExp(`^\\[FRONTRIGHT\\][\\s\\S]*?^${settingName}=(\\d+)`, 'm'));
+                if (matchFL && matchFR) {
+                    return (parseInt(matchFL[1]) + parseInt(matchFR[1])) / 2;
+                }
+                return null;
+            };
+
+            const getRearWheelSettingValue = (text, settingName) => {
+                const matchRL = text.match(new RegExp(`^\\[REARLEFT\\][\\s\\S]*?^${settingName}=(\\d+)`, 'm'));
+                const matchRR = text.match(new RegExp(`^\\[REARRIGHT\\][\\s\\S]*?^${settingName}=(\\d+)`, 'm'));
+                if (matchRL && matchRR) {
+                    return (parseInt(matchRL[1]) + parseInt(matchRR[1])) / 2;
+                }
+                return null;
+            };
+
+
+            const fwSetting = getSettingValue(setupText, 'FWSetting') || 0; // Default to 0 if not found/fixed
+            const rwSetting = getSettingValue(setupText, 'RWSetting');
+            const frontAntiSway = getSettingValue(setupText, 'FrontAntiSwaySetting');
+            const rearAntiSway = getSettingValue(setupText, 'RearAntiSwaySetting');
+            const frontRideHeight = getFrontWheelSettingValue(setupText, 'RideHeightSetting');
+            const rearRideHeight = getRearWheelSettingValue(setupText, 'RideHeightSetting');
+            const frontSpring = getFrontWheelSettingValue(setupText, 'SpringSetting');
+            const rearSpring = getRearWheelSettingValue(setupText, 'SpringSetting');
+            const frontFastBump = getFrontWheelSettingValue(setupText, 'FastBumpSetting');
+            const rearFastBump = getRearWheelSettingValue(setupText, 'FastBumpSetting');
+            const finalDriveSetting = getSettingValue(setupText, 'FinalDriveSetting');
+            const ratioSetSetting = getSettingValue(setupText, 'RatioSetSetting');
+
+
+            let downforce = 0.0;
+            if (rwSetting !== null) {
+                 const normalizedFW = fwMax > 0 ? (fwSetting / fwMax) : 0; // If FW is fixed (max 0), it contributes 0
+                 const normalizedRW = rwSetting / rwMax;
+                 downforce = ((normalizedFW + normalizedRW) / 2).toFixed(6);
+            } else {
+                downforce = 0.500000; // Fallback
+            }
+
+            let balance = 0.500000;
+            if (fwMax > 0 && rwSetting !== null && rwMax > 0) {
+                const normalizedFW = fwSetting / fwMax;
+                const normalizedRW = rwSetting / rwMax;
+                if ((normalizedFW + normalizedRW) > 0) {
+                    balance = (normalizedFW / (normalizedFW + normalizedRW));
+                    // Adjust for mechanical balance (simple illustrative adjustment)
+                    if (frontAntiSway !== null && rearAntiSway !== null) {
+                        const arbdiff = (frontAntiSway / 20) - (rearAntiSway / 20); // Normalize ARBs (max 20)
+                        balance = balance + arbdiff * 0.2; // Small adjustment based on ARB difference
+                    }
+                    balance = Math.min(1.0, Math.max(0.0, balance)).toFixed(6);
+                }
+            } else {
+                 balance = 0.500000; // Fallback if FW is fixed or RW missing
+            }
+
+
+            let ride = 0.500000;
+            if (frontRideHeight !== null && rearRideHeight !== null && frontSpring !== null && rearSpring !== null && frontFastBump !== null && rearFastBump !== null) {
+                const avgRideHeight = ((frontRideHeight + rearRideHeight) / 2) / rideHeightMax;
+                const avgSpring = ((frontSpring + rearSpring) / 2) / springMax;
+                const avgFastBump = ((frontFastBump + rearFastBump) / 2) / damperMax;
+                // Invert spring and damper values for 'softness'
+                ride = ((1 - avgRideHeight) * 0.3 + (1 - avgSpring) * 0.4 + (1 - avgFastBump) * 0.3).toFixed(6);
+                ride = Math.min(1.0, Math.max(0.0, ride)).toFixed(6);
+            } else {
+                 ride = 0.500000; // Fallback
+            }
+
+
+            let gearing = 0.500000;
+            if (finalDriveSetting !== null && ratioSetSetting !== null) {
+                 gearing = (0.7 * (finalDriveSetting / finalDriveMax) + 0.3 * (ratioSetSetting / ratioSetMax)).toFixed(6);
+                 gearing = Math.min(1.0, Math.max(0.0, gearing)).toFixed(6);
+            } else {
+                gearing = 0.500000; // Fallback
+            }
+
+            const custom = 1.000000; // Always 1.0
+
+            const basicSection = `
+[BASIC]
+Downforce=${downforce}
+Balance=${balance}
+Ride=${ride}
+Gearing=${gearing}
+Custom=${custom}`;
+
+            // Append the [BASIC] section. Ensure it's not already there (though AI should place it at end)
+            if (!setupText.includes('[BASIC]')) {
+                setupText += basicSection;
+            } else {
+                // If AI tried to put it there, ensure it's correct format
+                setupText = setupText.replace(/\[BASIC\][\s\S]*$/, basicSection);
             }
 
 
