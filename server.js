@@ -183,7 +183,7 @@ SlowReboundSetting=5//6 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=4//5 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//4.00 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=2//Medium (Min: 0=Wet, 1=Soft, 2=Medium, 3=Hard) (MUST BE OVERWRITTEN)
 
 [FRONTRIGHT]
 CamberSetting=26//-1.4 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
@@ -200,7 +200,7 @@ SlowReboundSetting=5//6 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=4//5 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//4.00 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=2//Medium (Min: 0=Wet, 1=Soft, 2=Medium, 3=Hard) (MUST BE OVERWRITTEN)
 
 [REARLEFT]
 CamberSetting=20//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
@@ -217,7 +217,7 @@ SlowReboundSetting=6//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=6//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//4.00 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=2//Medium (Min: 0=Wet, 1=Soft, 2=Medium, 3=Hard) (MUST BE OVERWRITTEN)
 
 [REARRIGHT]
 CamberSetting=20//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
@@ -234,7 +234,7 @@ SlowReboundSetting=6//11 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=6//11 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//4.00 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=2//Medium (Min: 0=Wet, 1=Soft, 2=Medium, 3=Hard) (MUST BE OVERWRITTEN)
 
 [BASIC]
 Downforce=0.050000
@@ -368,7 +368,7 @@ SlowReboundSetting=2//3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//3.20 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=1//Medium (Min: 0=Wet, 1=Medium) (MUST BE OVERWRITTEN)
 
 [FRONTRIGHT]
 CamberSetting=11//-1.5 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
@@ -385,7 +385,7 @@ SlowReboundSetting=2//3 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//3.20 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=1//Medium (Min: 0=Wet, 1=Medium) (MUST BE OVERWRITTEN)
 
 [REARLEFT]
 CamberSetting=20//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
@@ -402,7 +402,7 @@ SlowReboundSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//3.20 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=1//Medium (Min: 0=Wet, 1=Medium) (MUST BE OVERWRITTEN)
 
 [REARRIGHT]
 CamberSetting=20//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
@@ -419,7 +419,7 @@ SlowReboundSetting=1//2 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=0//1 (soft) (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//3.20 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=1//Medium (Min: 0=Wet, 1=Medium) (MUST BE OVERWRITTEN)
 
 [BASIC]
 Downforce=0.400000
@@ -567,7 +567,7 @@ SlowReboundSetting=10//10
 FastReboundSetting=10//10
 //BrakeDiscSetting=0//3.56 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Soft
+CompoundSetting=1//Soft (Min: 0=Wet, 1=Soft, 2=Medium, 3=Hard) (MUST BE OVERWRITTEN)
 //EquippedTireIDSetting=0//
 
 [FRONTRIGHT]
@@ -585,7 +585,7 @@ SlowReboundSetting=10//10
 FastReboundSetting=10//10
 //BrakeDiscSetting=0//3.56 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Soft
+CompoundSetting=1//Soft (Min: 0=Wet, 1=Soft, 2=Medium, 3=Hard) (MUST BE OVERWRITTEN)
 //EquippedTireIDSetting=0//
 
 [REARLEFT]
@@ -603,7 +603,7 @@ SlowReboundSetting=7//7
 FastReboundSetting=7//7
 //BrakeDiscSetting=0//3.20 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Soft
+CompoundSetting=1//Soft (Min: 0=Wet, 1=Soft, 2=Medium, 3=Hard) (MUST BE OVERWRITTEN)
 //EquippedTireIDSetting=0//
 
 [REARRIGHT]
@@ -621,7 +621,7 @@ SlowReboundSetting=7//7
 FastReboundSetting=7//7
 //BrakeDiscSetting=0//3.20 cm
 //BrakePadSetting=0//1
-//CompoundSetting=0//Soft
+CompoundSetting=1//Soft (Min: 0=Wet, 1=Soft, 2=Medium, 3=Hard) (MUST BE OVERWRITTEN)
 //EquippedTireIDSetting=0//
 
 [BASIC]
@@ -755,7 +755,7 @@ SlowReboundSetting=6//12 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=4//14 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//3.56 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=1//Medium (Min: 0=Wet, 1=Medium) (MUST BE OVERWRITTEN)
 
 [FRONTRIGHT]
 CamberSetting=26//-1.80 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
@@ -772,7 +772,7 @@ SlowReboundSetting=6//12 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=4//14 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//3.56 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=1//Medium (Min: 0=Wet, 1=Medium) (MUST BE OVERWRITTEN)
 
 [REARLEFT]
 CamberSetting=25//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
@@ -789,7 +789,7 @@ SlowReboundSetting=11//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=2//16 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//3.20 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-//CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=1//Medium (Min: 0=Wet, 1=Medium) (MUST BE OVERWRITTEN)
 
 [REARRIGHT]
 CamberSetting=25//-1.40 deg (Min: 0, Max: 40) (MUST BE OVERWRITTEN)
@@ -806,7 +806,7 @@ SlowReboundSetting=11//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastReboundSetting=2//16 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 //BrakeDiscSetting=0//3.20 cm (Fixed)
 //BrakePadSetting=0//1 (Fixed)
-CompoundSetting=0//Medium (Min: 0, Max: 2) (MUST BE OVERWRITTEN)
+CompoundSetting=1//Medium (Min: 0=Wet, 1=Medium) (MUST BE OVERWRITTEN)
 
 [BASIC]
 Downforce=0.400000
@@ -856,12 +856,14 @@ app.post('/generate-setup', async (req, res) => {
         // Generic regex to replace a setting's number while preserving its trailing comment
         const replaceSetting = (settingName, newValue, regexFlags = 'm') => {
             const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, regexFlags);
-            overriddenTemplate = overriddenTemplate.replace(regex, `<span class="math-inline">1</span>{newValue}$2`);
+            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
         };
 
         const replaceSectionSetting = (section, settingName, newValue, regexFlags = 'm') => {
-            const regex = new RegExp(`^(<span class="math-inline">\{section\}\[\\\\s\\\\S\]\*?</span>{settingName}=)\\d+(.*)`, regexFlags);
-            overriddenTemplate = overriddenTemplate.replace(regex, `<span class="math-inline">1</span>{newValue}$2`);
+            // This regex needs to be more specific to ensure it only replaces within the section
+            // It looks for the section header, then non-greedy match for anything until the setting, then replaces.
+            const sectionRegex = new RegExp(`\\[${section}\\]([\\s\\S]*?)^(${settingName}=)\\d+(.*)`, 'm');
+            overriddenTemplate = overriddenTemplate.replace(sectionRegex, `[${section}]$1$2${newValue}$3`);
         };
 
 
@@ -871,15 +873,21 @@ app.post('/generate-setup', async (req, res) => {
                 'Notes="Le Mans override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."' :
                 'Notes="Monza override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."';
 
-            replaceSectionSetting('\\[FRONTWING\\]', 'FWSetting', minAeroSetting);
-            replaceSectionSetting('\\[REARWING\\]', 'RWSetting', minAeroSetting);
+            // Ensure we handle cases where the FWSetting is commented out in some templates
+            if (overriddenTemplate.includes('[FRONTWING]\nFWSetting')) {
+                replaceSectionSetting('FRONTWING', 'FWSetting', minAeroSetting);
+            }
+            if (overriddenTemplate.includes('[REARWING]\nRWSetting')) {
+                 replaceSectionSetting('REARWING', 'RWSetting', minAeroSetting);
+            }
+
 
             let maxFinalDrive;
-            if (finalCategory === 'Hypercar') maxFinalDrive = 7;
-            else if (finalCategory === 'LMP2') maxFinalDrive = 5;
-            else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10;
+            if (finalCategory === 'Hypercar') maxFinalDrive = 7; // Example value, adjust as per LMU Hypercar max
+            else if (finalCategory === 'LMP2') maxFinalDrive = 5; // Example value, adjust as per LMU LMP2 max
+            else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10; // Example value, adjust as per LMU GT3/GTE max
 
-            replaceSectionSetting('\\[DRIVELINE\\]', 'FinalDriveSetting', maxFinalDrive);
+            replaceSectionSetting('DRIVELINE', 'FinalDriveSetting', maxFinalDrive);
             overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
             replaceSetting('RatioSetSetting', 1);
 
@@ -888,6 +896,7 @@ app.post('/generate-setup', async (req, res) => {
             replaceSetting('BrakeDuctSetting', 0);
             replaceSetting('BrakeDuctRearSetting', 0);
 
+            // Replace all RideHeightSetting values to 0
             overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
             overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
 
@@ -901,21 +910,23 @@ app.post('/generate-setup', async (req, res) => {
             overriddenTemplate = overriddenTemplate.replace(/^(SlowReboundSetting=)\d+(.*)/gm, `$10$2`);
             overriddenTemplate = overriddenTemplate.replace(/^(FastReboundSetting=)\d+(.*)/gm, `$10$2`);
 
-            // 3rd Spring Dampers (if applicable)
-            replaceSetting('Front3rdSlowBumpSetting', 0);
-            replaceSetting('Front3rdFastBumpSetting', 0);
-            replaceSetting('Front3rdSlowReboundSetting', 0);
-            replaceSetting('Front3rdFastReboundSetting', 0);
-            replaceSetting('Rear3rdSlowBumpSetting', 0);
-            replaceSetting('Rear3rdFastBumpSetting', 0);
-            replaceSetting('Rear3rdSlowReboundSetting', 0);
-            replaceSetting('Rear3rdFastReboundSetting', 0);
+            // 3rd Spring Dampers (if applicable, ensuring they are not commented out)
+            if (overriddenTemplate.includes('Front3rdSlowBumpSetting')) replaceSetting('Front3rdSlowBumpSetting', 0);
+            if (overriddenTemplate.includes('Front3rdFastBumpSetting')) replaceSetting('Front3rdFastBumpSetting', 0);
+            if (overriddenTemplate.includes('Front3rdSlowReboundSetting')) replaceSetting('Front3rdSlowReboundSetting', 0);
+            if (overriddenTemplate.includes('Front3rdFastReboundSetting')) replaceSetting('Front3rdFastReboundSetting', 0);
+            if (overriddenTemplate.includes('Rear3rdSlowBumpSetting')) replaceSetting('Rear3rdSlowBumpSetting', 0);
+            if (overriddenTemplate.includes('Rear3rdFastBumpSetting')) replaceSetting('Rear3rdFastBumpSetting', 0);
+            if (overriddenTemplate.includes('Rear3rdSlowReboundSetting')) replaceSetting('Rear3rdSlowReboundSetting', 0);
+            if (overriddenTemplate.includes('Rear3rdFastReboundSetting')) replaceSetting('Rear3rdFastReboundSetting', 0);
 
-            replaceSetting('FrontAntiSwaySetting', 1);
-            replaceSetting('RearAntiSwaySetting', 1);
+            // Anti-Roll Bars
+            if (overriddenTemplate.includes('FrontAntiSwaySetting')) replaceSetting('FrontAntiSwaySetting', 1);
+            if (overriddenTemplate.includes('RearAntiSwaySetting')) replaceSetting('RearAntiSwaySetting', 1);
 
-            // Set ride heights high
-            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$120$2`);
+            // Set ride heights high (e.g., 20 or 30, depending on the max range for the car)
+            // Use a higher value like 25 for general high setting
+            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$125$2`); // Assuming 30 is max. 25 is a good high value.
             overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
         }
         return overriddenTemplate;
@@ -1099,7 +1110,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 - 'RideHeightSetting': (Min: 0/~4.0 cm, Max: 30/~8.0 cm).
 - 'SpringSetting': (Min: 0, Max: 20).
 - 'AntiSwaySetting (ARB)': (Min: 0, Max: 20).
-- 'Camber Setting': (Min: 0/~-0.5 deg, Max: 40/~-4.0 deg). **Note on index mapping:** Higher index = less negative camber. Lower index = more negative camber.
+- 'CamberSetting': (Min: 0/~-0.5 deg, Max: 40/~-4.0 deg). **Note on index mapping:** Higher index = less negative camber. Lower index = more negative camber.
 - 'Toe In/Out': ('FrontToeInSetting'/'RearToeInSetting') (Min: 0/~-0.2 deg, Max: 30/~+0.2 deg).
 - Damper Settings: ('Slow Bump'/'Fast Bump'/'Slow Rebound'/'Fast Rebound') (Min: 0, Max: 10). Soft=0-3, Medium=4-7, Stiff=8-10. Bumpy tracks need softer Fast.
 
@@ -1233,19 +1244,19 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## LMU AI GUIDANCE REFINEMENTS (ULTIMATE PRECISION)
 - **CRITICAL MANDATORY OUTPUTS (NO OMISSIONS!):** For ALL parameters that are adjustable (i.e., not marked "Fixed") or flagged "(MUST BE OVERWRITTEN)", you **MUST** output a numerical value. **You are FORBIDDEN from omitting any of these lines.** This includes, but is not limited to:
-    * **ALL Differential Settings:** `DiffPowerSetting`, `DiffCoastSetting`, `DiffPreloadSetting` **MUST be present with calculated, non-default values.**
-    * **ALL 16 Individual Wheel Damper Settings:** `SlowBumpSetting`, `FastBumpSetting`, `SlowReboundSetting`, `FastReboundSetting` for `FRONTLEFT`, `FRONTRIGHT`, `REARLEFT`, `REARRIGHT` sections **MUST be present with calculated, non-default values.**
-    * **ALL 3rd Spring Damper Settings:** `Front3rdSlowBumpSetting`, `Front3rdFastBumpSetting`, `Front3rdSlowReboundSetting`, `Front3rdFastReboundSetting`, `Rear3rdSlowBumpSetting`, `Rear3rdFastBumpSetting`, `Rear3rdSlowReboundSetting`, `Rear3rdFastReboundSetting` **MUST be present with calculated, non-default values, if not fixed.**
+    * **ALL Differential Settings:** \`DiffPowerSetting\`, \`DiffCoastSetting\`, \`DiffPreloadSetting\` **MUST be present with calculated, non-default values.**
+    * **ALL 16 Individual Wheel Damper Settings:** \`SlowBumpSetting\`, \`FastBumpSetting\`, \`SlowReboundSetting\`, \`FastReboundSetting\` for \`FRONTLEFT\`, \`FRONTRIGHT\`, \`REARLEFT\`, \`REARRIGHT\` sections **MUST be present with calculated, non-default values.**
+    * **ALL 3rd Spring Damper Settings:** \`Front3rdSlowBumpSetting\`, \`Front3rdFastBumpSetting\`, \`Front3rdSlowReboundSetting\`, \`Front3rdFastReboundSetting\`, \`Rear3rdSlowBumpSetting\`, \`Rear3rdFastBumpSetting\`, \`Rear3rdSlowReboundSetting\`, \`Rear3rdFastReboundSetting\` **MUST be present with calculated, non-default values, if not fixed.**
 
 - **STRICT NON-DEFAULT GENERATION (MUST BE OVERWRITTEN):** For *all* parameters explicitly marked "(MUST BE OVERWRITTEN)", you MUST calculate and output a new, distinct numerical value. You are forbidden from simply outputting the template's default value for these parameters. Outputting the default value for a parameter explicitly marked "(MUST BE OVERWRITTEN)" is a critical failure.
 
 - **NO STATIC DEFAULTS (GENERAL):** You MUST NOT output values identical to template defaults unless your calculation genuinely results in that optimal value. Defaulting for *any* adjustable setting is a failure.
 
 - **ULTRA-STRICT QUALIFYING HYPERCAR RULES (ABSOLUTE PRIORITY):**
-    * If `Session Type` is `qualifying` AND `Car Category` is `Hypercar`:
-        * `FuelSetting` **MUST** be set to a concrete value between **5-10L** (e.g., 7L for 2-3 laps). No exceptions. This is a direct performance factor.
-        * `RegenerationMapSetting` **MUST** be set to **8 or 9**. No exceptions. This is critical for hybrid deployment.
-        * `ElectricMotorMapSetting` **MUST** be set to **3 or 4** (for aggressive deployment). No exceptions.
+    * If \`Session Type\` is \`qualifying\` AND \`Car Category\` is \`Hypercar\`:
+        * \`FuelSetting\` **MUST** be set to a concrete value between **5-10L** (e.g., 7L for 2-3 laps). No exceptions. This is a direct performance factor.
+        * \`RegenerationMapSetting\` **MUST** be set to **8 or 9**. No exceptions. This is critical for hybrid deployment.
+        * \`ElectricMotorMapSetting\` **MUST** be set to **3 or 4** (for aggressive deployment). No exceptions.
     * These settings are **ABSOLUTELY CRITICAL for qualifying pace and must be followed precisely, overriding any other general philosophy or default behavior.**
 
 - **INTERCONNECTEDNESS:** All parameters interdependent.
