@@ -550,7 +550,7 @@ DiffPreloadSetting=18//90 Nm
 //FrontDiffPreloadSetting=0//1
 //RearSplitSetting=0//RWD
 //GearAutoUpShiftSetting=0//Off
-//GearAutoDownShiftSetting=0//Off
+//GearAutoAutoDownShiftSetting=0//Off
 
 [FRONTLEFT]
 CamberSetting=28//-2.2 deg
@@ -942,9 +942,9 @@ You are a world-class LMU race engineer. Your task is to take the user's request
 
 **ULTRA-CRITICAL FORMATTING INSTRUCTIONS - FAILURE TO FOLLOW THESE IS A TASK FAILURE:**
 1.  You will be given a complete .VEH file template below.
-2.  You MUST output the ENTIRE file, modified with your new values.
+2.  You MUST output the ENTIRE file, modified with your new values. Every single parameter line from the provided template MUST be present in your output. DO NOT omit any lines.
 3.  You MUST PRESERVE THE ORIGINAL COMMENTS (the text starting with //) on every line that has one.
-4.  Your ONLY job is to change the **NUMBER** before the comment. DO NOT delete or alter the comments.
+4.  Your ONLY job is to change the **NUMBER** before the comment. Do not delete or alter the comments themselves.
 
 ---
 **EXAMPLE OF PERFECT EXECUTION:**
@@ -954,6 +954,14 @@ RWSetting=3//P4 (Min: 0, Max: 9) (MUST BE OVERWRITTEN) // Hypercar RW: 0-9 (P1-P
 
 **And you decide the correct value is 8, YOUR correct output for that line is:**
 RWSetting=8//P4 (Min: 0, Max: 9) (MUST BE OVERWRITTEN) // Hypercar RW: 0-9 (P1-P10 in game UI)
+
+**EXAMPLE FOR MANDATORY OVERWRITES:**
+
+**IF the template line is this:**
+FuelSetting=85//85L (MUST BE OVERWRITTEN)
+
+**And you decide the correct value for qualifying is 7, YOUR correct output for that line is:**
+FuelSetting=7//85L (MUST BE OVERWRITTEN)
 
 You will do this for the entire file. Any other format is a failure.
 ---
@@ -973,7 +981,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 3.  **Track DNA & Weather:** Analyze the track's unique demands ('TRACK DNA DATABASE') and weather conditions ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions and mention any necessary compromises in your notes.
 4.  **Car Architecture:** Apply specific adjustments based on the car's inherent traits ('CAR ARCHITECTURE PHILOSOPHY').
 5.  **Generate [BASIC] Parameters (MANDATORY):** You MUST dynamically calculate and GENERATE the [BASIC] section at the end of the .VEH file. This section is NOT in the template you are given; it must be fully derived from your setup choices.
-    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., 0.125000). Outputting a generic default like 0.500000 is a critical failure, UNLESS your calculation genuinely results in that optimal value.
+    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., Downforce=0.125000, Balance=0.320000, Ride=0.180000, Gearing=0.910000). Outputting a generic default like 0.500000 is a critical failure, UNLESS your calculation genuinely results in that optimal value, which must be justified in the notes.
     - **'Downforce'**: Represents overall aero grip. Low-drag setups (Le Mans, Monza) should be low (0.050000-0.150000). High-downforce tracks (Portimão) should be high (0.650000-0.950000). Balanced tracks get the middle range (0.250000-0.450000).
     - **'Balance'**: Represents understeer/oversteer. **For Aggressive setups, range is tighter: 0.150000-0.250000.** Neutral is mid-range (0.450000-0.550000). Stable understeer setups are higher (0.650000-0.850000). Adjust according to driver request and track needs.
     - **'Ride'**: Represents suspension compliance. Stiff and low for smooth tracks (0.075000-0.250000). Compliant and high for bumpy tracks like Sebring (0.750000-0.925000). Mid-range for others (0.350000-0.650000).
@@ -1146,10 +1154,10 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
     - **Aero:** Lower wings to minimize drag, but maintain enough aero balance for high-speed cornering confidence. Prioritize efficiency.
     - **Suspension:** Stiffer springs and dampers (medium to stiff range) to maximize aero platform stability and responsiveness. Aim for precise control over pitch and roll.
         - **Damping Nuances:** For **Slow-Speed Dampers (Bump/Rebound)**, set to tighter ranges for aggressive: **8-10**. For **Fast-Speed Dampers (Bump/Rebound)**, also tighter ranges: **6-8**.
-        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections). Do NOT omit or default these values.**
+        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections) with calculated values. Do NOT omit or output defaults for these values.**
     - **Anti-Roll Bars:** Stiffer front ARB (e.g., 15-20) to promote sharper turn-in (even if it means a touch more mid-corner understeer), and a slightly softer rear ARB (e.g., 5-10) to encourage rotation while maintaining predictability.
     - **Camber & Toe:** More negative camber (lower index, e.g., **Front: 0-8, Rear: 0-12**) on the front for maximum cornering grip. Front toe-out (lower index, e.g., **0-8**) for aggressive turn-in (toe-out is mandatory for aggression). Rear toe-in (higher index, e.g., **18-22**) is still crucial for stability, but potentially on the lower end of that range to allow more rotation.
-    - **Differential:** Lower \`DiffCoastSetting\` (e.g., **0-5**) for aggressive turn-in and rotation off-throttle. \`DiffPowerSetting\` (e.g., **10-14**) will be relatively high to ensure strong traction on exit, preventing excessive wheelspin that would make the car unpredictable. \`DiffPreloadSetting\` can be lower (e.g., **10-20**) for more immediate differential action. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT default.**
+    - **Differential:** Lower \`DiffCoastSetting\` (e.g., **0-5**) for aggressive turn-in and rotation off-throttle. \`DiffPowerSetting\` (e.g., **10-14**) will be relatively high to ensure strong traction on exit, preventing excessive wheelspin that would make the car unpredictable. \`DiffPreloadSetting\` can be lower (e.g., **10-20**) for more immediate differential action. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT output template defaults.**
     - **Brakes:** Higher 'BrakePressureSetting' (e.g., 80-100) for maximum stopping power. 'RearBrakeSetting' might be slightly more rearward (higher index, e.g., 20-30) to aid rotation on entry, but must remain controllable.
     - **Gearing:** Generally shorter gearing (lower 'RatioSetSetting' and 'GearXSetting' closer to 0) for quicker acceleration out of corners, unless on extreme top-speed tracks.
     - **[BASIC] Parameters:** 'Downforce' will be lower (0.050000-0.300000 depending on track). 'Balance' will be lower (0.150000-0.250000) indicating a more oversteer-prone, but drivable, car. 'Ride' will be lower (0.075000-0.250000) for a stiffer platform. 'Gearing' will be lower (0.075000-0.450000) for faster acceleration.
@@ -1157,10 +1165,10 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
     - **Aero:** Mid-range wing settings for a good compromise between straight-line speed and cornering grip. Aim for neutral aero balance.
     - **Suspension:** Medium stiffness springs and dampers (medium range, 4-7) to provide both responsiveness and some compliance over curbs and minor bumps.
         - **Damping Nuances:** Aim for mid-range (**4-7**) across all damper settings (slow/fast bump/rebound) to achieve a harmonious blend of body control and bump absorption.
-        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections). Do NOT omit or default these values.**
+        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections) with calculated values. Do NOT omit or output defaults for these values.**
     - **Anti-Roll Bars:** Medium stiffness front and rear ARBs (e.g., 8-15) for a neutral mid-corner balance. Slight variations to fine-tune based on track or car.
     - **Camber & Toe:** Balanced camber settings to optimize tire contact patch through corners and on straights (e.g., **Front: 10-25, Rear: 15-30**). Front toe-in (mid-range index, e.g., **10-20**) for stability, with rear toe-in (mid-range index, e.g., **18-24**) for predictability.
-    - **Differential:** Medium \`DiffPowerSetting\` (e.g., **5-10**) for good traction without excessive understeer. Medium \`DiffCoastSetting\` (e.g., **8-15**) for stable braking and turn-in, but still allowing some rotation. Medium \`DiffPreloadSetting\` (e.g., **20-50**) for smooth transitions. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT default.**
+    - **Differential:** Medium \`DiffPowerSetting\` (e.g., **5-10**) for good traction without excessive understeer. Medium \`DiffCoastSetting\` (e.g., **8-15**) for stable braking and turn-in, but still allowing some rotation. Medium \`DiffPreloadSetting\` (e.g., **20-50**) for smooth transitions. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT output template defaults.**
     - **Brakes:** Balanced 'BrakePressureSetting' (e.g., 60-80) for strong but manageable braking. Neutral 'RearBrakeSetting' (e.g., 15-25) for overall stability.
     - **Gearing:** Balanced gearing (mid-range 'RatioSetSetting' and 'GearXSetting') for a good blend of acceleration and top speed.
     - **[BASIC] Parameters:** 'Downforce' will be mid-range (0.250000-0.600000). 'Balance' will be mid-range (0.450000-0.550000) indicating a neutral car. 'Ride' will be mid-range (0.350000-0.650000) for a balanced platform. 'Gearing' will be mid-range (0.250000-0.850000).
@@ -1168,16 +1176,18 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
     - **Aero:** Slightly higher wings for increased downforce and stability, especially at high speeds. Aero balance biased slightly towards understeer for predictability.
     - **Suspension:** Slightly softer springs and dampers (soft to medium range) to absorb bumps and make the car more forgiving.
         - **Damping Nuances:** Use lower slow bump/rebound (e.g., **0-4**) for a more compliant and forgiving feel on body movements. For fast movements, aim for very soft settings (e.g., **0-3**) to maximize bump absorption and stability.
-        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections). Do NOT omit or default these values.**
+        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections) with calculated values. Do NOT omit or output defaults for these values.**
     - **Anti-Roll Bars:** Softer front ARB (e.g., 0-8) and stiffer rear ARB (e.g., 12-20) to promote understeer and stability.
     - **Camber & Toe:** Less negative camber (higher index, e.g., **Front: 25-40, Rear: 30-40**) on the front for better straight-line braking and stability. Front toe-in (higher index, e.g., **20-30**) for maximum straight-line stability. Significant rear toe-in (highest index, e.g., **24-30**) for maximum rear-end stability.
-    - **Differential:** Higher \`DiffCoastSetting\` (e.g., **15-20**) for maximum stability on braking and turn-in. \`DiffPowerSetting\` (e.g., **12-15**) for optimal traction and a very planted rear end on exit. Higher \`DiffPreloadSetting\` (e.g., **50-100**) for consistent and predictable differential action. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT default.**
+    - **Differential:** Higher \`DiffCoastSetting\` (e.g., **15-20**) for maximum stability on braking and turn-in. \`DiffPowerSetting\` (e.g., **12-15**) for optimal traction and a very planted rear end on exit. Higher \`DiffPreloadSetting\` (e.g., **50-100**) for consistent and predictable differential action. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT output template defaults.**
     - **Brakes:** Slightly lower 'BrakePressureSetting' (e.g., 40-60) for more margin against lockups. 'RearBrakeSetting' biased more forward (lower index, e.g., 0-15) for maximum braking stability.
     - **Gearing:** Generally longer gearing (higher 'RatioSetSetting' and 'GearXSetting' closer to 1) to reduce abrupt acceleration.
     - **[BASIC] Parameters:** 'Downforce' will be higher (0.500000-0.950000). 'Balance' will be higher (0.650000-0.850000) indicating a stable, understeer-prone car. 'Ride' will be higher (0.650000-0.925000) for a softer platform. 'Gearing' will be higher (0.850000-0.975000).
 
 ## QUALIFYING VS. RACE PHILOSOPHY
-- **'qualifying'**: One-lap pace, optimal timing. Softest tires, minimal fuel (2-3 laps), aggressive camber, high brake pressure, aggressive diff (lower coast, higher power). Tire wear irrelevant. **FuelSetting should be set to a concrete value between 5-10L (e.g., 7L for most Hypercars). For Hypercars, RegenerationMapSetting MUST be 8-9 and ElectricMotorMapSetting should reflect aggressive deployment (e.g., 3-4).**
+- **'qualifying' (ABSOLUTE RULES):** For qualifying, you **MUST** adhere to these specific values, overriding all other general setup philosophies:
+    - **FuelSetting:** Set to a **concrete value between 5-10L** (e.g., 7L for most Hypercars). This is non-negotiable.
+    - **Hypercar Hybrid Regeneration:** `RegenerationMapSetting` **MUST be 8-9**. `ElectricMotorMapSetting` **MUST be 3-4** for aggressive deployment. These values are fixed for qualifying.
 - **'race'**: Consistent pace/lap times over a stint, NOT just tire survival. Efficient, predictable car maintaining speed through degradation. Optimized tire pressures for consistency. Balance pace & tire wear when choosing 'PressureSetting'/'CamberSetting'. Diff settings should favor stability. **FuelSetting should be set based on race duration. For Hypercars, RegenerationMapSetting MUST be 10 and ElectricMotorMapSetting should reflect efficient usage (e.g., 1-2).**
 
 ## CAR ARCHITECTURE PHILOSOPHY (ENHANCED!)
@@ -1232,17 +1242,17 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - Neutral Balance (or predictable understeer).
 
 ## LMU AI GUIDANCE REFINEMENTS (ULTIMATE PRECISION)
-- **NO STATIC DEFAULTS:** MUST NOT output values identical to template defaults unless optimal. Defaulting = critical failure.
+- **NO STATIC DEFAULTS / MANDATORY OVERWRITES:** For ANY parameter explicitly marked `(MUST BE OVERWRITTEN)` in the template, you are REQUIRED to calculate and output a NEW, distinct numerical value. Outputting the IDENTICAL default value from the template for such parameters is a CRITICAL FAILURE, UNLESS your engineering calculation definitively leads to that exact default as the optimal, in which case you must explicitly state this in your notes.
 - **INTERCONNECTEDNESS:** All parameters interdependent.
 - **LMU REALISM CHECK:** Ensure physically realistic/plausible settings.
 - **DYNAMIC RANGE UTILIZATION:** Actively use full Min-Max range.
 - **OPTIMAL RIDE QUALITY:** Prioritize optimal tire contact.
 - **SPECIFIC NUMERICAL DEVIATION:** Use distinct floats for [BASIC]/Camber.
-- **FORCE INDIVIDUAL DAMPER OUTPUT:** AI must generate all 16 individual wheel damper settings (Slow/Fast Bump/Rebound) for all four wheels (FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections). This is a MANDATORY requirement.
+- **FORCE INDIVIDUAL DAMPER OUTPUT:** AI must generate all 16 individual wheel damper settings (Slow/Fast Bump/Rebound) for all four wheels (FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections) with calculated values. Do NOT omit any of these lines or output defaults for these values.
 - **STRICT QUALI FUEL/HYBRID:** AI must set **FuelSetting to a concrete value between 5-10L** (e.g., 7L for 2-3 laps) for qualifying sessions. For **Hypercars in qualifying**, **RegenerationMapSetting MUST be 8-9** and **ElectricMotorMapSetting MUST be 3-4**. These override other logic.
 - **FULL PHILOSOPHICAL DIFFERENTIATION:** AI must apply distinct numerical ranges for all adjustable parameters based on "Aggressive," "Balanced," and "Safe" goals, not just track overrides.
 - **EXACT NUMERICAL ADHERENCE:** AI must stick to specified ranges for RearToeInSetting (**18-24**), FrontToeInSetting (**0-8 for aggressive toe-out, 10-20 for balanced toe-in**), and DiffPowerSetting (**10-14 for aggressive/stable, 5-10 for balanced, 12-15 for safe**).
-- **COMPLETE DIFF SETTINGS:** AI must consistently output and adjust all **DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting** values, explicitly. Do NOT leave these as defaults or generic placeholders.
+- **COMPLETE DIFF SETTINGS:** AI must consistently output and adjust all **DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting** values, explicitly. Do NOT output template defaults.
 - **ACCURATE [BASIC] CALCULATION:** AI must dynamically calculate **Balance and Ride in [BASIC] to precisely reflect the chosen setup goal** (e.g., for aggressive setups, Balance will be **0.150000-0.250000** and Ride will be **0.075000-0.250000**), not just default values.
 
 
