@@ -243,7 +243,7 @@ Ride=0.400000
 Gearing=0.975000
 Custom=1`,
 
-    'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
+    'LMP2': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(12,0,0,0) //
 [GENERAL]
 Notes=""
@@ -428,7 +428,7 @@ Ride=0.400000
 Gearing=0.400000
 Custom=1`,
 
-    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
+    'GTE': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(0,0,0,0)
 //UpgradeClass=
 //Aero package=0
@@ -631,7 +631,7 @@ Ride=0.500000
 Gearing=0.500000
 Custom=1`,
 
-    'GT3': `VehicleClassSetting="[[CAR_NAME]]"
+    'GT3': `VehicleClassSetting="[[CAR_NAME]]"
 UpgradeSetting=(3276,0,0,0) //
 [GENERAL]
 Notes=""
@@ -818,134 +818,134 @@ Custom=1`
 
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
-    // Safely destructure all possible values from the request body
-    const {
-        car, track, request, selectedCarCategory,
-        selectedCarDisplay, selectedTrackDisplay, setupGoal,
-        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
-    } = req.body;
+    // Safely destructure all possible values from the request body
+    const {
+        car, track, request, selectedCarCategory,
+        selectedCarDisplay, selectedTrackDisplay, setupGoal,
+        sessionGoal, selectedWeather, trackTemp, specificRequest, driverFeedback
+    } = req.body;
 
-    // Validate essential parameters
-    if (!car || !track || !setupGoal || !selectedCarCategory) {
-        return res.status(400).json({
-            error: "Please provide Car, Track, Setup Goal, and Car Category details."
-        });
-    }
+    // Validate essential parameters
+    if (!car || !track || !setupGoal || !selectedCarCategory) {
+        return res.status(400).json({
+            error: "Please provide Car, Track, Setup Goal, and Car Category details."
+        });
+    }
 
-    // Handle potential category key mismatch
-    let finalCategory = selectedCarCategory;
-    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
-        finalCategory = 'GT3';
-    } else if (selectedCarCategory === 'GT3' && !LMU_VEH_TEMPLATES['GT3']) { // Check if 'GT3' is missing
-        finalCategory = 'GTE'; // Fallback if needed, or handle error
-    }
+    // Handle potential category key mismatch
+    let finalCategory = selectedCarCategory;
+    if (selectedCarCategory === 'LMGT3' && LMU_VEH_TEMPLATES['GT3']) {
+        finalCategory = 'GT3';
+    } else if (selectedCarCategory === 'GT3' && !LMU_VEH_TEMPLATES['GT3']) { // Check if 'GT3' is missing
+        finalCategory = 'GTE'; // Fallback if needed, or handle error
+    }
 
-    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
-    if (!exampleTemplate) {
-        return res.status(400).json({
-            error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.`
-        });
-    }
+    let exampleTemplate = LMU_VEH_TEMPLATES[finalCategory];
+    if (!exampleTemplate) {
+        return res.status(400).json({
+            error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.`
+        });
+    }
 
-    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
-    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
-    let finalExampleTemplate = exampleTemplate; // Start with the chosen template
+    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
+    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
+    let finalExampleTemplate = exampleTemplate; // Start with the chosen template
 
-    const trackOverrides = (trackName, template) => {
-        let overriddenTemplate = template;
-        // Generic regex to replace a setting's number while preserving its trailing comment
-        const replaceSetting = (settingName, newValue, regexFlags = 'm') => {
-            const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, regexFlags);
-            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
-        };
+    const trackOverrides = (trackName, template) => {
+        let overriddenTemplate = template;
+        // Generic regex to replace a setting's number while preserving its trailing comment
+        const replaceSetting = (settingName, newValue, regexFlags = 'm') => {
+            const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, regexFlags);
+            overriddenTemplate = overriddenTemplate.replace(regex, `<span class="math-inline">1</span>{newValue}$2`);
+        };
 
-        const replaceSectionSetting = (section, settingName, newValue, regexFlags = 'm') => {
-            const regex = new RegExp(`^(${section}[\\s\\S]*?${settingName}=)\\d+(.*)`, regexFlags);
-            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
-        };
-
-
-        if (trackName === "Circuit de la Sarthe (Le Mans)" || trackName === "Autodromo Nazionale Monza") {
-            const minAeroSetting = 0;
-            const note = trackName === "Circuit de la Sarthe (Le Mans)" ?
-                'Notes="Le Mans override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."' :
-                'Notes="Monza override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."';
-
-            replaceSectionSetting('\\[FRONTWING\\]', 'FWSetting', minAeroSetting);
-            replaceSectionSetting('\\[REARWING\\]', 'RWSetting', minAeroSetting);
-
-            let maxFinalDrive;
-            if (finalCategory === 'Hypercar') maxFinalDrive = 7;
-            else if (finalCategory === 'LMP2') maxFinalDrive = 5;
-            else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10;
-
-            replaceSectionSetting('\\[DRIVELINE\\]', 'FinalDriveSetting', maxFinalDrive);
-            overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
-            replaceSetting('RatioSetSetting', 1);
-
-            replaceSetting('WaterRadiatorSetting', 0);
-            replaceSetting('OilRadiatorSetting', 0);
-            replaceSetting('BrakeDuctSetting', 0);
-            replaceSetting('BrakeDuctRearSetting', 0);
-
-            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
-            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
-
-        } else if (trackName === "Sebring International Raceway") {
-            const note = 'Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to absorb bumps."';
-
-            // Set dampers and ARBs to very soft values (e.g., 0 or 1)
-            // Individual wheel dampers
-            overriddenTemplate = overriddenTemplate.replace(/^(SlowBumpSetting=)\d+(.*)/gm, `$10$2`);
-            overriddenTemplate = overriddenTemplate.replace(/^(FastBumpSetting=)\d+(.*)/gm, `$10$2`);
-            overriddenTemplate = overriddenTemplate.replace(/^(SlowReboundSetting=)\d+(.*)/gm, `$10$2`);
-            overriddenTemplate = overriddenTemplate.replace(/^(FastReboundSetting=)\d+(.*)/gm, `$10$2`);
-
-            // 3rd Spring Dampers (if applicable)
-            replaceSetting('Front3rdSlowBumpSetting', 0);
-            replaceSetting('Front3rdFastBumpSetting', 0);
-            replaceSetting('Front3rdSlowReboundSetting', 0);
-            replaceSetting('Front3rdFastReboundSetting', 0);
-            replaceSetting('Rear3rdSlowBumpSetting', 0);
-            replaceSetting('Rear3rdFastBumpSetting', 0);
-            replaceSetting('Rear3rdSlowReboundSetting', 0);
-            replaceSetting('Rear3rdFastReboundSetting', 0);
-
-            replaceSetting('FrontAntiSwaySetting', 1);
-            replaceSetting('RearAntiSwaySetting', 1);
-
-            // Set ride heights high
-            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$120$2`);
-            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
-        }
-        return overriddenTemplate;
-    };
-
-    finalExampleTemplate = trackOverrides(track, finalExampleTemplate);
-
-    // UPGRADE: Dynamically insert the user's selected car name into the template
-    finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
+        const replaceSectionSetting = (section, settingName, newValue, regexFlags = 'm') => {
+            const regex = new RegExp(`^(<span class="math-inline">\{section\}\[\\\\s\\\\S\]\*?</span>{settingName}=)\\d+(.*)`, regexFlags);
+            overriddenTemplate = overriddenTemplate.replace(regex, `<span class="math-inline">1</span>{newValue}$2`);
+        };
 
 
-    const sessionDuration = req.body.sessionDuration || 'N/A';
-    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
-        `Estimate fuel for a ${sessionDuration} minute race.` : '';
-    const weatherGuidance = `Current weather is ${selectedWeather}.`;
-    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+        if (trackName === "Circuit de la Sarthe (Le Mans)" || trackName === "Autodromo Nazionale Monza") {
+            const minAeroSetting = 0;
+            const note = trackName === "Circuit de la Sarthe (Le Mans)" ?
+                'Notes="Le Mans override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."' :
+                'Notes="Monza override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."';
+
+            replaceSectionSetting('\\[FRONTWING\\]', 'FWSetting', minAeroSetting);
+            replaceSectionSetting('\\[REARWING\\]', 'RWSetting', minAeroSetting);
+
+            let maxFinalDrive;
+            if (finalCategory === 'Hypercar') maxFinalDrive = 7;
+            else if (finalCategory === 'LMP2') maxFinalDrive = 5;
+            else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10;
+
+            replaceSectionSetting('\\[DRIVELINE\\]', 'FinalDriveSetting', maxFinalDrive);
+            overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
+            replaceSetting('RatioSetSetting', 1);
+
+            replaceSetting('WaterRadiatorSetting', 0);
+            replaceSetting('OilRadiatorSetting', 0);
+            replaceSetting('BrakeDuctSetting', 0);
+            replaceSetting('BrakeDuctRearSetting', 0);
+
+            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
+            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
+
+        } else if (trackName === "Sebring International Raceway") {
+            const note = 'Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to absorb bumps."';
+
+            // Set dampers and ARBs to very soft values (e.g., 0 or 1)
+            // Individual wheel dampers
+            overriddenTemplate = overriddenTemplate.replace(/^(SlowBumpSetting=)\d+(.*)/gm, `$10$2`);
+            overriddenTemplate = overriddenTemplate.replace(/^(FastBumpSetting=)\d+(.*)/gm, `$10$2`);
+            overriddenTemplate = overriddenTemplate.replace(/^(SlowReboundSetting=)\d+(.*)/gm, `$10$2`);
+            overriddenTemplate = overriddenTemplate.replace(/^(FastReboundSetting=)\d+(.*)/gm, `$10$2`);
+
+            // 3rd Spring Dampers (if applicable)
+            replaceSetting('Front3rdSlowBumpSetting', 0);
+            replaceSetting('Front3rdFastBumpSetting', 0);
+            replaceSetting('Front3rdSlowReboundSetting', 0);
+            replaceSetting('Front3rdFastReboundSetting', 0);
+            replaceSetting('Rear3rdSlowBumpSetting', 0);
+            replaceSetting('Rear3rdFastBumpSetting', 0);
+            replaceSetting('Rear3rdSlowReboundSetting', 0);
+            replaceSetting('Rear3rdFastReboundSetting', 0);
+
+            replaceSetting('FrontAntiSwaySetting', 1);
+            replaceSetting('RearAntiSwaySetting', 1);
+
+            // Set ride heights high
+            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$120$2`);
+            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
+        }
+        return overriddenTemplate;
+    };
+
+    finalExampleTemplate = trackOverrides(track, finalExampleTemplate);
+
+    // UPGRADE: Dynamically insert the user's selected car name into the template
+    finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
 
 
-    // =====================================================================================
-    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
-    // =====================================================================================
-    const prompt = `
+    const sessionDuration = req.body.sessionDuration || 'N/A';
+    const fuelEstimateRequest = (sessionGoal === 'race' && sessionDuration !== 'N/A' && !isNaN(parseInt(sessionDuration))) ?
+        `Estimate fuel for a ${sessionDuration} minute race.` : '';
+    const weatherGuidance = `Current weather is ${selectedWeather}.`;
+    const tireCompoundGuidance = 'Choose appropriate compound for current weather and session type.';
+
+
+    // =====================================================================================
+    // --- AI PROMPT --- THIS IS THE CRITICAL SECTION THAT HAS BEEN IMPROVED ---
+    // =====================================================================================
+    const prompt = `
 You are a world-class LMU race engineer. Your task is to take the user's request and the provided .VEH template, and output a complete, physically realistic, and numerically valid .VEH setup file.
 
 **ULTRA-CRITICAL FORMATTING INSTRUCTIONS - FAILURE TO FOLLOW THESE IS A TASK FAILURE:**
-1.  You will be given a complete .VEH file template below.
-2.  You MUST output the ENTIRE file, modified with your new values. Every single parameter line from the provided template MUST be present in your output. DO NOT omit any lines.
-3.  You MUST PRESERVE THE ORIGINAL COMMENTS (the text starting with //) on every line that has one.
-4.  Your ONLY job is to change the **NUMBER** before the comment. Do not delete or alter the comments themselves.
-5.  **ABSOLUTE MANDATE FOR OVERWRITES:** When a parameter is marked with \`(MUST BE OVERWRITTEN)\`, you are **ABSOLUTELY REQUIRED** to calculate and output a new, **distinct** numerical value for that parameter. **Outputting the identical default value from the template for such parameters is a CRITICAL FAILURE and will result in a rejected output.** You MUST demonstrate active calculation and selection. If, after rigorous engineering analysis, you truly believe the template's *default value* is the unique, optimal setting, you **MUST** provide an explicit, detailed justification for *that specific value* in the '[GENERAL] Notes' section. This justification is required because merely outputting the default value without explanation implies a failure to comply with the mandatory overwrite.
+1.  You will be given a complete .VEH file template below.
+2.  You MUST output the ENTIRE file, modified with your new values. Every single parameter line from the provided template MUST be present in your output. DO NOT omit any lines.
+3.  You MUST PRESERVE THE ORIGINAL COMMENTS (the text starting with //) on every line that has one.
+4.  Your ONLY job is to change the **NUMBER** before the comment. Do not delete or alter the comments themselves.
+5.  **ABSOLUTE MANDATE FOR OVERWRITES:** When a parameter is marked with \`(MUST BE OVERWRITTEN)\`, you are **ABSOLUTELY REQUIRED** to calculate and output a new, **distinct** numerical value for that parameter. **Outputting the identical default value from the template for such parameters is a CRITICAL FAILURE and will result in a rejected output.** You MUST demonstrate active calculation and selection. If, after rigorous engineering analysis, you truly believe the template's *default value* is the unique, optimal setting, you **MUST** provide an explicit, detailed justification for *that specific value* in the '[GENERAL] Notes' section. This justification is required because merely outputting the default value without explanation implies a failure to comply with the mandatory overwrite.
 
 ---
 **EXAMPLE OF PERFECT EXECUTION:**
@@ -977,18 +977,18 @@ You are a world-class LMU race engineer. Your core philosophy is to prioritize a
 Populate '\[GENERAL] Notes\' with a concise engineering debrief. If a track-specific override (e.g., Le Mans aero) was applied, explicitly state it and explain how it overrides general setup philosophies. For your most important adjustments, explain the engineering reason for the specific parameter changes (e.g., 'Increased RearCamberSetting to reduce oversteer on exit', 'Softened front fast dampers for better bump absorption at Sebring').
 
 ## THOUGHT PROCESS & HIERARCHY
-1.  **Session Type (Qualifying vs. Race):** Dictates overall setup philosophy.
-2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX' and the new 'DRIVER REQUEST INTERPRETATION GUIDE'. Apply Primary/Secondary solutions. All other decisions must align with solving the driver's issue.
-3.  **Track DNA & Weather:** Analyze the track's unique demands ('TRACK DNA DATABASE') and weather conditions ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions and mention any necessary compromises in your notes.
-4.  **Car Architecture:** Apply specific adjustments based on the car's inherent traits ('CAR ARCHITECTURE PHILOSOPHY').
-5.  **Generate [BASIC] Parameters (MANDATORY):** You MUST dynamically calculate and GENERATE the [BASIC] section at the end of the .VEH file. This section is NOT in the template you are given; it must be fully derived from your setup choices.
-    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., Downforce=0.125000, Balance=0.320000, Ride=0.180000, Gearing=0.910000). Outputting a generic default like 0.500000 is a critical failure, UNLESS your calculation genuinely results in that optimal value, which must be justified in the notes.
-    - **'Downforce'**: Represents overall aero grip. Low-drag setups (Le Mans, Monza) should be low (0.050000-0.150000). High-downforce tracks (Portimão) should be high (0.650000-0.950000). Balanced tracks get the middle range (0.250000-0.450000).
-    - **'Balance'**: Represents understeer/oversteer. **For Aggressive setups, range is tighter: 0.150000-0.250000.** Neutral is mid-range (0.450000-0.550000). Stable understeer setups are higher (0.650000-0.850000). Adjust according to driver request and track needs.
-    - **'Ride'**: Represents suspension compliance. Stiff and low for smooth tracks (0.075000-0.250000). Compliant and high for bumpy tracks like Sebring (0.750000-0.925000). Mid-range for others (0.350000-0.650000).
-    - **'Gearing'**: Represents the trade-off between acceleration and top speed. Long gearing for top speed tracks is higher (0.850000-0.975000). Short gearing for acceleration tracks is lower (0.075000-0.250000). Mid-range for balanced tracks (0.250000-0.850000). This MUST correspond to your detailed gear ratio selections.
-    - **'Custom'**: Must always be 1.
-6.  **Engineer's Debrief:** Write your concise summary in the \'Notes\' section as per the 'CRITICAL INSTRUCTION'.
+1.  **Session Type (Qualifying vs. Race):** Dictates overall setup philosophy.
+2.  **Driver Feedback is KING:** Address 'Driver Problem to Solve' first. Consult 'DRIVER FEEDBACK TROUBLESHOOTING MATRIX' and the new 'DRIVER REQUEST INTERPRETATION GUIDE'. Apply Primary/Secondary solutions. All other decisions must align with solving the driver's issue.
+3.  **Track DNA & Weather:** Analyze the track's unique demands ('TRACK DNA DATABASE') and weather conditions ('ADVANCED WEATHER & TIRE STRATEGY'). Apply baseline decisions and mention any necessary compromises in your notes.
+4.  **Car Architecture:** Apply specific adjustments based on the car's inherent traits ('CAR ARCHITECTURE PHILOSOPHY').
+5.  **Generate [BASIC] Parameters (MANDATORY):** You MUST dynamically calculate and GENERATE the [BASIC] section at the end of the .VEH file. This section is NOT in the template you are given; it must be fully derived from your setup choices.
+    - Every parameter ('Downforce', 'Balance', 'Ride', 'Gearing') MUST be a uniquely calculated float (e.g., Downforce=0.125000, Balance=0.320000, Ride=0.180000, Gearing=0.910000). Outputting a generic default like 0.500000 is a critical failure, UNLESS your calculation genuinely results in that optimal value, which must be justified in the notes.
+    - **'Downforce'**: Represents overall aero grip. Low-drag setups (Le Mans, Monza) should be low (0.050000-0.150000). High-downforce tracks (Portimão) should be high (0.650000-0.950000). Balanced tracks get the middle range (0.250000-0.450000).
+    - **'Balance'**: Represents understeer/oversteer. **For Aggressive setups, range is tighter: 0.150000-0.250000.** Neutral is mid-range (0.450000-0.550000). Stable understeer setups are higher (0.650000-0.850000). Adjust according to driver request and track needs.
+    - **'Ride'**: Represents suspension compliance. Stiff and low for smooth tracks (0.075000-0.250000). Compliant and high for bumpy tracks like Sebring (0.750000-0.925000). Mid-range for others (0.350000-0.650000).
+    - **'Gearing'**: Represents the trade-off between acceleration and top speed. Long gearing for top speed tracks is higher (0.850000-0.975000). Short gearing for acceleration tracks is lower (0.075000-0.250000). Mid-range for balanced tracks (0.250000-0.850000). This MUST correspond to your detailed gear ratio selections.
+    - **'Custom'**: Must always be 1.
+6.  **Engineer's Debrief:** Write your concise summary in the \'Notes\' section as per the 'CRITICAL INSTRUCTION'.
 
 // =====================================================================================
 // --- START OF NEW MASTER KNOWLEDGE BASE ---
@@ -1002,52 +1002,52 @@ Populate '\[GENERAL] Notes\' with a concise engineering debrief. If a track-spec
 ## ADVANCED AERODYNAMIC PRINCIPLES
 - **Aero Balance & Center of Pressure (CoP):** This is the point where the total aerodynamic force acts on the car. It's like the car's center of gravity, but for air pressure. Moving the CoP forward (e.g., more front wing) increases front-end grip (more oversteer). Moving it rearward (e.g., more rear wing) increases rear-end grip (more understeer).
 - **Rake:** This is the angle of the car's floor relative to the ground, created by running the rear ride height higher than the front. A positive rake (rear higher than front) increases the expansion of air under the car, creating a low-pressure area that sucks the car to the ground (downforce from the floor/diffuser).
-    - **Effect of Rake:** More rake generally increases overall downforce and shifts the aero balance forward. However, too much rake can "stall" the diffuser, causing a sudden loss of rear downforce. It's a powerful but sensitive tool.
+    - **Effect of Rake:** More rake generally increases overall downforce and shifts the aero balance forward. However, too much rake can "stall" the diffuser, causing a sudden loss of rear downforce. It's a powerful but sensitive tool.
 - **Aero Platform Sensitivity:** Downforce is highly sensitive to ride height. As the car gets closer to the ground, the underbody aerodynamics work much more effectively. However, if the car runs too low, it can bottom out, which instantly breaks the airflow and causes a sudden loss of grip. This is why stiff springs are required on high-downforce, high-speed tracks to prevent the car's ride height from changing too much.
 
 ## SUSPENSION GEOMETRY & DAMPING DEEP DIVE
 - **Camber Explained:** Negative camber is when the top of the tire is tilted inward. In a corner, the car rolls, and this negative camber helps to keep the outside tire's contact patch flat on the road, maximizing grip.
-    - **Trade-off:** Too much negative camber reduces the tire's contact patch during straight-line braking and acceleration. The goal is to use just enough camber for cornering grip without sacrificing too much straight-line performance.
+    - **Trade-off:** Too much negative camber reduces the tire's contact patch during straight-line braking and acceleration. The goal is to use just enough camber for cornering grip without sacrificing too much straight-line performance.
 - **Toe Explained:**
-    - **Front Toe:** Toe-out (negative values, lower index) means the front of the tires point away from each other. This makes the car eager to turn-in but can cause instability on the straights. Toe-in (positive values, higher index) improves straight-line stability but can make the car reluctant to initiate a turn.
-    - **Rear Toe:** Rear toe-in is CRITICAL for stability. It means the front of the rear tires point towards the centerline of the car. This provides significant stability under braking and on-throttle at corner exit. Nearly all race setups use some amount of rear toe-in. Rear toe-out is almost never used as it makes the car extremely unstable.
+    - **Front Toe:** Toe-out (negative values, lower index) means the front of the tires point away from each other. This makes the car eager to turn-in but can cause instability on the straights. Toe-in (positive values, higher index) improves straight-line stability but can make the car reluctant to initiate a turn.
+    - **Rear Toe:** Rear toe-in is CRITICAL for stability. It means the front of the rear tires point towards the centerline of the car. This provides significant stability under braking and on-throttle at corner exit. Nearly all race setups use some amount of rear toe-in. Rear toe-out is almost never used as it makes the car extremely unstable.
 - **Anti-Roll Bars (ARBs) Explained:** The ARB is a bar that connects the left and right wheels on an axle. Its job is to control how much the car's body rolls during cornering.
-    - **Stiffening the front ARB** resists roll at the front, transferring more load to the outside front tire. This reduces front-end grip and increases understeer.
-    - **Stiffening the rear ARB** resists roll at the rear, transferring more load to the outside rear tire. This reduces rear-end grip and increases oversteer. ARBs are your primary tool for adjusting mid-corner balance.
+    - **Stiffening the front ARB** resists roll at the front, transferring more load to the outside front tire. This reduces front-end grip and increases understeer.
+    - **Stiffening the rear ARB** resists roll at the rear, transferring more load to the outside rear tire. This reduces rear-end grip and increases oversteer. ARBs are your primary tool for adjusting mid-corner balance.
 - **Dampers Explained:** Dampers (or shock absorbers) control the *speed* of the suspension's movement. They are critical for managing the platform and keeping the tires on the road.
-    - **Bump:** Controls the suspension compressing.
-        - **Slow-Speed Bump:** Manages the slow movements of the car's body, like roll during cornering and pitch during braking/acceleration. A stiffer slow bump setting provides more support and responsiveness.
-        - **Fast-Speed Bump:** Manages the fast movements from hitting bumps and curbs. A softer fast bump setting is needed to absorb these impacts without throwing the car off balance.
-    - **Rebound:** Controls the suspension extending back out.
-        - **Slow-Speed Rebound:** Manages the body's return after a slow movement. It's crucial for controlling how the car "takes a set" in a corner.
-        - **Fast-Speed Rebound:** Controls the wheel returning to the road after hitting a bump. It must be set correctly to keep the tire in contact with the ground.
-    - **Relationship:** Dampers must work in harmony with the springs. A very stiff spring needs strong rebound damping to control it, otherwise the car will oscillate.
+    - **Bump:** Controls the suspension compressing.
+        - **Slow-Speed Bump:** Manages the slow movements of the car's body, like roll during cornering and pitch during braking/acceleration. A stiffer slow bump setting provides more support and responsiveness.
+        - **Fast-Speed Bump:** Manages the fast movements from hitting bumps and curbs. A softer fast bump setting is needed to absorb these impacts without throwing the car off balance.
+    - **Rebound:** Controls the suspension extending back out.
+        - **Slow-Speed Rebound:** Manages the body's return after a slow movement. It's crucial for controlling how the car "takes a set" in a corner.
+        - **Fast-Speed Rebound:** Controls the wheel returning to the road after hitting a bump. It must be set correctly to keep the tire in contact with the ground.
+    - **Relationship:** Dampers must work in harmony with the springs. A very stiff spring needs strong rebound damping to control it, otherwise the car will oscillate.
 
 ## DIFFERENTIAL DEEP DIVE (ADVANCED)
 - The differential allows the outside wheel to rotate faster than the inside wheel in a corner. Tuning it controls how much it "locks" the two wheels together. This is a primary tool for managing stability and rotation. Your settings here MUST be based on the car and track.
 - **Power (Acceleration) Lock - \`DiffPowerSetting\`:** Controls locking on-throttle.
-    - **More Lock (Higher Value):** Forces rear wheels to rotate at a similar speed. Improves traction on corner exit, preventing inside wheelspin. **CRITICAL FOR:**
-        - **Traction-Limited Tracks:** Use higher values for tracks with slow, hard acceleration zones (e.g., **Sebring, Portimão**).
-        - **Front-Engine Cars (Corvette, Aston):** These cars are traction-limited on exit. MUST use higher power lock to prevent wheelspin.
-        - **'Safe'/'Stable' Setups:** Higher lock provides a predictable throttle response and prevents snap-oversteer on exit.
-    - **Less Lock (Lower Value):** Allows wheels to rotate at different speeds. Helps the car rotate on-throttle but can cause inside wheelspin. **USEFUL FOR:**
-        - **High-Speed Tracks:** On tracks like **Monza or Le Mans**, corner exit is less about raw traction and more about smooth momentum. A lower lock helps the car turn without scrubbing speed.
-        - **Rear-Engine Cars (Porsche):** These have natural traction. They can use less power lock, which helps mitigate their inherent understeer.
-        - **'Aggressive' Setups:** Lower lock allows a skilled driver to use the throttle to help steer the car.
+    - **More Lock (Higher Value):** Forces rear wheels to rotate at a similar speed. Improves traction on corner exit, preventing inside wheelspin. **CRITICAL FOR:**
+        - **Traction-Limited Tracks:** Use higher values for tracks with slow, hard acceleration zones (e.g., **Sebring, Portimão**).
+        - **Front-Engine Cars (Corvette, Aston):** These cars are traction-limited on exit. MUST use higher power lock to prevent wheelspin.
+        - **'Safe'/'Stable' Setups:** Higher lock provides a predictable throttle response and prevents snap-oversteer on exit.
+    - **Less Lock (Lower Value):** Allows wheels to rotate at different speeds. Helps the car rotate on-throttle but can cause inside wheelspin. **USEFUL FOR:**
+        - **High-Speed Tracks:** On tracks like **Monza or Le Mans**, corner exit is less about raw traction and more about smooth momentum. A lower lock helps the car turn without scrubbing speed.
+        - **Rear-Engine Cars (Porsche):** These have natural traction. They can use less power lock, which helps mitigate their inherent understeer.
+        - **'Aggressive' Setups:** Lower lock allows a skilled driver to use the throttle to help steer the car.
 
 - **Coast (Deceleration) Lock - \`DiffCoastSetting\`:** Controls locking off-throttle (braking/turn-in).
-    - **More Lock (Higher Value):** Provides significant stability on corner entry by locking the rear axle. **CRITICAL FOR:**
-        - **High-Speed Stability:** Essential for tracks with fast, challenging entries (e.g., **Le Mans Porsche Curves, Monza chicanes, Spa Pouhon**). Prevents the rear from becoming light and loose.
-        - **'Safe'/'Stable' Setups:** This is a primary tool for confidence on corner entry.
-    - **Less Lock (Lower Value):** Allows the rear wheels to rotate freely, helping the car point into the corner and reducing entry understeer. **USEFUL FOR:**
-        - **Technical Tracks:** Helpful for tight, low-speed corners where rotation is key (e.g., **Fuji Sector 3, Sebring T7/T10**).
-        - **'Aggressive' Setups:** The main tool for achieving a "pointy" car that turns in sharply. If too low, the car will be very nervous on entry ('lift-off oversteer').
+    - **More Lock (Higher Value):** Provides significant stability on corner entry by locking the rear axle. **CRITICAL FOR:**
+        - **High-Speed Stability:** Essential for tracks with fast, challenging entries (e.g., **Le Mans Porsche Curves, Monza chicanes, Spa Pouhon**). Prevents the rear from becoming light and loose.
+        - **'Safe'/'Stable' Setups:** This is a primary tool for confidence on corner entry.
+    - **Less Lock (Lower Value):** Allows the rear wheels to rotate freely, helping the car point into the corner and reducing entry understeer. **USEFUL FOR:**
+        - **Technical Tracks:** Helpful for tight, low-speed corners where rotation is key (e.g., **Fuji Sector 3, Sebring T7/T10**).
+        - **'Aggressive' Setups:** The main tool for achieving a "pointy" car that turns in sharply. If too low, the car will be very nervous on entry ('lift-off oversteer').
 
 - **Preload (\`DiffPreloadSetting\`):** A static amount of lock always present. It determines the breakaway force required before the power/coast settings engage and smooths the transition between them.
-    - **Higher Preload:** Increases overall stability and predictability. The differential feels less "active". **CRITICAL FOR:**
-        - **Bumpy Tracks (Sebring):** Prevents the differential from locking/unlocking erratically as tires momentarily lose contact with the ground. This is a key to compliance and driver confidence.
-        - **'Safe'/'Stable' Setups:** Makes the car's reactions to throttle/brake inputs smoother and more benign.
-    - **Lower Preload:** Makes the transition between power and coast settings more aggressive and noticeable. Can improve initial turn-in but may make the car feel "snappy". Generally reserved for expert drivers on smooth tracks who want maximum responsiveness.
+    - **Higher Preload:** Increases overall stability and predictability. The differential feels less "active". **CRITICAL FOR:**
+        - **Bumpy Tracks (Sebring):** Prevents the differential from locking/unlocking erratically as tires momentarily lose contact with the ground. This is a key to compliance and driver confidence.
+        - **'Safe'/'Stable' Setups:** Makes the car's reactions to throttle/brake inputs smoother and more benign.
+    - **Lower Preload:** Makes the transition between power and coast settings more aggressive and noticeable. Can improve initial turn-in but may make the car feel "snappy". Generally reserved for expert drivers on smooth tracks who want maximum responsiveness.
 
 // =====================================================================================
 // --- END OF NEW MASTER KNOWLEDGE BASE ---
@@ -1073,8 +1073,8 @@ Populate '\[GENERAL] Notes\' with a concise engineering debrief. If a track-spec
 
 ### LMU Gearing Index Behavior
 - Individual gears ('Gear1Setting' to 'Gear7Setting'): **INVERSE relationship**.
-    - LOWER index (0) = SHORTEST ratio.
-    - HIGHER index (1) = LONGEST ratio.
+    - LOWER index (0) = SHORTEST ratio.
+    - HIGHER index (1) = LONGEST ratio.
 - **Range Limit**: Individual gears LIMITED TO ONLY INDICES 0 AND 1.
 - 'FinalDriveSetting': HIGHER index = longer overall gearing.
 - Apply LMU-specific gearing logic.
@@ -1092,15 +1092,15 @@ Populate '\[GENERAL] Notes\' with a concise engineering debrief. If a track-spec
 ### Tires
 - 'PressureSetting': (Min: 0/~130 kPa, Max: 10/~170 kPa). **Goal: Optimal operating temperature/pressure window.**
 - 'CompoundSetting': **LMU specific compound availability:**
-    - Hypercar/GTE: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
-    - LMP2/GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
-    - MUST select available compound.
+    - Hypercar/GTE: 0=Wet, 1=Soft, 2=Medium, 3=Hard.
+    - LMP2/GT3: ONLY 0=Wet, 1=Medium. (Soft/Hard NOT available).
+    - MUST select available compound.
 
 ### Aero
 - 'FWSetting'/'RWSetting' indices: (0=low, higher=more downforce).
-    - **Hypercar FW**: Min: 0, Max: 2. **RW**: Min: 0, Max: 9 (P1-P10).
-    - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
-    - **GT3/GTE RW**: Min: 0, Max: 14 (P1-P15).
+    - **Hypercar FW**: Min: 0, Max: 2. **RW**: Min: 0, Max: 9 (P1-P10).
+    - **LMP2 RW**: Min: 0, Max: 8 (P1-P9).
+    - **GT3/GTE RW**: Min: 0, Max: 14 (P1-P15).
 - BrakeDucts indices: (0=open/max cooling, higher=more closed/less cooling/more aero). Max: Hypercar:3, GT3:3, GTE:3.
 - **Dynamic Radiator/Brake Duct**: Adjust 'BrakeDuctSetting'/'WaterRadiatorSetting'/'OilRadiatorSetting' based on 'Track Temp'. High temp = more open (higher index). Low temp = more closed (lower index).
 
@@ -1128,17 +1128,17 @@ Populate '\[GENERAL] Notes\' with a concise engineering debrief. If a track-spec
 - 'TractionControlMapSetting' (TC): (Min: 0, Max: 10).
 
 ## GEARING STRATEGY (CRITICAL)
-1.  **High-Speed Tracks (e.g., Le Mans, Monza):**
-    - 'FinalDriveSetting': MUST be HIGHEST available index.
-    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
-    - 'RatioSetSetting': MUST be **1 (Long)**.
-    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
-    - Self-Verification: Confirm 6th/7th gear top speed >300 km/h (>185 mph) for Hypercars/LMP2s.
-2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):**
-    - 'FinalDriveSetting': MUST be LOWER available index.
-    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
-    - 'RatioSetSetting': MUST be **0 (Short)**.
-    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+1.  **High-Speed Tracks (e.g., Le Mans, Monza):**
+    - 'FinalDriveSetting': MUST be HIGHEST available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **1 (Longest)**.
+    - 'RatioSetSetting': MUST be **1 (Long)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
+    - Self-Verification: Confirm 6th/7th gear top speed >300 km/h (>185 mph) for Hypercars/LMP2s.
+2.  **Technical/Accelerative Tracks (e.g., Sebring, Portimão):**
+    - 'FinalDriveSetting': MUST be LOWER available index.
+    - 'Gear1Setting' to 'GearXSetting': MUST all be **0 (Shortest)**.
+    - 'RatioSetSetting': MUST be **0 (Short)**.
+    - Comments: MUST include realistic approx speed (~Y mph / ~Z km/h).
 ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## TRACK DNA DATABASE (EXPANDED!)
@@ -1152,43 +1152,43 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## LMU SETUP PHILOSOPHY DIAL (PACE & DRIVEABILITY)
 - **'Aggressive' Setup Goal:** Maximize *driveable* peak performance/responsiveness. NEVER compromise to an undrivable/unstable car. This means the car should be sharp, reactive, and consistently fast *in the hands of a skilled driver*.
-    - **Aero:** Lower wings to minimize drag, but maintain enough aero balance for high-speed cornering confidence. Prioritize efficiency.
-    - **Suspension:** Stiffer springs and dampers (medium to stiff range) to maximize aero platform stability and responsiveness. Aim for precise control over pitch and roll.
-        - **Damping Nuances:** For **Slow-Speed Dampers (Bump/Rebound)**, set to tighter ranges for aggressive: **8-10**. For **Fast-Speed Dampers (Bump/Rebound)**, also tighter ranges: **6-8**.
-        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections) with calculated values. Do NOT omit any of these lines or output defaults for these values.**
-    - **Anti-Roll Bars:** Stiffer front ARB (e.g., 15-20) to promote sharper turn-in (even if it means a touch more mid-corner understeer), and a slightly softer rear ARB (e.g., 5-10) to encourage rotation while maintaining predictability.
-    - **Camber & Toe:** More negative camber (lower index, e.g., **Front: 0-8, Rear: 0-12**) on the front for maximum cornering grip. Front toe-out (lower index, e.g., **0-8**) for aggressive turn-in (toe-out is mandatory for aggression). Rear toe-in (higher index, e.g., **18-22**) is still crucial for stability, but potentially on the lower end of that range to allow more rotation.
-    - **Differential:** Lower \`DiffCoastSetting\` (e.g., **0-5**) for aggressive turn-in and rotation off-throttle. \`DiffPowerSetting\` (e.g., **10-14**) will be relatively high to ensure strong traction on exit, preventing excessive wheelspin that would make the car unpredictable. \`DiffPreloadSetting\` can be lower (e.g., **10-20**) for more immediate differential action. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT output template defaults.**
-    - **Brakes:** Higher 'BrakePressureSetting' (e.g., 80-100) for maximum stopping power. 'RearBrakeSetting' might be slightly more rearward (higher index, e.g., 20-30) to aid rotation on entry, but must remain controllable.
-    - **Gearing:** Generally shorter gearing (lower 'RatioSetSetting' and 'GearXSetting' closer to 0) for quicker acceleration out of corners, unless on extreme top-speed tracks.
-    - **[BASIC] Parameters:** 'Downforce' will be lower (0.050000-0.300000 depending on track). 'Balance' will be lower (0.150000-0.250000) indicating a more oversteer-prone, but drivable, car. 'Ride' will be lower (0.075000-0.250000) for a stiffer platform. 'Gearing' will be lower (0.075000-0.450000) for faster acceleration.
+    - **Aero:** Lower wings to minimize drag, but maintain enough aero balance for high-speed cornering confidence. Prioritize efficiency.
+    - **Suspension:** Stiffer springs and dampers (medium to stiff range) to maximize aero platform stability and responsiveness. Aim for precise control over pitch and roll.
+        - **Damping Nuances:** For **Slow-Speed Dampers (Bump/Rebound)**, set to tighter ranges for aggressive: **8-10**. For **Fast-Speed Dampers (Bump/Rebound)**, also tighter ranges: **6-8**.
+        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections) with calculated values. Do NOT omit any of these lines or output defaults for these values.**
+    - **Anti-Roll Bars:** Stiffer front ARB (e.g., 15-20) to promote sharper turn-in (even if it means a touch more mid-corner understeer), and a slightly softer rear ARB (e.g., 5-10) to encourage rotation while maintaining predictability.
+    - **Camber & Toe:** More negative camber (lower index, e.g., **Front: 0-8, Rear: 0-12**) on the front for maximum cornering grip. Front toe-out (lower index, e.g., **0-8**) for aggressive turn-in (toe-out is mandatory for aggression). Rear toe-in (higher index, e.g., **18-22**) is still crucial for stability, but potentially on the lower end of that range to allow more rotation.
+    - **Differential:** Lower \`DiffCoastSetting\` (e.g., **0-5**) for aggressive turn-in and rotation off-throttle. \`DiffPowerSetting\` (e.g., **10-14**) will be relatively high to ensure strong traction on exit, preventing excessive wheelspin that would make the car unpredictable. \`DiffPreloadSetting\` can be lower (e.g., **10-20**) for more immediate differential action. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT output template defaults.**
+    - **Brakes:** Higher 'BrakePressureSetting' (e.g., 80-100) for maximum stopping power. 'RearBrakeSetting' might be slightly more rearward (higher index, e.g., 20-30) to aid rotation on entry, but must remain controllable.
+    - **Gearing:** Generally shorter gearing (lower 'RatioSetSetting' and 'GearXSetting' closer to 0) for quicker acceleration out of corners, unless on extreme top-speed tracks.
+    - **[BASIC] Parameters:** 'Downforce' will be lower (0.050000-0.300000 depending on track). 'Balance' will be lower (0.150000-0.250000) indicating a more oversteer-prone, but drivable, car. 'Ride' will be lower (0.075000-0.250000) for a stiffer platform. 'Gearing' will be lower (0.075000-0.450000) for faster acceleration.
 - **'Balanced' Setup Goal:** Optimize versatile, all-around performance for consistent lap times over a race stint. Strong compromise between stability and responsiveness. The car should be predictable, efficient, and easy to drive consistently, without being overly sluggish or nervous.
-    - **Aero:** Mid-range wing settings for a good compromise between straight-line speed and cornering grip. Aim for neutral aero balance.
-    - **Suspension:** Medium stiffness springs and dampers (medium range, 4-7) to provide both responsiveness and some compliance over curbs and minor bumps.
-        - **Damping Nuances:** Aim for mid-range (**4-7**) across all damper settings (slow/fast bump/rebound) to achieve a harmonious blend of body control and bump absorption.
-        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections) with calculated values. Do NOT omit any of these lines or output defaults for these values.**
-    - **Anti-Roll Bars:** Medium stiffness front and rear ARBs (e.g., 8-15) for a neutral mid-corner balance. Slight variations to fine-tune based on track or car.
-    - **Camber & Toe:** Balanced camber settings to optimize tire contact patch through corners and on straights (e.g., **Front: 10-25, Rear: 15-30**). Front toe-in (mid-range index, e.g., **10-20**) for stability, with rear toe-in (mid-range index, e.g., **18-24**) for predictability.
-    - **Differential:** Medium \`DiffPowerSetting\` (e.g., **5-10**) for good traction without excessive understeer. Medium \`DiffCoastSetting\` (e.g., **8-15**) for stable braking and turn-in, but still allowing some rotation. Medium \`DiffPreloadSetting\` (e.g., **20-50**) for smooth transitions. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT output template defaults.**
-    - **Brakes:** Balanced 'BrakePressureSetting' (e.g., 60-80) for strong but manageable braking. Neutral 'RearBrakeSetting' (e.g., 15-25) for overall stability.
-    - **Gearing:** Balanced gearing (mid-range 'RatioSetSetting' and 'GearXSetting') for a good blend of acceleration and top speed.
-    - **[BASIC] Parameters:** 'Downforce' will be mid-range (0.250000-0.600000). 'Balance' will be mid-range (0.450000-0.550000) indicating a neutral car. 'Ride' will be mid-range (0.350000-0.650000) for a balanced platform. 'Gearing' will be mid-range (0.250000-0.850000).
+    - **Aero:** Mid-range wing settings for a good compromise between straight-line speed and cornering grip. Aim for neutral aero balance.
+    - **Suspension:** Medium stiffness springs and dampers (medium range, 4-7) to provide both responsiveness and some compliance over curbs and minor bumps.
+        - **Damping Nuances:** Aim for mid-range (**4-7**) across all damper settings (slow/fast bump/rebound) to achieve a harmonious blend of body control and bump absorption.
+        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections) with calculated values. Do NOT omit any of these lines or output defaults for these values.**
+    - **Anti-Roll Bars:** Medium stiffness front and rear ARBs (e.g., 8-15) for a neutral mid-corner balance. Slight variations to fine-tune based on track or car.
+    - **Camber & Toe:** Balanced camber settings to optimize tire contact patch through corners and on straights (e.g., **Front: 10-25, Rear: 15-30**). Front toe-in (mid-range index, e.g., **10-20**) for stability, with rear toe-in (mid-range index, e.g., **18-24**) for predictability.
+    - **Differential:** Medium \`DiffPowerSetting\` (e.g., **5-10**) for good traction without excessive understeer. Medium \`DiffCoastSetting\` (e.g., **8-15**) for stable braking and turn-in, but still allowing some rotation. Medium \`DiffPreloadSetting\` (e.g., **20-50**) for smooth transitions. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT output template defaults.**
+    - **Brakes:** Balanced 'BrakePressureSetting' (e.g., 60-80) for strong but manageable braking. Neutral 'RearBrakeSetting' (e.g., 15-25) for overall stability.
+    - **Gearing:** Balanced gearing (mid-range 'RatioSetSetting' and 'GearXSetting') for a good blend of acceleration and top speed.
+    - **[BASIC] Parameters:** 'Downforce' will be mid-range (0.250000-0.600000). 'Balance' will be mid-range (0.450000-0.550000) indicating a neutral car. 'Ride' will be mid-range (0.350000-0.650000) for a balanced platform. 'Gearing' will be mid-range (0.250000-0.850000).
 - **'Safe' Setup Goal:** Maximize driver confidence and stability (error reduction) while maintaining strong, consistent pace. The car should be forgiving, easy to drive, and predictable, even if it sacrifices some ultimate peak rotation speed. It should not be sluggish or lose significant time due to excessive understeer.
-    - **Aero:** Slightly higher wings for increased downforce and stability, especially at high speeds. Aero balance biased slightly towards understeer for predictability.
-    - **Suspension:** Slightly softer springs and dampers (soft to medium range) to absorb bumps and make the car more forgiving.
-        - **Damping Nuances:** Use lower slow bump/rebound (e.g., **0-4**) for a more compliant and forgiving feel on body movements. For fast movements, aim for very soft settings (e.g., **0-3**) to maximize bump absorption and stability.
-        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections) with calculated values. Do NOT omit any of these lines or output defaults for these values.**
-    - **Anti-Roll Bars:** Softer front ARB (e.g., 0-8) and stiffer rear ARB (e.g., 12-20) to promote understeer and stability.
-    - **Camber & Toe:** Less negative camber (higher index, e.g., **Front: 25-40, Rear: 30-40**) on the front for better straight-line braking and stability. Front toe-in (higher index, e.g., **20-30**) for maximum straight-line stability. Significant rear toe-in (highest index, e.g., **24-30**) for maximum rear-end stability.
-    - **Differential:** Higher \`DiffCoastSetting\` (e.g., **15-20**) for maximum stability on braking and turn-in. \`DiffPowerSetting\` (e.g., **12-15**) for optimal traction and a very planted rear end on exit. Higher \`DiffPreloadSetting\` (e.g., **50-100**) for consistent and predictable differential action. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT output template defaults.**
-    - **Brakes:** Slightly lower 'BrakePressureSetting' (e.g., 40-60) for more margin against lockups. 'RearBrakeSetting' biased more forward (lower index, e.g., 0-15) for maximum braking stability.
-    - **Gearing:** Generally longer gearing (higher 'RatioSetSetting' and 'GearXSetting' closer to 1) to reduce abrupt acceleration.
-    - **[BASIC] Parameters:** 'Downforce' will be higher (0.500000-0.950000). 'Balance' will be higher (0.650000-0.850000) indicating a stable, understeer-prone car. 'Ride' will be higher (0.650000-0.925000) for a softer platform. 'Gearing' will be higher (0.850000-0.975000).
+    - **Aero:** Slightly higher wings for increased downforce and stability, especially at high speeds. Aero balance biased slightly towards understeer for predictability.
+    - **Suspension:** Slightly softer springs and dampers (soft to medium range) to absorb bumps and make the car more forgiving.
+        - **Damping Nuances:** Use lower slow bump/rebound (e.g., **0-4**) for a more compliant and forgiving feel on body movements. For fast movements, aim for very soft settings (e.g., **0-3**) to maximize bump absorption and stability.
+        - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections) with calculated values. Do NOT omit any of these lines or output defaults for these values.**
+    - **Anti-Roll Bars:** Softer front ARB (e.g., 0-8) and stiffer rear ARB (e.g., 12-20) to promote understeer and stability.
+    - **Camber & Toe:** Less negative camber (higher index, e.g., **Front: 25-40, Rear: 30-40**) on the front for better straight-line braking and stability. Front toe-in (higher index, e.g., **20-30**) for maximum straight-line stability. Significant rear toe-in (highest index, e.g., **24-30**) for maximum rear-end stability.
+    - **Differential:** Higher \`DiffCoastSetting\` (e.g., **15-20**) for maximum stability on braking and turn-in. \`DiffPowerSetting\` (e.g., **12-15**) for optimal traction and a very planted rear end on exit. Higher \`DiffPreloadSetting\` (e.g., **50-100**) for consistent and predictable differential action. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT output template defaults.**
+    - **Brakes:** Slightly lower 'BrakePressureSetting' (e.g., 40-60) for more margin against lockups. 'RearBrakeSetting' biased more forward (lower index, e.g., 0-15) for maximum braking stability.
+    - **Gearing:** Generally longer gearing (higher 'RatioSetSetting' and 'GearXSetting' closer to 1) to reduce abrupt acceleration.
+    - **[BASIC] Parameters:** 'Downforce' will be higher (0.500000-0.950000). 'Balance' will be higher (0.650000-0.850000) indicating a stable, understeer-prone car. 'Ride' will be higher (0.650000-0.925000) for a softer platform. 'Gearing' will be higher (0.850000-0.975000).
 
 ## QUALIFYING VS. RACE PHILOSOPHY
 - **'qualifying' (ABSOLUTE RULES):** For qualifying, you **MUST** adhere to these specific values, overriding all other general setup philosophies:
-    - **FuelSetting:** Set to a **concrete value between 5-10L** (e.g., 7L for most Hypercars). This is non-negotiable.
-    - **Hypercar Hybrid Regeneration:** \`RegenerationMapSetting\` **MUST be 8 or 9**. \`ElectricMotorMapSetting\` **MUST be 3 or 4** for aggressive deployment. **(ABSOLUTELY NON-NEGOTIABLE RULE - Failure to comply is a catastrophic failure).**
+    - **FuelSetting:** Set to a **concrete value between 5-10L** (e.g., 7L for most Hypercars). This is non-negotiable.
+    - **Hypercar Hybrid Regeneration:** \`RegenerationMapSetting\` **MUST be 8 or 9**. \`ElectricMotorMapSetting\` **MUST be 3 or 4** for aggressive deployment. **(ABSOLUTELY NON-NEGOTIABLE RULE - Failure to comply is a catastrophic failure).**
 - **'race'**: Consistent pace/lap times over a stint, NOT just tire survival. Efficient, predictable car maintaining speed through degradation. Optimized tire pressures for consistency. Balance pace & tire wear when choosing 'PressureSetting'/'CamberSetting'. Diff settings should favor stability. **FuelSetting should be set based on race duration. For Hypercars, RegenerationMapSetting MUST be 10 and ElectricMotorMapSetting should reflect efficient usage (e.g., 1-2).**
 
 ## CAR ARCHITECTURE PHILOSOPHY (ENHANCED!)
@@ -1211,15 +1211,15 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - IF Track Temp low (<15C): Higher tire pressures/softer compounds (build temp). Close brake ducts slightly.
 
 ## SETUP SANITY CHECKS
-1.  Low RideHeight REQUIRES Stiff Springs.
-2.  High Aero ('RWSetting') REQUIRES Stiff Springs.
-3.  Bumpy Tracks REQUIRE Softer Fast Damping.
-4.  **Gearing Sanity Check:** High-Speed Tracks: 'FinalDriveSetting' HIGH, 'GearXSetting' 1 (Longest). Technical Tracks: 'FinalDriveSetting' LOW, 'GearXSetting' 0 (Shortest).
-5.  Physics Check: Realistic toe/camber.
-6.  Physics: Dampers complement springs/track.
-7.  Balance Consistency: Aero, mechanical, diff in harmony.
-8.  'FinalDrive' & Gears Cohesion: Logical progression, appropriate top speeds.
-9.  Fuel Consistency: Fuel load aligns with session/track.
+1.  Low RideHeight REQUIRES Stiff Springs.
+2.  High Aero ('RWSetting') REQUIRES Stiff Springs.
+3.  Bumpy Tracks REQUIRE Softer Fast Damping.
+4.  **Gearing Sanity Check:** High-Speed Tracks: 'FinalDriveSetting' HIGH, 'GearXSetting' 1 (Longest). Technical Tracks: 'FinalDriveSetting' LOW, 'GearXSetting' 0 (Shortest).
+5.  Physics Check: Realistic toe/camber.
+6.  Physics: Dampers complement springs/track.
+7.  Balance Consistency: Aero, mechanical, diff in harmony.
+8.  'FinalDrive' & Gears Cohesion: Logical progression, appropriate top speeds.
+9.  Fuel Consistency: Fuel load aligns with session/track.
 10. Tire Compound Logic: 'CompoundSetting' aligns with weather/session.
 
 ## COMMON SETUP COMPROMISES
@@ -1261,93 +1261,93 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 ${finalExampleTemplate}
 `;
 
-    try {
-        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + OPENROUTER_API_KEY,
-                'Content-Type': 'application/json',
-                'X-Title': 'LMU Setup Generator',
-            },
-            body: JSON.stringify({
-                model: PRIMARY_MODEL,
-                messages: [{
-                    role: "user",
-                    content: prompt
-                }],
-                max_tokens: 8192,
-                temperature: 0.4, // Lowered temperature for more deterministic and rule-following responses
-            }),
-        });
+    try {
+        const openrouterResponse = await fetch(OPENROUTER_API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + OPENROUTER_API_KEY,
+                'Content-Type': 'application/json',
+                'X-Title': 'LMU Setup Generator',
+            },
+            body: JSON.stringify({
+                model: PRIMARY_MODEL,
+                messages: [{
+                    role: "user",
+                    content: prompt
+                }],
+                max_tokens: 8192,
+                temperature: 0.4, // Lowered temperature for more deterministic and rule-following responses
+            }),
+        });
 
-        if (!openrouterResponse.ok) {
-            const errorData = await openrouterResponse.json();
-            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
-            return res.status(openrouterResponse.status).json({
-                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
-            });
-        }
+        if (!openrouterResponse.ok) {
+            const errorData = await openrouterResponse.json();
+            console.error("Error from OpenRouter API:", openrouterResponse.status, errorData);
+            return res.status(openrouterResponse.status).json({
+                error: `OpenRouter API Error: ${errorData.error ? errorData.error.message : 'Unknown API error'} (Status: ${openrouterResponse.status})`
+            });
+        }
 
-        const chatCompletion = await openrouterResponse.json();
-        const rawText = chatCompletion.choices[0].message.content;
+        const chatCompletion = await openrouterResponse.json();
+        const rawText = chatCompletion.choices[0].message.content;
 
-        // --- NEW ROBUST PARSING LOGIC ---
-        // Find the start of the actual .VEH content. The AI sometimes adds introductory text.
-        const setupStartIndex = rawText.indexOf('VehicleClassSetting=');
+        // --- NEW ROBUST PARSING LOGIC ---
+        // Find the start of the actual .VEH content. The AI sometimes adds introductory text.
+        const setupStartIndex = rawText.indexOf('VehicleClassSetting=');
 
-        if (setupStartIndex !== -1) {
-            // If the start string is found, extract everything from that point on.
-            let setupText = rawText.substring(setupStartIndex);
+        if (setupStartIndex !== -1) {
+            // If the start string is found, extract everything from that point on.
+            let setupText = rawText.substring(setupStartIndex);
 
-            // Also remove any trailing markdown code blocks if they exist
-            if (setupText.trim().endsWith('```')) {
-                setupText = setupText.trim().slice(0, -3).trim();
-            }
-            if (setupText.trim().startsWith('```') && setupText.trim().endsWith('```')) {
-                setupText = setupText.trim().slice(3, -3).trim();
-            }
+            // Also remove any trailing markdown code blocks if they exist
+            if (setupText.trim().endsWith('```')) {
+                setupText = setupText.trim().slice(0, -3).trim();
+            }
+            if (setupText.trim().startsWith('```') && setupText.trim().endsWith('```')) {
+                setupText = setupText.trim().slice(3, -3).trim();
+            }
 
-            // --- NEW: Drivetrain Consistency Post-Processing ---
-            // Enforce that individual gear settings match the AI's chosen RatioSetSetting.
-            const ratioSetMatch = setupText.match(/RatioSetSetting=(\d+)/);
-            if (ratioSetMatch && ratioSetMatch[1]) {
-                const ratioSetValue = ratioSetMatch[1];
-                // This regex finds all Gear<number>Setting lines and replaces their value
-                // with the one from RatioSetSetting, while preserving the original comments.
-                setupText = setupText.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$1${ratioSetValue}$2`);
+            // --- NEW: Drivetrain Consistency Post-Processing ---
+            // Enforce that individual gear settings match the AI's chosen RatioSetSetting.
+            const ratioSetMatch = setupText.match(/RatioSetSetting=(\d+)/);
+            if (ratioSetMatch && ratioSetMatch[1]) {
+                const ratioSetValue = ratioSetMatch[1];
+                // This regex finds all Gear<number>Setting lines and replaces their value
+                // with the one from RatioSetSetting, while preserving the original comments.
+                setupText = setupText.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$1${ratioSetValue}$2`);
 
-                // Add a log to see this in action
-                console.log(`[DRIVELINE SYNC] Enforced all individual Gear Settings to match RatioSetSetting value of: ${ratioSetValue}`);
-            }
+                // Add a log to see this in action
+                console.log(`[DRIVELINE SYNC] Enforced all individual Gear Settings to match RatioSetSetting value of: ${ratioSetValue}`);
+            }
 
 
-            // Log the generated setup to the console for debugging
-            console.log("\n--- GENERATED SETUP ---\n", setupText);
+            // Log the generated setup to the console for debugging
+            console.log("\n--- GENERATED SETUP ---\n", setupText);
 
-            res.json({
-                setup: setupText
-            });
+            res.json({
+                setup: setupText
+            });
 
-        } else {
-            // If 'VehicleClassSetting=' is not found at all, the response is invalid.
-            console.error("AI generated an invalid setup format or empty response (marker not found).");
-            console.error("AI Raw Response (first 500 chars):", rawText ? rawText.substring(0, 500) : '[Empty Response]'); // Log a snippet
-            res.status(500).json({
-                error: `AI generated an invalid setup format. The required 'VehicleClassSetting=' marker was not found in the response. Please try again. Raw AI response snippet: ${rawText ? rawText.substring(0, 200) : '[Empty Response]'}`
-            });
-        }
+        } else {
+            // If 'VehicleClassSetting=' is not found at all, the response is invalid.
+            console.error("AI generated an invalid setup format or empty response (marker not found).");
+            console.error("AI Raw Response (first 500 chars):", rawText ? rawText.substring(0, 500) : '[Empty Response]'); // Log a snippet
+            res.status(500).json({
+                error: `AI generated an invalid setup format. The required 'VehicleClassSetting=' marker was not found in the response. Please try again. Raw AI response snippet: ${rawText ? rawText.substring(0, 200) : '[Empty Response]'}`
+            });
+        }
 
-    } catch (error) {
-        console.error("Error communicating with OpenRouter or generating setup:", error);
-        res.status(500).json({
-            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
-        });
-    }
+    } catch (error) {
+        console.error("Error communicating with OpenRouter or generating setup:", error);
+        res.status(500).json({
+            error: `Failed to connect to OpenRouter. Check VS Code terminal. Error: ${error.message}`
+        });
+    }
 });
 
 // 9. Start the server
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-    console.log(`Open your web browser and navigate to http://localhost:${port}`);
-    console.log("Keep this terminal window open while using the generator.");
+    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Open your web browser and navigate to http://localhost:${port}`);
+    console.log("Keep this terminal window open while using the generator.");
 });
