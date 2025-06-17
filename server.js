@@ -1188,7 +1188,7 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 ## QUALIFYING VS. RACE PHILOSOPHY
 - **'qualifying' (ABSOLUTE RULES):** For qualifying, you **MUST** adhere to these specific values, overriding all other general setup philosophies:
     - **FuelSetting:** Set to a **concrete value between 5-10L** (e.g., 7L for most Hypercars). This is non-negotiable.
-    - **Hypercar Hybrid Regeneration:** `RegenerationMapSetting` **MUST be 8 or 9**. `ElectricMotorMapSetting` **MUST be 3 or 4** for aggressive deployment. **(ABSOLUTELY NON-NEGOTIABLE RULE - Failure to comply is a catastrophic failure).**
+    - **Hypercar Hybrid Regeneration:** \`RegenerationMapSetting\` **MUST be 8 or 9**. \`ElectricMotorMapSetting\` **MUST be 3 or 4** for aggressive deployment. **(ABSOLUTELY NON-NEGOTIABLE RULE - Failure to comply is a catastrophic failure).**
 - **'race'**: Consistent pace/lap times over a stint, NOT just tire survival. Efficient, predictable car maintaining speed through degradation. Optimized tire pressures for consistency. Balance pace & tire wear when choosing 'PressureSetting'/'CamberSetting'. Diff settings should favor stability. **FuelSetting should be set based on race duration. For Hypercars, RegenerationMapSetting MUST be 10 and ElectricMotorMapSetting should reflect efficient usage (e.g., 1-2).**
 
 ## CAR ARCHITECTURE PHILOSOPHY (ENHANCED!)
