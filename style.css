@@ -1,7 +1,7 @@
+/* --- Global Styles & Background --- */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f8f8f8; /* Very light grey/off-white background */
-    color: #333333; /* Dark text for readability */
+    color: #ffffff; /* Default text color to white for readability */
     margin: 0;
     padding: 20px;
     display: flex;
@@ -9,26 +9,39 @@ body {
     align-items: flex-start;
     min-height: 100vh;
     box-sizing: border-box;
+
+    /* --- BACKGROUND IMAGE STYLES --- */
+    background-image: url('images/car.jpg'); /* Use your image filename here */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    /* NOTE: background-attachment is handled in the media query below for mobile compatibility */
+    background-color: #1c1c1c; /* Fallback color if image is missing */
 }
 
+/* --- Main Content Container --- */
 .container {
-    background-color: #ffffff; /* Pure white container */
-    border-radius: 8px;
-    padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    background-color: rgba(10, 10, 10, 0.8); /* Semi-transparent dark background */
+    border-radius: 12px;
+    padding: 30px 40px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
     width: 100%;
-    max-width: 700px; /* Slightly narrower max width */
+    max-width: 700px;
     box-sizing: border-box;
-    border: 1px solid #e0e0e0; /* Light border */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
 }
 
+/* --- Headings --- */
 h1, h2 {
-    color: #000000; /* Black headings */
+    color: #ffffff;
     text-align: center;
     margin-bottom: 25px;
     font-weight: 700;
 }
 
+/* --- Form Elements --- */
 .form-group {
     margin-bottom: 20px;
 }
@@ -37,7 +50,7 @@ label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #555555; /* Medium grey label color */
+    color: #cccccc;
     font-size: 0.95em;
 }
 
@@ -47,23 +60,23 @@ textarea,
 select {
     width: 100%;
     padding: 12px;
-    border: 1px solid #cccccc; /* Light grey border */
+    border: 1px solid #444444;
     border-radius: 4px;
-    background-color: #ffffff; /* White input background */
-    color: #333333; /* Dark text */
+    background-color: #2a2a2a;
+    color: #ffffff;
     font-size: 16px;
     box-sizing: border-box;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Common focus style for all inputs */
+/* Focus style for dark theme */
 input[type="text"]:focus,
 input[type="number"]:focus,
 textarea:focus,
 select:focus {
-    border-color: #000000; /* Black focus border */
+    border-color: #e10600; /* Ferrari Red focus border */
     outline: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 5px rgba(225, 6, 0, 0.5);
 }
 
 textarea {
@@ -71,10 +84,10 @@ textarea {
     min-height: 60px;
 }
 
-/* Main action buttons */
+/* --- Main Buttons --- */
 button#generateBtn, button#copyBtn {
-    background-color: #000000; /* Black button */
-    color: #ffffff; /* White text */
+    background-color: #e10600; /* Ferrari Red button */
+    color: #ffffff;
     padding: 12px 25px;
     border: none;
     border-radius: 4px;
@@ -84,34 +97,29 @@ button#generateBtn, button#copyBtn {
     margin-top: 20px;
     width: 100%;
     transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 button#generateBtn:hover, button#copyBtn:hover {
-    background-color: #333333; /* Darker grey on hover */
+    background-color: #ff2a23; /* Brighter red on hover */
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-button#generateBtn:active, button#copyBtn:active {
-    background-color: #555555;
-    transform: translateY(0);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(225, 6, 0, 0.4);
 }
 
 button.hidden {
     display: none;
 }
 
+/* --- Output Section --- */
 .output-section {
     margin-top: 40px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #444;
     padding-top: 25px;
 }
 
 #setupOutput {
-    background-color: #f8f8f8; /* Very light grey background for code */
-    border: 1px solid #dddddd;
+    background-color: #1e1e1e;
+    border: 1px solid #333333;
     border-radius: 4px;
     padding: 15px;
     white-space: pre-wrap;
@@ -121,13 +129,14 @@ button.hidden {
     font-family: 'Consolas', 'Courier New', monospace;
     font-size: 0.9em;
     line-height: 1.4;
-    color: #333333;
+    color: #dcdcdc;
 }
 
+/* --- Loading Spinner & Message Box --- */
 .loading-spinner {
     display: none;
-    border: 4px solid #dddddd;
-    border-top: 4px solid #000000; 
+    border: 4px solid #444;
+    border-top: 4px solid #ffffff; 
     border-radius: 50%;
     width: 30px;
     height: 30px;
@@ -144,14 +153,14 @@ button.hidden {
     margin-top: 15px;
     padding: 10px;
     border-radius: 4px;
-    background-color: #fffacd; /* Light yellow for info */
-    color: #333333;
     font-weight: 600;
     text-align: center;
-    border: 1px solid #ffe0a0;
-    opacity: 0; /* Start hidden */
-    visibility: hidden; /* Start hidden */
+    opacity: 0;
+    visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
+    background-color: rgba(200, 200, 150, 0.9);
+    color: #000;
+    border: 1px solid #ffe0a0;
 }
 
 #messageBox.visible {
@@ -160,14 +169,12 @@ button.hidden {
 }
 
 #messageBox.error {
-    background-color: #ffe0e0; /* Light red for error */
-    color: #cc0000;
-    border: 1px solid #ffc0c0;
+    background-color: rgba(225, 6, 0, 0.8);
+    color: #ffffff;
+    border: 1px solid #ff5050;
 }
 
-
-/* --- Button Group Styles (Minimalist) --- */
-
+/* --- Button Group Styles (Dark Theme) --- */
 .button-group {
     display: flex;
     gap: 10px;
@@ -179,52 +186,34 @@ button.hidden {
 .type-btn {
     flex: 1; 
     min-width: 80px; 
-    background-color: #e0e0e0; /* Light grey for unselected */
-    color: #555555; /* Dark text for unselected */
-    border: 1px solid #cccccc; 
+    background-color: #3a3a3a;
+    color: #cccccc;
+    border: 1px solid #555555; 
     padding: 10px 15px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.95em; 
     font-weight: 600;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-    box-shadow: none;
+    transition: all 0.2s ease;
 }
 
 .type-btn:hover {
-    background-color: #d0d0d0; 
+    background-color: #4a4a4a; 
+    border-color: #777777;
     transform: translateY(-1px);
-    border-color: #b0b0b0;
 }
 
 .type-btn.selected {
-    background-color: #000000; /* Black for selected */
-    color: #ffffff; /* White text for selected */
-    border-color: #000000; 
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); 
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #ffffff; 
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3); 
     transform: translateY(-2px);
 }
 
-.type-btn.selected:hover {
-    background-color: #333333; 
-}
-
-textarea#specificRequest {
-    min-height: 60px;
-    margin-bottom: 0;
-}
-
-input[type="number"][readonly],
-input[type="text"][readonly] { 
-    background-color: #f0f0f0; /* Very light grey for read-only */
-    cursor: not-allowed;
-    border-color: #e0e0e0; 
-    color: #888888; 
-}
-
-/* --- New Combobox Styling --- */
+/* --- Dark Theme Combobox Styling --- */
 .combobox-container {
-    position: relative; /* For positioning the list */
+    position: relative;
 }
 
 .combobox-wrapper {
@@ -234,50 +223,50 @@ input[type="text"][readonly] {
 }
 
 .combobox-wrapper input[type="text"] {
-    padding-right: 35px; /* Make space for the icon */
+    padding-right: 35px;
 }
 
 .combobox-icon {
     position: absolute;
     right: 12px;
-    color: #666;
-    pointer-events: none; /* Make icon unclickable directly, clicks go to input */
+    color: #999;
+    pointer-events: none;
     transition: transform 0.2s ease;
 }
 
 .combobox-list {
     position: absolute;
-    top: 100%; /* Position below the input */
+    top: 100%;
     left: 0;
     width: 100%;
-    max-height: 250px; /* Max height before scrolling */
-    overflow-y: auto; /* Enable scrolling */
-    background-color: #ffffff; /* White background for list */
-    border: 1px solid #cccccc;
+    max-height: 250px;
+    overflow-y: auto;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
     border-top: none;
     border-radius: 0 0 4px 4px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    z-index: 10; /* Ensure it appears above other elements */
-    display: none; /* Hidden by default */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    display: none;
     opacity: 0;
     transform: translateY(-10px);
     transition: opacity 0.2s ease, transform 0.2s ease, display 0.2s;
 }
 
 .combobox-list.active {
-    display: block; /* Show when active */
+    display: block;
     opacity: 1;
     transform: translateY(0);
 }
 
 .combobox-category-header {
-    background-color: #f0f0f0; /* Lighter grey for category headers */
-    color: #555555;
+    background-color: #3a3a3a;
+    color: #cccccc;
     padding: 8px 12px;
     font-weight: 700;
     font-size: 0.9em;
-    border-bottom: 1px solid #e0e0e0;
-    position: sticky; /* Make header stick while scrolling */
+    border-bottom: 1px solid #444;
+    position: sticky;
     top: 0;
     z-index: 1;
 }
@@ -285,13 +274,14 @@ input[type="text"][readonly] {
 .combobox-list-item {
     padding: 10px 12px;
     cursor: pointer;
-    color: #333333;
+    color: #dcdcdc;
     transition: background-color 0.1s ease;
     font-size: 0.95em;
 }
 
 .combobox-list-item:hover {
-    background-color: #e0e0e0; /* Light highlight on hover */
+    background-color: #e10600;
+    color: #ffffff;
 }
 
 .combobox-no-results {
@@ -302,7 +292,7 @@ input[type="text"][readonly] {
 }
 
 
-/* Layout for split fields (Track Temp and Session Duration) */
+/* --- Responsive Layout Adjustments --- */
 .split-fields {
     display: flex;
     gap: 20px;
@@ -314,7 +304,16 @@ input[type="text"][readonly] {
     min-width: 180px; 
 }
 
-/* Ensure padding around container is sufficient for mobile */
+/* --- Media Query for Larger Screens --- */
+/* This rule applies only if the screen width is 768px or wider */
+@media (min-width: 768px) {
+  body {
+    /* Re-enables the fixed background effect for desktops and tablets */
+    background-attachment: fixed;
+  }
+}
+
+/* --- Media Query for Smaller Mobile Screens --- */
 @media (max-width: 600px) {
     body {
         padding: 10px;
