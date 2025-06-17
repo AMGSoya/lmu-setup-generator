@@ -1,3 +1,32 @@
+IMPROVE THIS CODE INSTRUCTIONS BELOW(SEND ME THE FULL REVISED CODE):
+
+The AI is consistently failing to actively calculate and overwrite parameters marked "MUST BE OVERWRITTEN." Instead, it often outputs the original template's default value. This applies to a vast majority of the adjustable settings, including:
+All individual wheel damper settings (Slow/Fast Bump/Rebound) for [FRONTLEFT], [FRONTRIGHT], [REARLEFT], [REARRIGHT]. This is the biggest problem as it renders the car undrivable.
+Front and Rear 3rd Spring and Packer settings (Front3rdSpringSetting, Rear3rdSpringSetting, Front3rdPackerSetting, Rear3rdPackerSetting).
+Anti-Roll Bar settings (FrontAntiSwaySetting, RearAntiSwaySetting).
+Front and Rear Toe settings (FrontToeInSetting, RearToeInSetting).
+Camber settings (CamberSetting).
+Tire Pressure settings (PressureSetting).
+Differential settings (DiffPowerSetting, DiffCoastSetting, DiffPreloadSetting).
+Lack of Differentiation Between Setup Goals:
+
+The outputs for "Balanced" and "Aggressive" setups were nearly identical for all parameters not affected by the Le Mans override. The AI is not effectively applying the distinct philosophical guidelines (e.g., "stiffer" for aggressive, "softer" for balanced) outlined in the LMU SETUP PHILOSOPHY DIAL.
+Incorrect Session-Specific Parameter Adjustments (Fuel & Hybrid):
+
+For "Qualifying" sessions, the AI failed to implement the explicit instructions for:
+Minimal Fuel: It kept the FuelSetting at a high race-like value (85L) instead of 2-3 laps.
+Hybrid Regeneration Map: It used the race setting (RegenerationMapSetting=10) instead of the specified qualifying range (8-9 for Hypercars).
+Failure to Follow Specific Parameter Value Ranges and Guidelines:
+
+Rear Toe-In: Despite the explicit mandate for RearToeInSetting to be 18-24, the AI consistently output 17.
+Differential Power Setting (DiffPowerSetting): It consistently output 3, which directly contradicts the "REAR PLATFORM STABILITY" philosophy's instruction to use "relatively HIGH" values (e.g., 10-14 for Hypercars) to prevent wheelspin. This makes the car unstable on exit.
+Front Toe-Out for Aggressive: The prompt instructs "Front toe-out (lower index, e.g., 0-8)" for aggressive setups, but the AI outputs 15 (toe-in).
+Aggressive Damping Nuances: The AI did not apply the specified "Aggressive" damping strategy of "higher slow-speed damping (e.g., 7-10)" and "balanced or slightly softer fast-speed damping (e.g., 4-7)."
+
+PRIORITIZE NOT CHANGING ANYTHING OR REMOVING ANYTHING IN THE CODE, FAILING TO FOLLOW THIS MIGHT BREAK THE WHOLE CODE.
+
+CODE BELOW:
+
 // --- server.js (Final Version with Syntax Fix and Improved AI Output Directives) ---
 
 // 1. Load environment variables from .env file
