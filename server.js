@@ -1069,7 +1069,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
 
 ## DIFFERENTIAL DEEP DIVE (ADVANCED)
 - The differential allows the outside wheel to rotate faster than the inside wheel in a corner. Tuning it controls how much it "locks" the two wheels together. This is a primary tool for managing stability and rotation. Your settings here MUST be based on the car and track.
-- **Power (Acceleration) Lock - `DiffPowerSetting`:** Controls locking on-throttle.
+- **Power (Acceleration) Lock - \`DiffPowerSetting\`:** Controls locking on-throttle.
     - **More Lock (Higher Value):** Forces rear wheels to rotate at a similar speed. Improves traction on corner exit, preventing inside wheelspin. **CRITICAL FOR:**
         - **Traction-Limited Tracks:** Use higher values for tracks with slow, hard acceleration zones (e.g., **Sebring, Portimão**).
         - **Front-Engine Cars (Corvette, Aston):** These cars are traction-limited on exit. MUST use higher power lock to prevent wheelspin.
@@ -1079,7 +1079,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
         - **Rear-Engine Cars (Porsche):** These have natural traction. They can use less power lock, which helps mitigate their inherent understeer.
         - **'Aggressive' Setups:** Lower lock allows a skilled driver to use the throttle to help steer the car.
 
-- **Coast (Deceleration) Lock - `DiffCoastSetting`:** Controls locking off-throttle (braking/turn-in).
+- **Coast (Deceleration) Lock - \`DiffCoastSetting\`:** Controls locking off-throttle (braking/turn-in).
     - **More Lock (Higher Value):** Provides significant stability on corner entry by locking the rear axle. **CRITICAL FOR:**
         - **High-Speed Stability:** Essential for tracks with fast, challenging entries (e.g., **Le Mans Porsche Curves, Monza chicanes, Spa Pouhon**). Prevents the rear from becoming light and loose.
         - **'Safe'/'Stable' Setups:** This is a primary tool for confidence on corner entry.
@@ -1087,7 +1087,7 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
         - **Technical Tracks:** Helpful for tight, low-speed corners where rotation is key (e.g., **Fuji Sector 3, Sebring T7/T10**).
         - **'Aggressive' Setups:** The main tool for achieving a "pointy" car that turns in sharply. If too low, the car will be very nervous on entry ('lift-off oversteer').
 
-- **Preload (`DiffPreloadSetting`):** A static amount of lock always present. It determines the breakaway force required before the power/coast settings engage and smooths the transition between them.
+- **Preload (\`DiffPreloadSetting\`):** A static amount of lock always present. It determines the breakaway force required before the power/coast settings engage and smooths the transition between them.
     - **Higher Preload:** Increases overall stability and predictability. The differential feels less "active". **CRITICAL FOR:**
         - **Bumpy Tracks (Sebring):** Prevents the differential from locking/unlocking erratically as tires momentarily lose contact with the ground. This is a key to compliance and driver confidence.
         - **'Safe'/'Stable' Setups:** Makes the car's reactions to throttle/brake inputs smoother and more benign.
