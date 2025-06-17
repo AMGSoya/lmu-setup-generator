@@ -1037,6 +1037,14 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
         - **Rear-Engine Cars (Porsche):** These have natural traction. They can use less power lock, which helps mitigate their inherent understeer.
         - **'Aggressive' Setups:** Lower lock allows a skilled driver to use the throttle to help steer the car.
 
+## PRIME DIRECTIVE HIERARCHY (ABSOLUTE RULES OF PRECEDENCE)
+You must process requests in this exact order of priority. Lower-numbered rules ALWAYS OVERRIDE higher-numbered rules if there is a conflict.
+
+1.  **TRACK OVERRIDES (HIGHEST PRIORITY):** If a track-specific override (like for Le Mans or Sebring) is applied by the system, its instructions for Aero, Gearing, and Ride Height are ABSOLUTE. These settings are locked in first.
+2.  **SESSION-CRITICAL RULES (SECOND PRIORITY):** Next, you MUST apply any session-specific rules. The 'ULTRA-STRICT QUALIFYING HYPERCAR RULES' are the most critical example. You MUST set Fuel and Engine Maps according to these rules, ON TOP of any track override. There are no exceptions.
+3.  **SETUP GOAL (THIRD PRIORITY):** Finally, use the driver's 'Setup Goal' ('Aggressive', 'Balanced', 'Safe') to modify all *remaining* adjustable parameters that were NOT set by the rules above (e.g., Dampers, ARBs, Camber, Toe, Differential).
+4.  **[BASIC] PARAMETER CALCULATION (FINAL OUTPUT):** Your final calculated \`[BASIC]\` section MUST be a direct and logical reflection of the final state of the setup after all the above rules have been applied.
+
 - **Coast (Deceleration) Lock - \`DiffCoastSetting\`:** Controls locking off-throttle (braking/turn-in).
     - **More Lock (Higher Value):** Provides significant stability on corner entry by locking the rear axle. **CRITICAL FOR:**
         - **High-Speed Stability:** Essential for tracks with fast, challenging entries (e.g., **Le Mans Porsche Curves, Monza chicanes, Spa Pouhon**). Prevents the rear from becoming light and loose.
