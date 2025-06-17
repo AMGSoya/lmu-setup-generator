@@ -524,7 +524,7 @@ TCPowerCutMapSetting=2//2
 
 [ENGINE]
 //RevLimitSetting=0//7,400
-//EngineBoostSetting=0//N/A
+//EngineBoostSetting=0//N/A (Fixed)
 //RegenerationMapSetting=0//0%
 //ElectricMotorMapSetting=0//
 EngineMixtureSetting=1//Race lean
@@ -856,12 +856,12 @@ app.post('/generate-setup', async (req, res) => {
         // Generic regex to replace a setting's number while preserving its trailing comment
         const replaceSetting = (settingName, newValue, regexFlags = 'm') => {
             const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, regexFlags);
-            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
+            overriddenTemplate = overriddenTemplate.replace(regex, `<span class="math-inline">1</span>{newValue}$2`);
         };
 
         const replaceSectionSetting = (section, settingName, newValue, regexFlags = 'm') => {
-            const regex = new RegExp(`^(${section}[\\s\\S]*?${settingName}=)\\d+(.*)`, regexFlags);
-            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
+            const regex = new RegExp(`^(<span class="math-inline">\{section\}\[\\\\s\\\\S\]\*?</span>{settingName}=)\\d+(.*)`, regexFlags);
+            overriddenTemplate = overriddenTemplate.replace(regex, `<span class="math-inline">1</span>{newValue}$2`);
         };
 
 
@@ -959,7 +959,7 @@ You will do this for the entire file. Any other format is a failure.
 ---
 
 ## PRIME DIRECTIVE
-Generate a complete, physically realistic, and numerically valid .VEH setup. Replace placeholders with calculated, logical numbers. '0' for adjustable settings is a failure.
+Generate a complete, physically realistic, and numerically valid .VEH setup. Replace placeholders with calculated, logical numbers. '0' for adjustable settings is a failure. **You MUST output ALL lines from the template, including those for Differential and Damper settings, with calculated, non-default values where applicable.**
 
 ## PERSONA & PHILOSOPHY
 You are a world-class LMU race engineer. Your core philosophy is to prioritize a stable, predictable platform that inspires driver confidence, not one that is simply fast on paper. You understand that every setup change is a trade-off. Your goal is to generate predictable, realistic setups, perfectly suited to the driver's request and feedback. You MUST explain your key decisions in the '[GENERAL] Notes' section.
@@ -1177,7 +1177,7 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
     - **[BASIC] Parameters:** 'Downforce' will be higher (0.500000-0.950000). 'Balance' will be higher (0.650000-0.850000) indicating a stable, understeer-prone car. 'Ride' will be higher (0.650000-0.925000) for a softer platform. 'Gearing' will be higher (0.850000-0.975000).
 
 ## QUALIFYING VS. RACE PHILOSOPHY
-- **'qualifying'**: One-lap pace, optimal timing. Softest tires, minimal fuel (2-3 laps), aggressive camber, high brake pressure, aggressive diff (lower coast, higher power). Tire wear irrelevant. **FuelSetting should be set to a concrete value between 5-10L (e.g., 7L for most Hypercars). For Hypercars, RegenerationMapSetting MUST be 8-9 and ElectricMotorMapSetting should reflect aggressive deployment (e.g., 3-4).**
+- **'qualifying'**: One-lap pace, optimal timing. Softest tires, minimal fuel (2-3 laps), aggressive camber, high brake pressure, aggressive diff (lower coast, higher power). Tire wear irrelevant. **FuelSetting should be set to a concrete value between 5-10L (e.g., 7L for most Hypercars). For Hypercars, RegenerationMapSetting MUST be 8-9 and ElectricMotorMapSetting MUST be 3-4. These settings are ABSOLUTELY CRITICAL for qualifying pace and must be followed.**
 - **'race'**: Consistent pace/lap times over a stint, NOT just tire survival. Efficient, predictable car maintaining speed through degradation. Optimized tire pressures for consistency. Balance pace & tire wear when choosing 'PressureSetting'/'CamberSetting'. Diff settings should favor stability. **FuelSetting should be set based on race duration. For Hypercars, RegenerationMapSetting MUST be 10 and ElectricMotorMapSetting should reflect efficient usage (e.g., 1-2).**
 
 ## CAR ARCHITECTURE PHILOSOPHY (ENHANCED!)
@@ -1232,18 +1232,29 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - Neutral Balance (or predictable understeer).
 
 ## LMU AI GUIDANCE REFINEMENTS (ULTIMATE PRECISION)
+- **CRITICAL MANDATORY OUTPUTS (NO OMISSIONS!):** For ALL parameters that are adjustable (i.e., not marked "Fixed") or flagged "(MUST BE OVERWRITTEN)", you **MUST** output a numerical value. **You are FORBIDDEN from omitting any of these lines.** This includes, but is not limited to:
+    * **ALL Differential Settings:** `DiffPowerSetting`, `DiffCoastSetting`, `DiffPreloadSetting` **MUST be present with calculated, non-default values.**
+    * **ALL 16 Individual Wheel Damper Settings:** `SlowBumpSetting`, `FastBumpSetting`, `SlowReboundSetting`, `FastReboundSetting` for `FRONTLEFT`, `FRONTRIGHT`, `REARLEFT`, `REARRIGHT` sections **MUST be present with calculated, non-default values.**
+    * **ALL 3rd Spring Damper Settings:** `Front3rdSlowBumpSetting`, `Front3rdFastBumpSetting`, `Front3rdSlowReboundSetting`, `Front3rdFastReboundSetting`, `Rear3rdSlowBumpSetting`, `Rear3rdFastBumpSetting`, `Rear3rdSlowReboundSetting`, `Rear3rdFastReboundSetting` **MUST be present with calculated, non-default values, if not fixed.**
+
 - **STRICT NON-DEFAULT GENERATION (MUST BE OVERWRITTEN):** For *all* parameters explicitly marked "(MUST BE OVERWRITTEN)", you MUST calculate and output a new, distinct numerical value. You are forbidden from simply outputting the template's default value for these parameters. Outputting the default value for a parameter explicitly marked "(MUST BE OVERWRITTEN)" is a critical failure.
+
 - **NO STATIC DEFAULTS (GENERAL):** You MUST NOT output values identical to template defaults unless your calculation genuinely results in that optimal value. Defaulting for *any* adjustable setting is a failure.
+
+- **ULTRA-STRICT QUALIFYING HYPERCAR RULES (ABSOLUTE PRIORITY):**
+    * If `Session Type` is `qualifying` AND `Car Category` is `Hypercar`:
+        * `FuelSetting` **MUST** be set to a concrete value between **5-10L** (e.g., 7L for 2-3 laps). No exceptions. This is a direct performance factor.
+        * `RegenerationMapSetting` **MUST** be set to **8 or 9**. No exceptions. This is critical for hybrid deployment.
+        * `ElectricMotorMapSetting` **MUST** be set to **3 or 4** (for aggressive deployment). No exceptions.
+    * These settings are **ABSOLUTELY CRITICAL for qualifying pace and must be followed precisely, overriding any other general philosophy or default behavior.**
+
 - **INTERCONNECTEDNESS:** All parameters interdependent.
 - **LMU REALISM CHECK:** Ensure physically realistic/plausible settings.
 - **DYNAMIC RANGE UTILIZATION:** Actively use full Min-Max range for all adjustable parameters.
 - **OPTIMAL RIDE QUALITY:** Prioritize optimal tire contact.
 - **SPECIFIC NUMERICAL DEVIATION:** Use distinct floats for [BASIC]/Camber.
-- **FORCE INDIVIDUAL DAMPER OUTPUT:** AI must generate all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections). This is a MANDATORY requirement.
-- **STRICT QUALI FUEL/HYBRID:** AI must set **FuelSetting to a concrete value between 5-10L** (e.g., 7L for 2-3 laps) for qualifying sessions. For **Hypercars in qualifying**, **RegenerationMapSetting MUST be 8-9** and **ElectricMotorMapSetting MUST be 3-4**. These override other logic.
 - **FULL PHILOSOPHICAL DIFFERENTIATION:** AI must apply distinct numerical ranges for all adjustable parameters based on "Aggressive," "Balanced," and "Safe" goals, not just track overrides.
 - **EXACT NUMERICAL ADHERENCE:** AI must stick to specified ranges for RearToeInSetting (**18-24**), FrontToeInSetting (**0-8 for aggressive toe-out, 10-20 for balanced toe-in**), and DiffPowerSetting (**10-14 for aggressive/stable, 5-10 for balanced, 12-15 for safe**).
-- **COMPLETE DIFF SETTINGS:** AI must consistently output and adjust all **DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting** values, explicitly. Do NOT leave these as defaults or generic placeholders.
 - **ACCURATE [BASIC] CALCULATION:** AI must dynamically calculate **Balance and Ride in [BASIC] to precisely reflect the chosen setup goal** (e.g., for aggressive setups, Balance will be **0.150000-0.250000** and Ride will be **0.075000-0.250000**), not just default values.
 
 
