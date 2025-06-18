@@ -799,7 +799,7 @@ SpringSetting=1//2 (Min: 0, Max: 20) (MUST BE OVERWRITTEN)
 //TenderSpringSetting=0//Detached (Fixed)
 //TenderTravelSetting=0//Detached (Fixed)
 //SpringRubberSetting=0//Detached (Fixed)
-RideHeightSetting=16//6.6 cm (Min: 0, Max: 30) (MUST BE OVERWRITTEN)
+RideHeightSetting=16//6.6 cm (Min: _0, Max: 30) (MUST BE OVERWRITTEN)
 SlowBumpSetting=7//11 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 FastBumpSetting=4//14 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
 SlowReboundSetting=11//7 (Min: 0, Max: 10) (MUST BE OVERWRITTEN)
@@ -816,17 +816,13 @@ Gearing=0.400000
 Custom=1`
 };
 
-// --- [NEW AND IMPROVED] ---
-// This function will now be used for POST-PROCESSING the AI's output
-// to guarantee our track overrides are respected.
-const applyTrackOverrides = (trackName, setupText, carCategory) => {
+// --- [FINALIZED AND ROBUST] ---
+// This function applies non-negotiable overrides AFTER the AI has generated the setup.
+const applyTrackOverrides = (trackName, setupText, carCategory, sessionGoal) => {
     let overriddenText = setupText;
 
     // Helper function to replace a setting's value using regex
     const replaceSetting = (settingName, newValue) => {
-        // This regex looks for a line starting with the setting name, followed by '=',
-        // captures the original number, and the rest of the line (including comments).
-        // It replaces only the number part.
         const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, 'm');
         if (regex.test(overriddenText)) {
             overriddenText = overriddenText.replace(regex, `$1${newValue}$2`);
@@ -838,6 +834,7 @@ const applyTrackOverrides = (trackName, setupText, carCategory) => {
         const note = `Notes="${trackNote} override applied: Absolute minimum drag enforced. Aero, ride height, and radiators minimized for top speed. Gearing set to longest configuration."`;
 
         console.log(`[OVERRIDE] Applying ${trackNote} low-drag override.`);
+        overriddenText = overriddenText.replace(/Notes=".*"/, note);
 
         // Apply minimum aero settings
         replaceSetting('FWSetting', 0);
@@ -849,7 +846,7 @@ const applyTrackOverrides = (trackName, setupText, carCategory) => {
         if (carCategory === 'GT3' || carCategory === 'GTE') maxFinalDrive = 10;
         replaceSetting('FinalDriveSetting', maxFinalDrive);
         replaceSetting('RatioSetSetting', 1); // Use the 'Long' ratio set
-        overriddenText = overriddenText.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`); // Set all individual gears to longest
+        overriddenText = overriddenText.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
 
         // Minimize cooling drag
         replaceSetting('WaterRadiatorSetting', 0);
@@ -859,13 +856,18 @@ const applyTrackOverrides = (trackName, setupText, carCategory) => {
 
         // Minimize ride height
         overriddenText = overriddenText.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
-
-        // Replace the AI's notes with our override note
-        overriddenText = overriddenText.replace(/Notes=".*"/, note);
+        
+        // [NEW] Enforce Hypercar Qualifying Engine Maps
+        if (carCategory === 'Hypercar' && sessionGoal === 'qualifying') {
+            console.log('[OVERRIDE] Applying Hypercar Qualifying engine map override.');
+            replaceSetting('RegenerationMapSetting', 9); // Maximize recovery for the next push lap
+            replaceSetting('ElectricMotorMapSetting', 4); // Maximize deployment
+        }
 
     } else if (trackName === "Sebring International Raceway") {
         const note = 'Notes="Sebring override applied: Compliance enforced. Dampers/ARBs set to softest. Ride height increased to absorb bumps."';
         console.log('[OVERRIDE] Applying Sebring compliance override.');
+        overriddenText = overriddenText.replace(/Notes=".*"/, note);
 
         // Soften all dampers and ARBs
         overriddenText = overriddenText.replace(/^(SlowBumpSetting=)\d+(.*)/gm, `$10$2`);
@@ -885,7 +887,6 @@ const applyTrackOverrides = (trackName, setupText, carCategory) => {
 
         // Increase ride height
         overriddenText = overriddenText.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$125$2`);
-        overriddenText = overriddenText.replace(/Notes=".*"/, note);
     }
     return overriddenText;
 };
@@ -921,8 +922,7 @@ app.post('/generate-setup', async (req, res) => {
             error: `No .VEH template found for car category: ${finalCategory}. Ensure selected car has a valid category.`
         });
     }
-
-    // --- LOGIC CHANGE: We no longer apply overrides to the template beforehand ---
+    
     let finalExampleTemplate = exampleTemplate;
 
     // UPGRADE: Dynamically insert the user's selected car name into the template
@@ -967,7 +967,7 @@ Generate a complete, physically realistic, and numerically valid .VEH setup. Rep
 You are a world-class LMU race engineer. Your core philosophy is to prioritize a stable, predictable platform that inspires driver confidence, not one that is simply fast on paper. You understand that every setup change is a trade-off. Your goal is to generate predictable, realistic setups, perfectly suited to the driver's request and feedback. You MUST explain your key decisions in the '[GENERAL] Notes' section.
 
 ## CRITICAL INSTRUCTION
-Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specific override (e.g., Le Mans aero) was applied, explicitly state it and explain how it overrides general setup philosophies. For your most important adjustments, explain the engineering reason for the specific parameter changes (e.g., 'Increased RearCamberSetting to reduce oversteer on exit', 'Softened front fast dampers for better bump absorption at Sebring').
+Populate '[GENERAL] Notes' with a concise engineering debrief. For your most important adjustments, explain the engineering reason for the specific parameter changes (e.g., 'Increased RearCamberSetting to reduce oversteer on exit', 'Softened front fast dampers for better bump absorption at Sebring'). NOTE: The server may override some of your choices for specific tracks (e.g., Le Mans low-drag) after you generate the setup; this is expected behavior.
 
 ## THOUGHT PROCESS & HIERARCHY
 1.  **Session Type (Qualifying vs. Race):** Dictates overall setup philosophy.
@@ -1027,14 +1027,6 @@ Populate '[GENERAL] Notes' with a concise engineering debrief. If a track-specif
         - **High-Speed Tracks:** On tracks like **Monza or Le Mans**, corner exit is less about raw traction and more about smooth momentum. A lower lock helps the car turn without scrubbing speed.
         - **Rear-Engine Cars (Porsche):** These have natural traction. They can use less power lock, which helps mitigate their inherent understeer.
         - **'Aggressive' Setups:** Lower lock allows a skilled driver to use the throttle to help steer the car.
-
-## PRIME DIRECTIVE HIERARCHY (ABSOLUTE RULES OF PRECEDENCE)
-You must process requests in this exact order of priority. Lower-numbered rules ALWAYS OVERRIDE higher-numbered rules if there is a conflict.
-
-1.  **TRACK OVERRIDES (HIGHEST PRIORITY):** If a track-specific override (like for Le Mans or Sebring) is applied by the system, its instructions for Aero, Gearing, and Ride Height are ABSOLUTE. These settings are locked in first.
-2.  **SESSION-CRITICAL RULES (SECOND PRIORITY):** Next, you MUST apply any session-specific rules. The 'ULTRA-STRICT QUALIFYING HYPERCAR RULES' are the most critical example. You MUST set Fuel and Engine Maps according to these rules, ON TOP of any track override. There are no exceptions.
-3.  **SETUP GOAL (THIRD PRIORITY):** Finally, use the driver's 'Setup Goal' ('Aggressive', 'Balanced', 'Safe') to modify all *remaining* adjustable parameters that were NOT set by the rules above (e.g., Dampers, ARBs, Camber, Toe, Differential).
-4.  **[BASIC] PARAMETER CALCULATION (FINAL OUTPUT):** Your final calculated \`[BASIC]\` section MUST be a direct and logical reflection of the final state of the setup after all the above rules have been applied.
 
 - **Coast (Deceleration) Lock - \`DiffCoastSetting\`:** Controls locking off-throttle (braking/turn-in).
     - **More Lock (Higher Value):** Provides significant stability on corner entry by locking the rear axle. **CRITICAL FOR:**
@@ -1144,8 +1136,8 @@ You must process requests in this exact order of priority. Lower-numbered rules 
 ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 
 ## TRACK DNA DATABASE (EXPANDED!)
-- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed, overriding other general setup philosophies. **Deep Dive:** The challenge is surviving the Porsche Curves. You need high-speed stability. Use a higher \`DiffCoastSetting\` to keep the rear planted on entry to these fast corners, even with minimal wing. A slightly higher \`DiffPreloadSetting\` adds predictability. Bumps on the Mulsanne require good fast-speed damping.
-- **Sebring International Raceway:** Extremely bumpy (old concrete slabs). Focus: SOFT suspension, higher ride height. **It requires soft fast damping for its harsh bumps but can still use stiffer slow damping for platform control in the smoother corners.** The **'Ride'** parameter in [BASIC] **MUST be set to its ABSOLUTE HIGHEST possible value (e.g., 0.900000-0.975000)**. **Dampers (Slow/Fast Bump/Rebound) and Anti-Roll Bars (Front/Rear AntiSwaySetting) MUST be set to their absolute softest (index 0 for dampers, 0-2 for ARBs)**. 'RideHeightSetting' MUST be set to a high value (e.g., 20-30). This ensures maximum bump absorption, overriding general setup goals for stiffness. **Deep Dive:** Turn 17 is notoriously brutal. Short gearing is vital for hairpins. You MUST use a high \`DiffPowerSetting\` for traction on bumpy exits and a high \`DiffPreloadSetting\` to stabilize the differential over the slabs.
+- **Circuit de la Sarthe (Le Mans):** High-speed. Focus: LOWEST drag (low wings, VERY LONG GEARS). The **'Downforce'** parameter in [BASIC] **MUST be set to its ABSOLUTE LOWEST possible value (e.g., 0.050000 - 0.080000)**. Any higher is critical failure. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed. **Deep Dive:** The challenge is surviving the Porsche Curves. You need high-speed stability. Use a higher \`DiffCoastSetting\` to keep the rear planted on entry to these fast corners, even with minimal wing. A slightly higher \`DiffPreloadSetting\` adds predictability. Bumps on the Mulsanne require good fast-speed damping.
+- **Sebring International Raceway:** Extremely bumpy (old concrete slabs). Focus: SOFT suspension, higher ride height. **It requires soft fast damping for its harsh bumps but can still use stiffer slow damping for platform control in the smoother corners.** The **'Ride'** parameter in [BASIC] **MUST be set to its ABSOLUTE HIGHEST possible value (e.g., 0.900000-0.975000)**. 'RideHeightSetting' MUST be set to a high value (e.g., 20-30). This ensures maximum bump absorption. **Deep Dive:** Turn 17 is notoriously brutal. Short gearing is vital for hairpins. You MUST use a high \`DiffPowerSetting\` for traction on bumpy exits and a high \`DiffPreloadSetting\` to stabilize the differential over the slabs.
 - **Spa-Francorchamps:** High-speed, elevation change. Focus: High-speed stability, good aero balance. Stiff springs for Eau Rouge compression. Long Gears Recommended. **Deep Dive:** Must have a stiff front end (springs, slow bump) for compression in Eau Rouge/Raidillon. The trade-off is the slow Bus Stop chicane. A slightly softer rear ARB can help. The key is aero efficiency. Use a relatively high \`DiffCoastSetting\` for stability through Pouhon and other fast entries.
 - **Autodromo Nazionale Monza:** Very high-speed. Focus: LOWEST drag, even more than Le Mans. **VERY LONG GEARS ESSENTIAL**. The **'REARWING (RWSetting)'** MUST be its **absolute minimum index (e.g., 0 or 1)**. Individual gear ratios ('Gear1Setting' to 'GearXSetting') MUST all be **1 (Longest Ratio)**. 'FinalDriveSetting' MUST be HIGHEST available index. 'RatioSetSetting' MUST be **1 (Long)**. Radiators/Ducts/Ride Heights MUST be minimized (index 0). This ensures lowest drag/max top speed. **Deep Dive:** The challenge is braking stability and curb-riding for the chicanes. You need a compliant car with good traction. A high \`DiffCoastSetting\` is essential for stability when braking from top speed. Use a lower \`DiffPowerSetting\` to help the car rotate out of the slow chicanes without understeer.
 - **Fuji Speedway:** Long main straight, technical final sector. Focus: Compromise top speed/low-speed agility. Balanced Gearing Recommended. **Deep Dive:** This is a track of two halves. A common compromise is lower wing for the straight, but use mechanical grip (softer front ARB, lower \`DiffCoastSetting\`) to get the car to turn in the final sector. Good traction out of the final corner is paramount, so \`DiffPowerSetting\` must be high enough to prevent wheelspin.
@@ -1331,7 +1323,7 @@ ${finalExampleTemplate}
             // --- [BUG FIX IMPLEMENTATION] ---
             // Apply the track-specific overrides AFTER the AI has generated the setup.
             // This makes our overrides the final word.
-            let finalSetupText = applyTrackOverrides(track, setupText, finalCategory);
+            let finalSetupText = applyTrackOverrides(track, setupText, finalCategory, sessionGoal);
 
 
             // Log the generated setup to the console for debugging
