@@ -851,82 +851,69 @@ app.post('/generate-setup', async (req, res) => {
     // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
     let finalExampleTemplate = exampleTemplate; // Start with the chosen template
 
+    // --- SERVER-SIDE OVERRIDE LOGIC [CORRECTED & ENHANCED] ---
     const trackOverrides = (trackName, template) => {
         let overriddenTemplate = template;
-        // Generic regex to replace a setting's number while preserving its trailing comment
-        const replaceSetting = (settingName, newValue, regexFlags = 'm') => {
-            const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, regexFlags);
-            overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
-        };
 
-        const replaceSectionSetting = (section, settingName, newValue, regexFlags = 'm') => {
-            // This regex needs to be more specific to ensure it only replaces within the section
-            // It looks for the section header, then non-greedy match for anything until the setting, then replaces.
-            const sectionRegex = new RegExp(`(\\[${section}\\][\\s\\S]*?^)(${settingName}=)\\d+(.*)`, 'm');
-            overriddenTemplate = overriddenTemplate.replace(sectionRegex, `$1$2${newValue}$3`);
+        // Correctly formatted helper function to replace a setting's value
+        const replaceSetting = (settingName, newValue) => {
+            const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, 'm');
+            if (regex.test(overriddenTemplate)) {
+                 overriddenTemplate = overriddenTemplate.replace(regex, `<span class="math-inline">1</span>{newValue}$2`);
+            }
         };
-
 
         if (trackName === "Circuit de la Sarthe (Le Mans)" || trackName === "Autodromo Nazionale Monza") {
-            const minAeroSetting = 0;
             const note = trackName === "Circuit de la Sarthe (Le Mans)" ?
                 'Notes="Le Mans override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."' :
                 'Notes="Monza override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."';
 
-            // Ensure we handle cases where the FWSetting is commented out in some templates
-            if (overriddenTemplate.includes('[FRONTWING]\nFWSetting')) {
-                replaceSectionSetting('FRONTWING', 'FWSetting', minAeroSetting);
-            }
-            if (overriddenTemplate.includes('[REARWING]\nRWSetting')) {
-                 replaceSectionSetting('REARWING', 'RWSetting', minAeroSetting);
-            }
+            // Apply minimum aero settings
+            replaceSetting('FWSetting', 0);
+            replaceSetting('RWSetting', 0);
 
+            // Set max hybrid recovery as a baseline for these high-speed tracks
+            replaceSetting('RegenerationMapSetting', 10);
 
-            let maxFinalDrive;
-            if (finalCategory === 'Hypercar') maxFinalDrive = 7; // Example value, adjust as per LMU Hypercar max
-            else if (finalCategory === 'LMP2') maxFinalDrive = 5; // Example value, adjust as per LMU LMP2 max
-            else if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10; // Example value, adjust as per LMU GT3/GTE max
-
-            replaceSectionSetting('DRIVELINE', 'FinalDriveSetting', maxFinalDrive);
-            overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
+            // Apply longest gearing
+            let maxFinalDrive = 5; // Default max
+            if (finalCategory === 'Hypercar') maxFinalDrive = 7;
+            if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10;
+            replaceSetting('FinalDriveSetting', maxFinalDrive);
             replaceSetting('RatioSetSetting', 1);
+            overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
 
+            // Minimize cooling drag
             replaceSetting('WaterRadiatorSetting', 0);
             replaceSetting('OilRadiatorSetting', 0);
             replaceSetting('BrakeDuctSetting', 0);
             replaceSetting('BrakeDuctRearSetting', 0);
 
-            // Replace all RideHeightSetting values to 0
+            // Minimize ride height
             overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
             overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
 
         } else if (trackName === "Sebring International Raceway") {
             const note = 'Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to absorb bumps."';
 
-            // Set dampers and ARBs to very soft values (e.g., 0 or 1)
-            // Individual wheel dampers
+            // Soften all dampers and ARBs
             overriddenTemplate = overriddenTemplate.replace(/^(SlowBumpSetting=)\d+(.*)/gm, `$10$2`);
             overriddenTemplate = overriddenTemplate.replace(/^(FastBumpSetting=)\d+(.*)/gm, `$10$2`);
             overriddenTemplate = overriddenTemplate.replace(/^(SlowReboundSetting=)\d+(.*)/gm, `$10$2`);
             overriddenTemplate = overriddenTemplate.replace(/^(FastReboundSetting=)\d+(.*)/gm, `$10$2`);
+            replaceSetting('Front3rdSlowBumpSetting', 0);
+            replaceSetting('Front3rdFastBumpSetting', 0);
+            replaceSetting('Front3rdSlowReboundSetting', 0);
+            replaceSetting('Front3rdFastReboundSetting', 0);
+            replaceSetting('Rear3rdSlowBumpSetting', 0);
+            replaceSetting('Rear3rdFastBumpSetting', 0);
+            replaceSetting('Rear3rdSlowReboundSetting', 0);
+            replaceSetting('Rear3rdFastReboundSetting', 0);
+            replaceSetting('FrontAntiSwaySetting', 1);
+            replaceSetting('RearAntiSwaySetting', 1);
 
-            // 3rd Spring Dampers (if applicable, ensuring they are not commented out)
-            if (overriddenTemplate.includes('Front3rdSlowBumpSetting')) replaceSetting('Front3rdSlowBumpSetting', 0);
-            if (overriddenTemplate.includes('Front3rdFastBumpSetting')) replaceSetting('Front3rdFastBumpSetting', 0);
-            if (overriddenTemplate.includes('Front3rdSlowReboundSetting')) replaceSetting('Front3rdSlowReboundSetting', 0);
-            if (overriddenTemplate.includes('Front3rdFastReboundSetting')) replaceSetting('Front3rdFastReboundSetting', 0);
-            if (overriddenTemplate.includes('Rear3rdSlowBumpSetting')) replaceSetting('Rear3rdSlowBumpSetting', 0);
-            if (overriddenTemplate.includes('Rear3rdFastBumpSetting')) replaceSetting('Rear3rdFastBumpSetting', 0);
-            if (overriddenTemplate.includes('Rear3rdSlowReboundSetting')) replaceSetting('Rear3rdSlowReboundSetting', 0);
-            if (overriddenTemplate.includes('Rear3rdFastReboundSetting')) replaceSetting('Rear3rdFastReboundSetting', 0);
-
-            // Anti-Roll Bars
-            if (overriddenTemplate.includes('FrontAntiSwaySetting')) replaceSetting('FrontAntiSwaySetting', 1);
-            if (overriddenTemplate.includes('RearAntiSwaySetting')) replaceSetting('RearAntiSwaySetting', 1);
-
-            // Set ride heights high (e.g., 20 or 30, depending on the max range for the car)
-            // Use a higher value like 25 for general high setting
-            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$125$2`); // Assuming 30 is max. 25 is a good high value.
+            // Increase ride height
+            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$125$2`);
             overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
         }
         return overriddenTemplate;
@@ -1173,7 +1160,7 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
     - **Gearing:** Generally shorter gearing (lower 'RatioSetSetting' and 'GearXSetting' closer to 0) for quicker acceleration out of corners, unless on extreme top-speed tracks.
     - **[BASIC] Parameters:** 'Downforce' will be lower (0.050000-0.300000 depending on track). 'Balance' will be lower (0.150000-0.250000) indicating a more oversteer-prone, but drivable, car. 'Ride' will be lower (0.075000-0.250000) for a stiffer platform. 'Gearing' will be lower (0.075000-0.450000) for faster acceleration.
 - **'Balanced' Setup Goal:** Optimize versatile, all-around performance for consistent lap times over a race stint. Strong compromise between stability and responsiveness. The car should be predictable, efficient, and easy to drive consistently, without being overly sluggish or nervous.
-    - **Aero:** Mid-range wing settings for a good compromise between straight-line speed and cornering grip. Aim for neutral aero balance.
+    - **Aero:** Mid-range wing settings for a good compromise between straight-line-speed and cornering grip. Aim for neutral aero balance.
     - **Suspension:** Medium stiffness springs and dampers (medium range, 4-7) to provide both responsiveness and some compliance over curbs and minor bumps.
         - **Damping Nuances:** Aim for mid-range (**4-7**) across all damper settings (slow/fast bump/rebound) to achieve a harmonious blend of body control and bump absorption.
         - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections). Do NOT omit or default these values.**
