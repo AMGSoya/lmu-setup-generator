@@ -492,9 +492,9 @@ RearToeInSetting=12//0.47 deg
 //Rear3rdTenderSpringSetting=0//Detached
 //Rear3rdTenderTravelSetting=0//Detached
 //Rear3rdSlowBumpSetting=0//N/A
-//Rear3rdFastBumpSetting=0//N/A
-//Rear3rdSlowReboundSetting=0//N/A
-//Rear3rdFastReboundSetting=0//N/A
+//FastBumpSetting=0//N/A
+//SlowReboundSetting=0//N/A
+//FastReboundSetting=0//N/A
 //ChassisAdj00Setting=0//N/A
 //ChassisAdj01Setting=0//N/A
 //ChassisAdj02Setting=0//N/A
@@ -859,7 +859,7 @@ app.post('/generate-setup', async (req, res) => {
         const replaceSetting = (settingName, newValue) => {
             const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, 'm');
             if (regex.test(overriddenTemplate)) {
-                 overriddenTemplate = overriddenTemplate.replace(regex, `<span class="math-inline">1</span>{newValue}$2`);
+                overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
             }
         };
 
@@ -1059,6 +1059,7 @@ You must process requests in this exact order of priority. Lower-numbered rules 
 ## REAR PLATFORM STABILITY (MANDATORY PHILOSOPHY - REFINED!)
 - The rear of the car MUST be predictable. A "loose" or "snappy" rear end is a failed setup, regardless of the user's request for "oversteer".
 - Your goal is to create a rear end that rotates willingly but is always predictable and communicative. You must achieve this with a balanced combination of rear toe, damping, and differential settings.
+- **NEW: How to fix a "Loose and Snappy" rear end**: If the goal is to fix a snappy rear, the primary tools are to INCREASE \`DiffCoastSetting\` for more stability on corner entry, and INCREASE \`DiffPreloadSetting\` to smooth the transition between on/off throttle. A slightly SOFTER \`RearAntiSwaySetting\` also helps prevent sudden loss of traction mid-corner. These changes make the car's rotation more progressive and controllable.
 - **AVOID** setting Anti-Roll Bars (FrontAntiSwaySetting, RearAntiSwaySetting) to 0, which detaches them. A detached bar often creates an unpredictable platform. Always start from a connected, functional baseline.
 - **Rear Toe-In:** ALWAYS use a significant amount of Rear Toe-In for stability. For most cars and tracks, a value between 18 and 24 is a safe and effective starting point. NEVER use rear toe-out.
 - **Differential Power Setting (DiffPowerSetting):** To prevent corner exit wheelspin and a loose rear, use a relatively HIGH 'DiffPowerSetting'. A higher value locks the differential more on-throttle, forcing both wheels to turn together and providing better traction. Start with higher values (e.g., 10-14 for Hypercar) and only reduce if the car has too much understeer on exit.
@@ -1147,15 +1148,15 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - **Autódromo Internacional do Algarve (Portimão):** "Rollercoaster", elevation, blind crests. Focus: Predictable, stable platform. Medium downforce, compliant suspension. Slightly Shorter Gears Recommended. **Deep Dive:** Blind crests unload the car, making a stable setup essential. You cannot have a snappy car. Use higher \`DiffPreloadSetting\` and \`DiffCoastSetting\` to maintain stability when the car goes light. The driver needs to trust the car will have grip.
 - **Bahrain International Circuit:** High grip, smooth, hot. Focus: Good braking stability, traction. Tire wear high. Balanced Gearing Recommended. **Deep Dive:** Numerous slow corners and high-traction zones mean high rear tire wear. Manage this with less negative rear camber and a high \`DiffPowerSetting\` to prevent excessive wheelspin. Braking for T1, T8, and T10 is critical, so a forward brake bias and stable coast-side diff settings (\`DiffCoastSetting\`) are important.
 
-## LMU SETUP PHILOSOPHY DIAL (PACE & DRIVEABILITY)
+## LMU SETUP PHILOSOPHY DIAL (PACE & DRIVEABILITY) [IMPROVED FOR REAR STABILITY]
 - **'Aggressive' Setup Goal:** Maximize *driveable* peak performance/responsiveness. NEVER compromise to an undrivable/unstable car. This means the car should be sharp, reactive, and consistently fast *in the hands of a skilled driver*.
     - **Aero:** Lower wings to minimize drag, but maintain enough aero balance for high-speed cornering confidence. Prioritize efficiency.
     - **Suspension:** Stiffer springs and dampers (medium to stiff range) to maximize aero platform stability and responsiveness. Aim for precise control over pitch and roll.
         - **Damping Nuances:** For **Slow-Speed Dampers (Bump/Rebound)**, set to tighter ranges for aggressive: **8-10**. For **Fast-Speed Dampers (Bump/Rebound)**, also tighter ranges: **6-8**.
         - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections). Do NOT omit or default these values.**
     - **Anti-Roll Bars:** Stiffer front ARB (e.g., 15-20) to promote sharper turn-in (even if it means a touch more mid-corner understeer), and a slightly softer rear ARB (e.g., 5-10) to encourage rotation while maintaining predictability.
-    - **Camber & Toe:** More negative camber (lower index, e.g., **Front: 0-8, Rear: 0-12**) on the front for maximum cornering grip. Front toe-out (lower index, e.g., **0-8**) for aggressive turn-in (toe-out is mandatory for aggression). Rear toe-in (higher index, e.g., **18-22**) is still crucial for stability, but potentially on the lower end of that range to allow more rotation.
-    - **Differential:** Lower \`DiffCoastSetting\` (e.g., **0-5**) for aggressive turn-in and rotation off-throttle. \`DiffPowerSetting\` (e.g., **10-14**) will be relatively high to ensure strong traction on exit, preventing excessive wheelspin that would make the car unpredictable. \`DiffPreloadSetting\` can be lower (e.g., **10-20**) for more immediate differential action. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT default.**
+    - **Camber & Toe:** More negative camber (lower index, e.g., **Front: 0-8, Rear: 0-12**) on the front for maximum cornering grip. Front toe-out (lower index, e.g., **0-8**) for aggressive turn-in (toe-out is mandatory for aggression). Rear toe-in (higher index, e.g., **20-24**) is still crucial for stability, using the higher end of the range to prevent snappiness.
+    - **Differential (IMPROVED):** Lower \`DiffCoastSetting\` (e.g., **6-10**) for aggressive turn-in, but high enough to prevent snap oversteer. \`DiffPowerSetting\` (e.g., **10-14**) will be relatively high to ensure strong traction on exit. \`DiffPreloadSetting\` should be mid-range (e.g., **25-45**) to smooth transitions and reduce snappiness. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT default.**
     - **Brakes:** Higher 'BrakePressureSetting' (e.g., 80-100) for maximum stopping power. 'RearBrakeSetting' might be slightly more rearward (higher index, e.g., 20-30) to aid rotation on entry, but must remain controllable.
     - **Gearing:** Generally shorter gearing (lower 'RatioSetSetting' and 'GearXSetting' closer to 0) for quicker acceleration out of corners, unless on extreme top-speed tracks.
     - **[BASIC] Parameters:** 'Downforce' will be lower (0.050000-0.300000 depending on track). 'Balance' will be lower (0.150000-0.250000) indicating a more oversteer-prone, but drivable, car. 'Ride' will be lower (0.075000-0.250000) for a stiffer platform. 'Gearing' will be lower (0.075000-0.450000) for faster acceleration.
@@ -1165,8 +1166,8 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
         - **Damping Nuances:** Aim for mid-range (**4-7**) across all damper settings (slow/fast bump/rebound) to achieve a harmonious blend of body control and bump absorption.
         - **CRITICAL: The AI MUST explicitly set all 16 individual wheel damper settings (Slow/Fast Bump/Rebound for FRONTLEFT, FRONTRIGHT, REARLEFT, REARRIGHT sections). Do NOT omit or default these values.**
     - **Anti-Roll Bars:** Medium stiffness front and rear ARBs (e.g., 8-15) for a neutral mid-corner balance. Slight variations to fine-tune based on track or car.
-    - **Camber & Toe:** Balanced camber settings to optimize tire contact patch through corners and on straights (e.g., **Front: 10-25, Rear: 15-30**). Front toe-in (mid-range index, e.g., **10-20**) for stability, with rear toe-in (mid-range index, e.g., **18-24**) for predictability.
-    - **Differential:** Medium \`DiffPowerSetting\` (e.g., **5-10**) for good traction without excessive understeer. Medium \`DiffCoastSetting\` (e.g., **8-15**) for stable braking and turn-in, but still allowing some rotation. Medium \`DiffPreloadSetting\` (e.g., **20-50**) for smooth transitions. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT default.**
+    - **Camber & Toe:** Balanced camber settings to optimize tire contact patch through corners and on straights (e.g., **Front: 10-25, Rear: 15-30**). Front toe-in (mid-range index, e.g., **10-20**) for stability, with rear toe-in (higher index, e.g., **18-24**) for predictability.
+    - **Differential (IMPROVED):** Medium \`DiffPowerSetting\` (e.g., **8-12**) for a balance of traction and rotation on exit. Higher \`DiffCoastSetting\` (e.g., **10-16**) for stable braking and turn-in. Medium \`DiffPreloadSetting\` (e.g., **30-60**) for smooth, predictable transitions. **CRITICAL: The AI MUST explicitly set concrete, calculated values for DiffPowerSetting, DiffCoastSetting, and DiffPreloadSetting. Do NOT default.**
     - **Brakes:** Balanced 'BrakePressureSetting' (e.g., 60-80) for strong but manageable braking. Neutral 'RearBrakeSetting' (e.g., 15-25) for overall stability.
     - **Gearing:** Balanced gearing (mid-range 'RatioSetSetting' and 'GearXSetting') for a good blend of acceleration and top speed.
     - **[BASIC] Parameters:** 'Downforce' will be mid-range (0.250000-0.600000). 'Balance' will be mid-range (0.450000-0.550000) indicating a neutral car. 'Ride' will be mid-range (0.350000-0.650000) for a balanced platform. 'Gearing' will be mid-range (0.250000-0.850000).
