@@ -816,6 +816,81 @@ Gearing=0.400000
 Custom=1`
 };
 
+// --- [NEW AND IMPROVED] ---
+// This function will now be used for POST-PROCESSING the AI's output
+// to guarantee our track overrides are respected.
+const applyTrackOverrides = (trackName, setupText, carCategory) => {
+    let overriddenText = setupText;
+
+    // Helper function to replace a setting's value using regex
+    const replaceSetting = (settingName, newValue) => {
+        // This regex looks for a line starting with the setting name, followed by '=',
+        // captures the original number, and the rest of the line (including comments).
+        // It replaces only the number part.
+        const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, 'm');
+        if (regex.test(overriddenText)) {
+            overriddenText = overriddenText.replace(regex, `$1${newValue}$2`);
+        }
+    };
+
+    if (trackName === "Circuit de la Sarthe (Le Mans)" || trackName === "Autodromo Nazionale Monza") {
+        const trackNote = trackName === "Circuit de la Sarthe (Le Mans)" ? "Le Mans" : "Monza";
+        const note = `Notes="${trackNote} override applied: Absolute minimum drag enforced. Aero, ride height, and radiators minimized for top speed. Gearing set to longest configuration."`;
+
+        console.log(`[OVERRIDE] Applying ${trackNote} low-drag override.`);
+
+        // Apply minimum aero settings
+        replaceSetting('FWSetting', 0);
+        replaceSetting('RWSetting', 0);
+
+        // Apply longest gearing
+        let maxFinalDrive = 5; // Default max for LMP2
+        if (carCategory === 'Hypercar') maxFinalDrive = 7;
+        if (carCategory === 'GT3' || carCategory === 'GTE') maxFinalDrive = 10;
+        replaceSetting('FinalDriveSetting', maxFinalDrive);
+        replaceSetting('RatioSetSetting', 1); // Use the 'Long' ratio set
+        overriddenText = overriddenText.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`); // Set all individual gears to longest
+
+        // Minimize cooling drag
+        replaceSetting('WaterRadiatorSetting', 0);
+        replaceSetting('OilRadiatorSetting', 0);
+        replaceSetting('BrakeDuctSetting', 0);
+        replaceSetting('BrakeDuctRearSetting', 0);
+
+        // Minimize ride height
+        overriddenText = overriddenText.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
+
+        // Replace the AI's notes with our override note
+        overriddenText = overriddenText.replace(/Notes=".*"/, note);
+
+    } else if (trackName === "Sebring International Raceway") {
+        const note = 'Notes="Sebring override applied: Compliance enforced. Dampers/ARBs set to softest. Ride height increased to absorb bumps."';
+        console.log('[OVERRIDE] Applying Sebring compliance override.');
+
+        // Soften all dampers and ARBs
+        overriddenText = overriddenText.replace(/^(SlowBumpSetting=)\d+(.*)/gm, `$10$2`);
+        overriddenText = overriddenText.replace(/^(FastBumpSetting=)\d+(.*)/gm, `$10$2`);
+        overriddenText = overriddenText.replace(/^(SlowReboundSetting=)\d+(.*)/gm, `$10$2`);
+        overriddenText = overriddenText.replace(/^(FastReboundSetting=)\d+(.*)/gm, `$10$2`);
+        replaceSetting('Front3rdSlowBumpSetting', 0);
+        replaceSetting('Front3rdFastBumpSetting', 0);
+        replaceSetting('Front3rdSlowReboundSetting', 0);
+        replaceSetting('Front3rdFastReboundSetting', 0);
+        replaceSetting('Rear3rdSlowBumpSetting', 0);
+        replaceSetting('Rear3rdFastBumpSetting', 0);
+        replaceSetting('Rear3rdSlowReboundSetting', 0);
+        replaceSetting('Rear3rdFastReboundSetting', 0);
+        replaceSetting('FrontAntiSwaySetting', 1);
+        replaceSetting('RearAntiSwaySetting', 1);
+
+        // Increase ride height
+        overriddenText = overriddenText.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$125$2`);
+        overriddenText = overriddenText.replace(/Notes=".*"/, note);
+    }
+    return overriddenText;
+};
+
+
 // 8. Define a route for AI setup requests
 app.post('/generate-setup', async (req, res) => {
     // Safely destructure all possible values from the request body
@@ -847,79 +922,8 @@ app.post('/generate-setup', async (req, res) => {
         });
     }
 
-    // --- CRITICAL: LE MANS SPECIFIC OVERRIDE LOGIC (Server-Side Enforcement) ---
-    // This ensures Le Mans gets the absolute lowest drag settings regardless of AI's broader interpretation.
-    let finalExampleTemplate = exampleTemplate; // Start with the chosen template
-
-    // --- SERVER-SIDE OVERRIDE LOGIC [CORRECTED & ENHANCED] ---
-    const trackOverrides = (trackName, template) => {
-        let overriddenTemplate = template;
-
-        // Correctly formatted helper function to replace a setting's value
-        const replaceSetting = (settingName, newValue) => {
-            const regex = new RegExp(`^(${settingName}=)\\d+(.*)`, 'm');
-            if (regex.test(overriddenTemplate)) {
-                overriddenTemplate = overriddenTemplate.replace(regex, `$1${newValue}$2`);
-            }
-        };
-
-        if (trackName === "Circuit de la Sarthe (Le Mans)" || trackName === "Autodromo Nazionale Monza") {
-            const note = trackName === "Circuit de la Sarthe (Le Mans)" ?
-                'Notes="Le Mans override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."' :
-                'Notes="Monza override applied: Absolute minimum drag prioritized. All aero, ride height, and radiators minimized for top speed. Gearing set to longest possible configuration."';
-
-            // Apply minimum aero settings
-            replaceSetting('FWSetting', 0);
-            replaceSetting('RWSetting', 0);
-
-            // Set max hybrid recovery as a baseline for these high-speed tracks
-            replaceSetting('RegenerationMapSetting', 10);
-
-            // Apply longest gearing
-            let maxFinalDrive = 5; // Default max
-            if (finalCategory === 'Hypercar') maxFinalDrive = 7;
-            if (finalCategory === 'GT3' || finalCategory === 'GTE') maxFinalDrive = 10;
-            replaceSetting('FinalDriveSetting', maxFinalDrive);
-            replaceSetting('RatioSetSetting', 1);
-            overriddenTemplate = overriddenTemplate.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$11$2`);
-
-            // Minimize cooling drag
-            replaceSetting('WaterRadiatorSetting', 0);
-            replaceSetting('OilRadiatorSetting', 0);
-            replaceSetting('BrakeDuctSetting', 0);
-            replaceSetting('BrakeDuctRearSetting', 0);
-
-            // Minimize ride height
-            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$10$2`);
-            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
-
-        } else if (trackName === "Sebring International Raceway") {
-            const note = 'Notes="Sebring override applied: Prioritized maximum bump absorption. Dampers and Anti-Roll Bars set to softest. Ride height increased to absorb bumps."';
-
-            // Soften all dampers and ARBs
-            overriddenTemplate = overriddenTemplate.replace(/^(SlowBumpSetting=)\d+(.*)/gm, `$10$2`);
-            overriddenTemplate = overriddenTemplate.replace(/^(FastBumpSetting=)\d+(.*)/gm, `$10$2`);
-            overriddenTemplate = overriddenTemplate.replace(/^(SlowReboundSetting=)\d+(.*)/gm, `$10$2`);
-            overriddenTemplate = overriddenTemplate.replace(/^(FastReboundSetting=)\d+(.*)/gm, `$10$2`);
-            replaceSetting('Front3rdSlowBumpSetting', 0);
-            replaceSetting('Front3rdFastBumpSetting', 0);
-            replaceSetting('Front3rdSlowReboundSetting', 0);
-            replaceSetting('Front3rdFastReboundSetting', 0);
-            replaceSetting('Rear3rdSlowBumpSetting', 0);
-            replaceSetting('Rear3rdFastBumpSetting', 0);
-            replaceSetting('Rear3rdSlowReboundSetting', 0);
-            replaceSetting('Rear3rdFastReboundSetting', 0);
-            replaceSetting('FrontAntiSwaySetting', 1);
-            replaceSetting('RearAntiSwaySetting', 1);
-
-            // Increase ride height
-            overriddenTemplate = overriddenTemplate.replace(/^(RideHeightSetting=)\d+(.*)/gm, `$125$2`);
-            overriddenTemplate = overriddenTemplate.replace(/Notes=""/, note);
-        }
-        return overriddenTemplate;
-    };
-
-    finalExampleTemplate = trackOverrides(track, finalExampleTemplate);
+    // --- LOGIC CHANGE: We no longer apply overrides to the template beforehand ---
+    let finalExampleTemplate = exampleTemplate;
 
     // UPGRADE: Dynamically insert the user's selected car name into the template
     finalExampleTemplate = finalExampleTemplate.replace('[[CAR_NAME]]', car);
@@ -1320,20 +1324,21 @@ ${finalExampleTemplate}
             const ratioSetMatch = setupText.match(/RatioSetSetting=(\d+)/);
             if (ratioSetMatch && ratioSetMatch[1]) {
                 const ratioSetValue = ratioSetMatch[1];
-                // This regex finds all Gear<number>Setting lines and replaces their value
-                // with the one from RatioSetSetting, while preserving the original comments.
                 setupText = setupText.replace(/^(Gear\dSetting=)\d+(.*)/gm, `$1${ratioSetValue}$2`);
-
-                // Add a log to see this in action
                 console.log(`[DRIVELINE SYNC] Enforced all individual Gear Settings to match RatioSetSetting value of: ${ratioSetValue}`);
             }
 
+            // --- [BUG FIX IMPLEMENTATION] ---
+            // Apply the track-specific overrides AFTER the AI has generated the setup.
+            // This makes our overrides the final word.
+            let finalSetupText = applyTrackOverrides(track, setupText, finalCategory);
+
 
             // Log the generated setup to the console for debugging
-            console.log("\n--- GENERATED SETUP ---\n", setupText);
+            console.log("\n--- GENERATED SETUP (POST-OVERRIDE) ---\n", finalSetupText);
 
             res.json({
-                setup: setupText
+                setup: finalSetupText
             });
 
         } else {
