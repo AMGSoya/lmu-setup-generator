@@ -1179,6 +1179,13 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
     - **Gearing:** Generally longer gearing (higher 'RatioSetSetting' and 'GearXSetting' closer to 1) to reduce abrupt acceleration.
     - **[BASIC] Parameters:** 'Downforce' will be higher (0.500000-0.950000). 'Balance' will be higher (0.650000-0.850000) indicating a stable, understeer-prone car. 'Ride' will be higher (0.650000-0.925000) for a softer platform. 'Gearing' will be higher (0.850000-0.975000).
 
+## TIRE MANAGEMENT & LONGEVITY PHILOSOPHY
+- For any 'race' session, a setup that is fast for one lap but destroys its tires in three is a failed setup. The goal of a race setup is to maintain consistent pace by keeping the tires within their optimal temperature window and minimizing wear.
+- **Camber and Wear:** More negative camber increases cornering grip but concentrates load and heat on the inside shoulder of the tire. For long stints, use less aggressive (more positive) camber settings to spread the load across the tire face, reducing overheating and wear, even if it sacrifices some ultimate cornering speed.
+- **Toe and Scrub:** Toe settings have a powerful effect on tire wear. Front toe-out improves turn-in but "scrubs" the front tires on the straights, generating heat and wear. Rear toe-in provides stability but also scrubs the tires. For race setups, use the minimum amount of toe required to achieve the desired handling characteristics.
+- **Suspension and Tire Health:** A car with overly stiff suspension, especially fast-speed bump and rebound, will shock the tires over every imperfection, generating temperature spikes and potentially causing graining or blistering. A more compliant suspension is gentler on the tires.
+- **Differential and Rear Tires:** A differential with very low \`DiffPowerSetting\` (very open) can cause excessive inside wheelspin on corner exit, rapidly overheating and wearing that single tire. A very high setting can cause both tires to slip and scrub across the asphalt. The optimal race setting is one that minimizes wheelspin without causing exit understeer.
+
 ## QUALIFYING VS. RACE PHILOSOPHY
 - **'qualifying'**: One-lap pace, optimal timing. Softest tires, minimal fuel (2-3 laps), aggressive camber, high brake pressure, aggressive diff (lower coast, higher power). Tire wear irrelevant. **FuelSetting should be set to a concrete value between 5-10L (e.g., 7L for most Hypercars). For Hypercars, RegenerationMapSetting MUST be 8-9 and ElectricMotorMapSetting MUST be 3-4. These settings are ABSOLUTELY CRITICAL for qualifying pace and must be followed.**
 - **'race'**: Consistent pace/lap times over a stint, NOT just tire survival. Efficient, predictable car maintaining speed through degradation. Optimized tire pressures for consistency. Balance pace & tire wear when choosing 'PressureSetting'/'CamberSetting'. Diff settings should favor stability. **FuelSetting should be set based on race duration. For Hypercars, RegenerationMapSetting MUST be 10 and ElectricMotorMapSetting should reflect efficient usage (e.g., 1-2).**
@@ -1189,6 +1196,16 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - **Front-Engine (Corvette, Aston Martin):** Great braking stability, but can be prone to exit understeer and wheelspin. **MUST use a higher \`DiffPowerSetting\` to manage traction.** Benefits from setup choices that promote rear-end rotation (stiffer rear ARB, lower \`DiffCoastSetting\`) to get the car pointed correctly before applying power.
 - **General Principle:** Lean into the positive characteristics of a car's architecture while actively using setup tools to mitigate its inherent negative traits.
 
+## ADVANCED DAMPER TUNING PHILOSOPHY
+- Dampers are the fine-tuning tool used AFTER springs and anti-roll bars have set the car's general mechanical balance. Their primary job is to control the *rate* of weight transfer and manage the tire's contact with the road.
+- **Separating Body Motion from Bumps:**
+    - **Slow-Speed Dampers (0-5 clicks):** These control the deliberate, slow movements of the chassis: roll during cornering, pitch under braking, and squat under acceleration. Stiffer slow-speed settings provide a more responsive, reactive platform but can make the car feel harsh. Softer settings make the car feel lazy but are more forgiving.
+    - **Fast-Speed Dampers (6-10+ clicks):** These exclusively handle high-velocity impacts like hitting curbs and sharp bumps in the road. A setup for a bumpy track like Sebring **MUST** have soft fast-speed dampers to absorb energy without throwing the chassis off balance. A smooth track allows for stiffer fast-speed settings, which can improve responsiveness.
+- **The Golden Rule of Dampers (Entry vs. Exit):**
+    - To stabilize the car on **corner entry**, focus on the **rebound** setting of the front dampers and the **bump** setting of the rear dampers. Stiffer front rebound controls how quickly the front rises during braking, maintaining front-end grip. Stiffer rear bump controls how the car accepts weight as it rolls onto the rear axle.
+    - To improve traction on **corner exit**, focus on the **bump** setting of the front dampers and the **rebound** setting of the rear dampers. Softer rear rebound allows the suspension to extend and keep the tire pressed into the asphalt as weight shifts forward.
+- **Harmony is Key:** Damper settings must be in harmony. A setting that is wildly different from the others on the same axle can create unpredictable behavior. Adjustments should be small and methodical.
+
 ## DRIVER FEEDBACK TROUBLESHOOTING MATRIX (High Priority)
 - IF "Understeer on corner entry": 1st: Reduce 'DiffCoastSetting'. 2nd: Soften 'FrontAntiSwaySetting'. 3rd: Increase 'FrontToeInSetting' (more toe out).
 - IF "Understeer mid-corner or on exit": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Reduce 'DiffPowerSetting'. 3rd: Stiffen Rear Springs or increase rear ride height (rake).
@@ -1196,6 +1213,35 @@ ALWAYS ensure non-zero index for adjustable gears (not fixed 0).
 - IF "Oversteer on exit" or "Poor traction" / "Loose rear": 1st: INCREASE 'DiffPowerSetting' (more on-throttle lock). 2nd: Increase 'RearToeInSetting' (more toe-in for stability). 3rd: Soften 'RearAntiSwaySetting'. 4th: Reduce negative rear camber (HIGHER 'RearCamberSetting' index). 5th: Soften rear springs or reduce rear ride height (rake).
 - IF "Unstable under braking": 1st: Decrease 'RearBrakeSetting' (move bias forward). 2nd: Increase 'EngineBrakingMapSetting'. 3rd: Increase 'DiffCoastSetting'.
 - IF "Too much Understeer" or "Pushing in corners": 1st: Stiffen 'RearAntiSwaySetting'. 2nd: Increase negative rear camber (LOWER 'RearCamberSetting' index). 3rd: Decrease 'RearToeInSetting' (less toe-in).
+
+## DRIVER INPUT & SETUP PHILOSOPHY
+
+- A setup must match the driver's unique style. A car is not fast on its own; it is fast when it complements the driver's inputs. Your generated setup should consider these common driving style trade-offs.
+
+- **Steering Input Style:**
+
+    - **For an Aggressive Driver (fast, large steering inputs):** The car needs more inherent stability to avoid being unsettled. You should favor a higher \`DiffCoastSetting\`, more \`RearToeIn\`, and less aggressive front-end geometry. The setup must be "calmed down" to handle the driver's sharp inputs without snapping.
+
+    - **For a Smooth Driver (minimal, fluid steering inputs):** The driver is not shocking the chassis, so the car can be set up to be more responsive and "pointy." You can use a lower \`DiffCoastSetting\` and more aggressive front-end settings, as the driver's smooth style will prevent the car from becoming nervous.
+
+- **Braking Technique:**
+
+    - **For a Trail-Braker (carries brake pressure into the corner apex):** The car must be exceptionally stable while braking and turning simultaneously. This requires a more forward brake bias (lower \`RearBrakeSetting\`) and a higher \`DiffCoastSetting\` to prevent oversteer on corner entry. The car must be forgiving when loaded laterally and longitudinally at the same time.
+
+    - **For a Straight-Line Braker (releases the brake before significant steering input):** The driver is separating the tasks of braking and cornering. The car can therefore be set up with a more rearward brake bias and a lower \`DiffCoastSetting\` to help it pivot and rotate more aggressively on turn-in.
+
+
+
+- **Directive:** When 'Aggressive' is the goal, assume the driver is also aggressive with their inputs and requires a car that can handle it but still forgiving. When 'Safe' is the goal, assume the driver needs maximum stability to compensate for potentially imprecise or varied inputs. 'Balanced' should be a compromise between the two.
+
+## DRIVER CONFIDENCE AS A CORE PRINCIPLE
+- Outside of a single all-or-nothing qualifying lap, the single most important characteristic of a good setup is the confidence it inspires in the driver. A driver who trusts their car will push closer to the true limit, more often.
+- **Pillars of Confidence:**
+    1.  **Braking Stability:** The car must not wander or become unstable during heavy braking. This is primarily achieved with a forward brake bias, sufficient rear toe-in, and a higher \`DiffCoastSetting\`.
+    2.  **Predictable Turn-in:** The driver must know that when they turn the wheel, the front will grip consistently without a sudden snap of oversteer. This is achieved with a balanced relationship between front and rear roll stiffness (ARBs).
+    3.  **Controllable On-Throttle:** The driver must be able to apply the throttle on corner-exit without fear of the car instantly spinning. This is achieved with a higher \`DiffPowerSetting\` and appropriate \`TCPowerCutMapSetting\`.
+    4.  **Clear Communication:** The setup should allow the car to "talk" to the driver. The loss of grip at the limit should be progressive and communicated through the force feedback, not a sudden event. This is often achieved with a well-balanced damping profile.
+- **Directive:** Unless the setup goal is explicitly 'Aggressive' for a short qualifying run, you should always err on the side of a setup that enhances these pillars of confidence.
 
 ## ADVANCED WEATHER & TIRE STRATEGY
 - IF Weather is 'Rain'/'Wet': Wet tires ('CompoundSetting'=0), INCREASE 'PressureSetting' (+3-5 clicks), INCREASE 'RideHeightSetting' (+10-15 cm), SOFTER Springs/Dampers, HIGHER TC/ABS. Open BrakeDucts.
